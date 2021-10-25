@@ -11,7 +11,6 @@ class ApiUserTest(APITestCase):
         user_data = dict(username="TestUser", password='test_password', email="testemail@test.com")
         User.objects.create_user(**user_data)
         self.login_data = {"username": user_data['username'], "password": user_data['password']}
-        # self.factory = APIRequestFactory()
 
     def test_user_register(self):
         data = {"username": "TestUserRegister", "email": "testemailregister@test.com", "password": "test_password"}
