@@ -26,7 +26,6 @@ class RegisterAPI(generics.GenericAPIView):
 class LoginAPI(KnoxLoginView):
     permission_classes = (permissions.AllowAny,)
 
-    # TODO: Should be logged once make if around login
     def post(self, request, format=None):
         serializer = AuthTokenSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
