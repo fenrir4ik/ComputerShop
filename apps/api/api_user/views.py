@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from .serializers import UserSerializer, RegisterSerializer, ChangePasswordSerializer
 
 
-class RegisterAPI(generics.GenericAPIView):
+class RegisterAPI(generics.CreateAPIView): #generics.GenericAPIView
     serializer_class = RegisterSerializer
     permission_classes = (permissions.AllowAny,)
 
