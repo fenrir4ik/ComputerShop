@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'apps.api.api_user',
     'apps.api.api_product',
     'apps.api.api_shopping_cart',
+    'apps.api.api_order',
     'rest_framework',
     'knox',
 ]
