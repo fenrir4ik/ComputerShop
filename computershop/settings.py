@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'apps.api.api_user',
     'apps.api.api_product',
+    'apps.api.api_shopping_cart',
     'rest_framework',
     'knox',
 ]
