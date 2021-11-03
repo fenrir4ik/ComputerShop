@@ -1,28 +1,47 @@
 import json
 
+from rest_framework import permissions
+
+HTTP_METHODS_AVAILABLE = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace']
+
+
 class APIBase:
+    # TODO добавить важность поля должно быть или нет и
+    #  подумать над тем что класс может иметь несколько методов post/get
+    #   print(getattr(RegisterAPI, 'post').__doc__) таким способом получаем докстринг каждого класса
     in_arguments = {} #in json {'agr1': 'value1', 'arg2': 'value2'}
     out_arguments = {} #out json {'out1': 'value1', 'out2': 'value2'}
-    http_methods = () #http methods available {'GET', 'POST'}
-    auth_required = False #auth required: True/False
-    call_path = '' #uri to call
+    __call_path = '' #url to call
 
     @classmethod
     def get_api_details(cls):
         return json.dumps({
-            'in_arguments': cls.__cast_args(cls.in_arguments),
-            'out_arguments': cls.__cast_args(cls.out_arguments),
-            'http_methods':cls.http_methods,
-            'auth_required': cls.auth_required,
-            'call_path': cls.call_path,
+            'in_arguments': cls.__parse_args(cls.in_arguments),
+            'out_arguments': cls.__parse_args(cls.out_arguments),
+            'http_methods': cls.__get_http_methods(),
+            'permission_required': cls.__permission_required(),
+            'call_path': cls.__call_path,
         }, separators=(',', ':'), indent=4)
 
     @classmethod
-    def __cast_args(self, dictionary):
+    def __parse_args(self, dictionary):
         result = {}
         for key, value in dictionary.items():
             if isinstance(value, dict):
-                result[key] = self.__cast_args(value)
+                result[key] = self.__parse_args(value)
             else:
                 result[key] = value.__name__ if value in (int, float, str, bool) else None
         return result
+
+    @classmethod
+    def __get_http_methods(cls):
+        return [m.upper() for m in HTTP_METHODS_AVAILABLE if hasattr(cls, m)]
+
+    @classmethod
+    def __permission_required(cls):
+        return permissions.IsAuthenticated in getattr(cls, 'permission_classes', [])
+
+    @classmethod
+    def set_call_path(cls, path):
+        cls.__call_path = path
+        return cls.__call_path
