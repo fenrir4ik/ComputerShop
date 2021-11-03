@@ -28,10 +28,11 @@ class LoginAPI(KnoxLoginView, APIBase):
     in_arguments = {'username': str, 'password': str}
     out_arguments = {'expiery':str, 'token': str}
 
+    serializer_class = AuthTokenSerializer
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request, format=None):
-        serializer = AuthTokenSerializer(data=request.data)
+        serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
         login(request, user)

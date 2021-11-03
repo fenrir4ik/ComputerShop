@@ -16,7 +16,7 @@ class APIBase:
     @classmethod
     def get_api_details(cls):
         return json.dumps({
-            'in_arguments': cls.__parse_args(cls.in_arguments),
+            'in_arguments': cls.__parse_args(cls.in_arguments), # через serializer
             'out_arguments': cls.__parse_args(cls.out_arguments),
             'http_methods': cls.__get_http_methods(),
             'permission_required': cls.__permission_required(),
