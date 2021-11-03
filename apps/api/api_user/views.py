@@ -1,14 +1,21 @@
 from django.contrib.auth import login
 from django.contrib.auth.models import User
-from knox.views import LoginView as KnoxLoginView
+from knox.views import LoginView as KnoxLoginView, LogoutView as KnoxLogoutView
 from rest_framework import permissions, generics, status
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.response import Response
 
 from .serializers import UserSerializer, RegisterSerializer, ChangePasswordSerializer
+from ..APIBase import APIBase
 
 
-class RegisterAPI(generics.CreateAPIView):
+class RegisterAPI(generics.CreateAPIView, APIBase):
+    in_arguments = {'username': str, 'email': str, 'password': str}
+    out_arguments = {'user': {'id': int, 'username': str, 'email': str}}
+    http_methods = ('POST')
+    auth_required = False
+    call_path = 'api_user/register'
+
     serializer_class = RegisterSerializer
     permission_classes = (permissions.AllowAny,)
 
@@ -23,7 +30,13 @@ class RegisterAPI(generics.CreateAPIView):
         })
 
 
-class LoginAPI(KnoxLoginView):
+class LoginAPI(KnoxLoginView, APIBase):
+    in_arguments = {'username': str, 'password': str}
+    out_arguments = {'expiery':str, 'token': str}
+    http_methods = ('POST')
+    auth_required = False
+    call_path = 'api_user/login'
+
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request, format=None):
@@ -34,7 +47,13 @@ class LoginAPI(KnoxLoginView):
         return super(LoginAPI, self).post(request, format=None)
 
 
-class ChangePasswordAPI(generics.UpdateAPIView):
+class ChangePasswordAPI(generics.UpdateAPIView, APIBase):
+    in_arguments = {'old_password': str, 'new_password': str}
+    out_arguments = {}
+    http_methods = ('PUT')
+    auth_required = True
+    call_path = 'api_user/change_password'
+
     serializer_class = ChangePasswordSerializer
     model = User
     permission_classes = (permissions.IsAuthenticated,)
@@ -60,3 +79,10 @@ class ChangePasswordAPI(generics.UpdateAPIView):
             }
             return Response(response)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class LogoutAPI(KnoxLogoutView, APIBase):
+    in_arguments = {}
+    out_arguments = {}
+    http_methods = ('POST')
+    auth_required = True
+    call_path = 'api_user/logout'
