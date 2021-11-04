@@ -9,15 +9,13 @@ class APIBase:
     # TODO добавить важность поля должно быть или нет и
     #  подумать над тем что класс может иметь несколько методов post/get
     #   print(getattr(RegisterAPI, 'post').__doc__) таким способом получаем докстринг каждого класса
-    in_arguments = {} #in json {'agr1': 'value1', 'arg2': 'value2'}
-    out_arguments = {} #out json {'out1': 'value1', 'out2': 'value2'}
     __call_path = '' #url to call
 
     @classmethod
     def get_api_details(cls):
         return json.dumps({
-            'in_arguments': cls.__parse_args(cls.in_arguments), # через serializer
-            'out_arguments': cls.__parse_args(cls.out_arguments),
+            'in_arguments': None,
+            'out_arguments': None,
             'http_methods': cls.__get_http_methods(),
             'permission_required': cls.__permission_required(),
             'call_path': cls.__call_path,

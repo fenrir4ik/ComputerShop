@@ -10,14 +10,10 @@ from ..APIBase import APIBase
 
 
 class RegisterAPI(generics.CreateAPIView, APIBase):
-    in_arguments = {'username': str, 'email': str, 'password': str}
-    out_arguments = {'user': {'id': int, 'username': str, 'email': str}}
-
     serializer_class = RegisterSerializer
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request, *args, **kwargs):
-        '''Stringa'''
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
@@ -25,9 +21,6 @@ class RegisterAPI(generics.CreateAPIView, APIBase):
 
 
 class LoginAPI(KnoxLoginView, APIBase):
-    in_arguments = {'username': str, 'password': str}
-    out_arguments = {'expiery':str, 'token': str}
-
     serializer_class = AuthTokenSerializer
     permission_classes = (permissions.AllowAny,)
 
@@ -40,11 +33,7 @@ class LoginAPI(KnoxLoginView, APIBase):
 
 
 class ChangePasswordAPI(generics.UpdateAPIView, APIBase):
-    in_arguments = {'old_password': str, 'new_password': str}
-    out_arguments = {}
-
     serializer_class = ChangePasswordSerializer
-    model = User
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_object(self, queryset=None):
@@ -70,5 +59,4 @@ class ChangePasswordAPI(generics.UpdateAPIView, APIBase):
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class LogoutAPI(KnoxLogoutView, APIBase):
-    in_arguments = {}
-    out_arguments = {}
+    pass
