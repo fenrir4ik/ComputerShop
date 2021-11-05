@@ -24,9 +24,8 @@ class ApiUserTest(APITestCase):
     def test_user_register(self):
         data = {"username": "TestUserRegister", "email": "testemailregister@test.com", "password": "test_password"}
         response = self.client.post(self.relative_path + 'register/', data)
-        response_data = response.json()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response_data['user']['username'], 'TestUserRegister')
+        self.assertEqual(response.data['user']['username'], 'TestUserRegister')
 
     def test_user_login(self):
         response = self.client.post(self.relative_path + 'login/', self.login_data)
@@ -39,7 +38,7 @@ class ApiUserTest(APITestCase):
         header = {'HTTP_AUTHORIZATION': f"Token {token}"}
 
         response = self.client.post(self.relative_path + 'logout/', **header)
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         response = self.client.post(self.relative_path + 'logout/', **header)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 

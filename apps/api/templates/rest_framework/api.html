@@ -1,0 +1,25 @@
+{% extends "rest_framework/base.html" %}
+{% load i18n %}
+
+{% block branding %}
+    <a class="navbar-brand">
+        Computer Shop API
+    </a>
+    {{ mydata }}
+{% endblock %}
+
+{% block breadcrumbs %}
+  <ul class="breadcrumb">
+    <li><a href="{{ api_root }}">Computer Shop API</a></li>
+    <li><a href="{{ current_api_folder.link }}">{{ current_api_folder.name }}</a></li>
+    {% for breadcrumb_name, breadcrumb_url in breadcrumblist %}
+      {% if forloop.last %}
+        <li class="active"><a href="{{ breadcrumb_url }}">{{ breadcrumb_name }}</a></li>
+      {% else %}
+        <li><a href="{{ breadcrumb_url }}">{{ breadcrumb_name }}</a></li>
+      {% endif %}
+    {% empty %}
+      {% block breadcrumbs_empty %}&nbsp;{% endblock breadcrumbs_empty %}
+    {% endfor %}
+  </ul>
+{% endblock %}

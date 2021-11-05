@@ -1,28 +1,29 @@
 from django.contrib.auth import login
-from django.contrib.auth.models import User
-from django.http import JsonResponse
 from knox.views import LoginView as KnoxLoginView, LogoutView as KnoxLogoutView
 from rest_framework import permissions, generics, status
 from rest_framework.authtoken.serializers import AuthTokenSerializer
+from rest_framework.response import Response
 
 from .serializers import UserSerializer, RegisterSerializer, ChangePasswordSerializer
-from ..APIBase import APIBase
+from ..renderers import CustomBrowsableAPIRenderer
 
 
-class RegisterAPI(generics.CreateAPIView, APIBase):
+class RegisterAPI(generics.CreateAPIView):
     serializer_class = RegisterSerializer
     permission_classes = (permissions.AllowAny,)
+    renderer_classes = [CustomBrowsableAPIRenderer,]
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        return JsonResponse({"user": UserSerializer(user, context=self.get_serializer_context()).data}, status=status.HTTP_200_OK)
+        return Response({"user": UserSerializer(user, context=self.get_serializer_context()).data}, status=status.HTTP_200_OK)
 
 
-class LoginAPI(KnoxLoginView, APIBase):
+class LoginAPI(KnoxLoginView):
     serializer_class = AuthTokenSerializer
     permission_classes = (permissions.AllowAny,)
+    renderer_classes = [CustomBrowsableAPIRenderer, ]
 
     def post(self, request, format=None):
         serializer = self.serializer_class(data=request.data)
@@ -32,9 +33,10 @@ class LoginAPI(KnoxLoginView, APIBase):
         return super(LoginAPI, self).post(request, format=None)
 
 
-class ChangePasswordAPI(generics.UpdateAPIView, APIBase):
+class ChangePasswordAPI(generics.UpdateAPIView):
     serializer_class = ChangePasswordSerializer
     permission_classes = (permissions.IsAuthenticated,)
+    renderer_classes = [CustomBrowsableAPIRenderer, ]
 
     def get_object(self, queryset=None):
         obj = self.request.user
@@ -46,7 +48,7 @@ class ChangePasswordAPI(generics.UpdateAPIView, APIBase):
 
         if serializer.is_valid():
             if not self.object.check_password(serializer.data.get("old_password")):
-                return JsonResponse({"old_password": ["Wrong password"]}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"old_password": ["Wrong password"]}, status=status.HTTP_400_BAD_REQUEST)
             self.object.set_password(serializer.data.get("new_password"))
             self.object.save()
             response = {
@@ -55,8 +57,9 @@ class ChangePasswordAPI(generics.UpdateAPIView, APIBase):
                 'message': 'Password updated successfully',
                 'data': []
             }
-            return JsonResponse(response, status=status.HTTP_200_OK)
-        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(response, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class LogoutAPI(KnoxLogoutView, APIBase):
-    pass
+
+class LogoutAPI(KnoxLogoutView):
+    renderer_classes = [CustomBrowsableAPIRenderer, ]
