@@ -11,7 +11,6 @@ from ..renderers import CustomBrowsableAPIRenderer
 class RegisterAPI(generics.CreateAPIView):
     serializer_class = RegisterSerializer
     permission_classes = (permissions.AllowAny,)
-    renderer_classes = [CustomBrowsableAPIRenderer,]
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -23,7 +22,6 @@ class RegisterAPI(generics.CreateAPIView):
 class LoginAPI(KnoxLoginView):
     serializer_class = AuthTokenSerializer
     permission_classes = (permissions.AllowAny,)
-    renderer_classes = [CustomBrowsableAPIRenderer, ]
 
     def post(self, request, format=None):
         serializer = self.serializer_class(data=request.data)
@@ -36,7 +34,6 @@ class LoginAPI(KnoxLoginView):
 class ChangePasswordAPI(generics.UpdateAPIView):
     serializer_class = ChangePasswordSerializer
     permission_classes = (permissions.IsAuthenticated,)
-    renderer_classes = [CustomBrowsableAPIRenderer, ]
 
     def get_object(self, queryset=None):
         obj = self.request.user
@@ -62,4 +59,4 @@ class ChangePasswordAPI(generics.UpdateAPIView):
 
 
 class LogoutAPI(KnoxLogoutView):
-    renderer_classes = [CustomBrowsableAPIRenderer, ]
+    pass
