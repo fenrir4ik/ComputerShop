@@ -160,3 +160,6 @@ REST_FRAMEWORK = {
 }
 
 REST_KNOX = {'TOKEN_TTL': timedelta(hours=24)}
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
