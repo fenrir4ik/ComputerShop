@@ -1,7 +1,6 @@
 {% extends "rest_framework/base.html" %}
+{% load rest_framework %}
 {% load i18n %}
-
-<title>{% block title %}{% if name %}{{ name }} – {% endif %}Computer Shop API{% endblock %}</title>
 
 {% block branding %}
     <a class="navbar-brand">Computer Shop API</a>
@@ -21,4 +20,20 @@
       {% block breadcrumbs_empty %}&nbsp;{% endblock breadcrumbs_empty %}
     {% endfor %}
   </ul>
+{% endblock %}
+
+{% block description %}
+{% endblock %}
+
+{% block content %}
+    <div class="response-info" aria-label="{% trans "response info" %}">
+        <pre class="prettyprint">
+            <span class="meta nocode">
+                <b>LIST OF ALLOWED METHODS</b>
+                {% for key, value in api_dict.items %}
+                    <p>{{ key }}</p><a href="{{value}}">{{ value }}</a>
+                {% endfor %}
+            </span>
+        </pre>
+    </div>
 {% endblock %}

@@ -5,7 +5,7 @@ from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.response import Response
 
 from .serializers import UserSerializer, RegisterSerializer, ChangePasswordSerializer
-from ..renderers import CustomBrowsableAPIRenderer
+
 
 
 class RegisterAPI(generics.CreateAPIView):

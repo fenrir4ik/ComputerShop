@@ -36,9 +36,8 @@ class ApiUserTest(APITestCase):
         response = self.client.post(self.relative_path + 'login/', self.login_data)
         token = response.data['token']
         header = {'HTTP_AUTHORIZATION': f"Token {token}"}
-
         response = self.client.post(self.relative_path + 'logout/', **header)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         response = self.client.post(self.relative_path + 'logout/', **header)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
