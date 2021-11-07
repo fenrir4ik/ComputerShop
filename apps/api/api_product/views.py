@@ -5,7 +5,7 @@ from rest_framework import viewsets, permissions, generics, status
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.response import Response
 
-
+from .filters import ProductFilter
 from .models import Product, Characteristics, ProductType, ProductCharacteristics
 from .serializers import ProductSerializer, ProductCharacteristicsSerializer, TypeSerializer, \
     TypeCharacteristicsSerializer, ProductCharacteristicsDisplaySerializer
@@ -14,7 +14,7 @@ from .serializers import ProductSerializer, ProductCharacteristicsSerializer, Ty
 class ProductViewSet(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ['product_type']
+    filterset_class = ProductFilter
     search_fields = ['product_name']
     ordering_fields = ['product_price']
     ordering = ['product_price']
@@ -123,7 +123,7 @@ class ProductTypeCharacteristicsAPI(generics.ListAPIView):
     def get_product_type_characteristics(self, pt_id):
         sql_query = """SELECT DISTINCT t1.char_name, t2.char_value 
                        FROM characteristics t1
-                       JOIN product_chars t2 on t1.id = t2.char_name_id
+                       JOIN product_chars t2 on t1.id = t2.char_id
                        JOIN product t3 on t3.id = t2.product_id
                        JOIN product_type t4 on t4.id = t3.product_type_id
                        WHERE t4.id = %s
