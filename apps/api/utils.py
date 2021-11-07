@@ -8,3 +8,20 @@ def get_current_api_folder(request):
         return {'name': name, 'link': path}
     else:
         return 'WARNING'
+
+def get_methods_from_url(urlpattern):
+    ALLOWED_HTTP_METHODS = {'GET': '#1E8449',
+                            'POST': '#6495ED',
+                            'PUT': '#F1C40F',
+                            'PATCH': '#E67E22',
+                            'DELETE': '#ff0000'}
+    api_methods = []
+    modelset_actions = getattr(urlpattern.callback, 'actions', None)
+    if modelset_actions:
+        api_methods+=modelset_actions.keys()
+    else:
+        api_class = getattr(urlpattern.callback, 'cls', None)
+        if api_class:
+            api_methods += api_class.http_method_names
+    api_methods = [(name, color) for name, color in ALLOWED_HTTP_METHODS.items() if name.lower() in api_methods]
+    return api_methods

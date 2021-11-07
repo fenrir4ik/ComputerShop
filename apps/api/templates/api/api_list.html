@@ -30,8 +30,12 @@
         <pre class="prettyprint">
             <span class="meta nocode">
                 <b>LIST OF ALLOWED METHODS</b>
-                {% for api_name, api_links in api_dict.items %}
-                    <p>{{ api_name }}</p><a href="{{api_links.real_uri}}">{{ api_links.display_uri }}</a>
+                {% for api_name, api_details in api_dict.items %}
+                    <p>{{ api_name }}</p>
+                    {% for method, color in api_details.api_methods %}
+                        <a style="color:{{color}}">{{method}}</a>
+                    {% endfor %}
+                    <a href="{{api_details.real_uri}}">{{ api_details.display_uri }}</a>
                 {% endfor %}
             </span>
         </pre>

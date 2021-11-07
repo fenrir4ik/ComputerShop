@@ -1,20 +1,23 @@
 from django.urls import path
-from .views import ProductViewSet
+from .views import ProductViewSet, ProductCharacteristicsAPI, ProductTypeCharacteristicsAPI, ProductTypeAPI
 from ..views import SingleApiList
 
 
-#TODO   +product/
-#       +product/?page=2
-#       -product/?page=2&type=5!!!!
-#       +product/2 GET
-#       +product/2 POST
-#       +product/2 DELETE
-#       +product/2 UPDATE
-#       -characteristics GET/POST/DELETE/UPDATE
-#       +GET CHARACTERISTICS PER TYPE
+      ++product/
+      ++product/?page=2
+      ++product/?page=2&type=5&asc desc&!!!!
+      ++product/2 GET
+      ++product/ POST
+      ++product/2 DELETE
+      ++product/2 UPDATE
+      ++characteristics POST/DELETE/UPDATE TO PRODUCT
+      ++GET CHARACTERISTICS PER TYPE
+      --product/?chars=5
+      ++get all types
 
 product_list = ProductViewSet.as_view({
-    'get': 'list'
+    'get': 'list',
+    'post': 'create'
 })
 
 product_detail = ProductViewSet.as_view({
@@ -22,12 +25,15 @@ product_detail = ProductViewSet.as_view({
     'put': 'update',
     'patch': 'partial_update',
     'delete': 'destroy',
-    'post': 'create'
 })
 
+
 urlpatterns = [
-    path('product/', product_list, name='product_list'),
-    path('product/<int:pk>/', product_detail, name='product_details')
+    path('product/', product_list, name='Product List'),
+    path('product/<int:pk>/', product_detail, name='Product Details'),
+    path('product_characteristics/<int:pk>/', ProductCharacteristicsAPI.as_view(), name='Product Characteristics'),
+    path('product_type_characteristics/<int:pk>/', ProductTypeCharacteristicsAPI.as_view(), name='Product Type Characteristics'),
+    path('product_types/', ProductTypeAPI.as_view(), name='Product Type List')
 ]
 
 urlpatterns.append(path('', SingleApiList.as_view(urlpatterns=urlpatterns.copy()), name='single_api_list'))

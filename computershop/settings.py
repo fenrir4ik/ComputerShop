@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'apps.api.api_shopping_cart',
     'apps.api.api_order',
     'rest_framework',
+    'django_filters',
     'knox',
 ]
 
@@ -148,15 +149,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
-    'DEFAULT_AUTHENTICATION_CLASSES': (
+    'DEFAULT_AUTHENTICATION_CLASSES': [
         'knox.auth.TokenAuthentication',
         'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-    ),
-    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication'
+    ],
+    'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
-        'apps.api.renderers.CustomBrowsableAPIRenderer',
-    )
+        'apps.api.renderers.CustomBrowsableAPIRenderer'
+    ],
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'
+    ]
 }
 
 REST_KNOX = {'TOKEN_TTL': timedelta(hours=24)}

@@ -16,8 +16,10 @@ class Characteristics(models.Model):
     class Meta:
         db_table = 'characteristics'
 
-    char_name = models.CharField(max_length=100)
-    char_value = models.CharField(max_length=100)
+    char_name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return f"{self.char_name}"
 
 
 class Country(models.Model):
@@ -49,7 +51,7 @@ class Product(models.Model):
 
     product_type = models.ForeignKey(ProductType, on_delete=models.RESTRICT)
     product_vendor = models.ForeignKey(Vendor, on_delete=models.RESTRICT)
-    product_characteristics = models.ManyToManyField(Characteristics, through='ProductCharacteristics')
+    product_characteristics = models.ManyToManyField(Characteristics, related_name='products', through='ProductCharacteristics')
     product_name = models.CharField(max_length=100, db_index=True)
     product_price = models.DecimalField(decimal_places=2,max_digits=9)
     product_amount = models.PositiveIntegerField()
@@ -68,9 +70,11 @@ class Product(models.Model):
 class ProductCharacteristics(models.Model):
     class Meta:
         db_table = 'product_chars'
+        unique_together = (('product', 'char_name'),)
 
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    chars = models.ForeignKey(Characteristics, on_delete=models.CASCADE)
+    char_name = models.ForeignKey(Characteristics, on_delete=models.CASCADE)
+    char_value = models.CharField(max_length=100)
 
 
 @receiver(pre_save, sender=Product)
