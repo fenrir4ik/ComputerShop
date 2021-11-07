@@ -139,3 +139,4 @@ class ProductTypeAPI(generics.ListAPIView):
     queryset = ProductType.objects.all()
     pagination_class = None
     http_method_names = ['get']
+
