@@ -3,17 +3,17 @@ from .views import ProductViewSet, ProductCharacteristicsAPI, ProductTypeCharact
 from ..views import SingleApiList
 
 
-      ++product/
-      ++product/?page=2
-      ++product/?page=2&type=5&asc desc&!!!!
-      ++product/2 GET
-      ++product/ POST
-      ++product/2 DELETE
-      ++product/2 UPDATE
-      ++characteristics POST/DELETE/UPDATE TO PRODUCT
-      ++GET CHARACTERISTICS PER TYPE
-      --product/?chars=5
-      ++get all types
+#TODO   ++product/
+#       ++product/?page=2
+#       ++product/?page=2&type=5&asc desc&!!!!
+#       ++product/2 GET
+#       ++product/ POST
+#       ++product/2 DELETE
+#       ++product/2 UPDATE
+#       ++characteristics POST/DELETE/UPDATE TO PRODUCT
+#       ++GET CHARACTERISTICS PER TYPE
+#       --product/?chars=5
+#       ++get all types
 
 product_list = ProductViewSet.as_view({
     'get': 'list',
