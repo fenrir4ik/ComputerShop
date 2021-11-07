@@ -10,4 +10,4 @@ urlpatterns = [
     path('change_password/', ChangePasswordAPI.as_view(), name='Password Changing'),
 ]
 
-urlpatterns.append(path('', SingleApiList.as_view(urlpatterns=urlpatterns.copy()), name='single_api_list'))
+urlpatterns.append(path('', SingleApiList.as_view(urlpatterns=urlpatterns.copy()), name='User API'))

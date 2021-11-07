@@ -36,4 +36,4 @@ urlpatterns = [
     path('product_types/', ProductTypeAPI.as_view(), name='Product Type List')
 ]
 
-urlpatterns.append(path('', SingleApiList.as_view(urlpatterns=urlpatterns.copy()), name='single_api_list'))
+urlpatterns.append(path('', SingleApiList.as_view(urlpatterns=urlpatterns.copy()), name='Product API'))
