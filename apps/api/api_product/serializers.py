@@ -21,6 +21,11 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         exclude = ['product_characteristics']
 
+class ProductSerializerDisplay(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        exclude = ['product_characteristics']
+        depth = 1
 
 class TypeSerializer(serializers.ModelSerializer):
     class Meta:

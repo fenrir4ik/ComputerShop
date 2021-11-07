@@ -7,17 +7,22 @@ from rest_framework.response import Response
 
 from .filters import ProductFilter
 from .models import Product, Characteristics, ProductType, ProductCharacteristics
-from .serializers import ProductSerializer, ProductCharacteristicsSerializer, TypeSerializer, \
-    TypeCharacteristicsSerializer, ProductCharacteristicsDisplaySerializer
+from .serializers import ProductSerializerDisplay, ProductCharacteristicsSerializer, TypeSerializer, \
+    TypeCharacteristicsSerializer, ProductCharacteristicsDisplaySerializer, ProductSerializer
 
 
 class ProductViewSet(viewsets.ModelViewSet):
-    serializer_class = ProductSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = ProductFilter
     search_fields = ['product_name']
     ordering_fields = ['product_price']
     ordering = ['product_price']
+
+    def get_serializer_class(self):
+        if self.action in ('list', 'retrieve'):
+            return ProductSerializerDisplay
+        else:
+            return ProductSerializer
 
     def get_permissions(self):
         if self.action in ('update', 'partial_update', 'destroy', 'create'):
