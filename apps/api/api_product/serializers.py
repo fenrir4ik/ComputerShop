@@ -4,7 +4,7 @@ from .models import Product, ProductType, ProductCharacteristics
 
 
 class ProductCharacteristicsDisplaySerializer(serializers.ModelSerializer):
-    char_name = serializers.StringRelatedField()
+    char_name = serializers.StringRelatedField(source='char', read_only=True)
 
     class Meta:
         model = ProductCharacteristics

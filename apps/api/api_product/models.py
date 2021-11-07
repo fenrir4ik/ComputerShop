@@ -70,10 +70,10 @@ class Product(models.Model):
 class ProductCharacteristics(models.Model):
     class Meta:
         db_table = 'product_chars'
-        unique_together = (('product', 'char_name'),)
+        unique_together = (('product', 'char', 'char_value'),)
 
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    char_name = models.ForeignKey(Characteristics, on_delete=models.CASCADE)
+    char = models.ForeignKey(Characteristics, on_delete=models.CASCADE)
     char_value = models.CharField(max_length=100)
 
 
