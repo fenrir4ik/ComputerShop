@@ -7,7 +7,7 @@ from rest_framework.response import Response
 
 
 from .models import Product, Characteristics, ProductType, ProductCharacteristics
-from .serializers import ProductSerializer, ProductCharacteristicsSerializer, TypeSerializer, DictionaryWrapper, \
+from .serializers import ProductSerializer, ProductCharacteristicsSerializer, TypeSerializer, \
     TypeCharacteristicsSerializer, ProductCharacteristicsDisplaySerializer
 
 
