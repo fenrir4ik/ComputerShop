@@ -3,15 +3,6 @@ from django.urls import path
 from .views import ProductViewSet, ProductCharacteristicsAPI, ProductTypeAPI
 from ..views import SingleApiList
 
-#TODO   ++product/
-#       ++product/?page=2
-#       ++product/?page=2&type=5&asc desc&!!!!
-#       ++product/2 GET
-#       ++product/ POST
-#       ++product/2 DELETE
-#       ++product/2 UPDATE
-#       ++characteristics POST/DELETE/UPDATE TO PRODUCT
-#       ++get all types
 
 product_list = ProductViewSet.as_view({
     'get': 'list',

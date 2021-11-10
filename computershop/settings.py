@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
+import sys
 from datetime import timedelta
 from pathlib import Path
 
@@ -166,3 +167,6 @@ REST_KNOX = {'TOKEN_TTL': timedelta(hours=24)}
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+if 'test' in sys.argv :
+    DEFAULT_FILE_STORAGE = 'inmemorystorage.InMemoryStorage'

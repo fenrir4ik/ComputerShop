@@ -9,6 +9,7 @@ from .filters import ProductFilter
 from .models import Product, Characteristics, ProductType, ProductCharacteristics
 from .serializers import ProductSerializerDisplay, ProductCharacteristicsSerializer, TypeSerializer, \
     ProductCharacteristicsDisplaySerializer, ProductSerializer
+from .utils import API_SHOPPING_CART_in_any_cart
 
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -19,7 +20,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     ordering = ['product_price']
 
     def get_serializer_class(self):
-        if self.action in ('list', 'retrieve'):
+        if self.action in ('list', 'retrieve', 'destroy'):
             return ProductSerializerDisplay
         else:
             return ProductSerializer
@@ -33,6 +34,15 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Product.objects.all().order_by('id')
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if not API_SHOPPING_CART_in_any_cart(instance.id):
+            self.perform_destroy(instance)
+            return Response(status=status.HTTP_200_OK)
+        else:
+            return Response({"detail": ["Product exists in shopping cart of user"]}, status=status.HTTP_200_OK)
+
 
 
 class ProductCharacteristicsAPI(generics.RetrieveUpdateDestroyAPIView):
@@ -93,7 +103,6 @@ class ProductCharacteristicsAPI(generics.RetrieveUpdateDestroyAPIView):
                     product_instance.product_characteristics.add(obj, through_defaults={
                         'char_value': char.get('char_value')})
             except DatabaseError:
-                print('true')
                 product_instance.product_characteristics.clear()
             finally:
                 product_instance.save()
