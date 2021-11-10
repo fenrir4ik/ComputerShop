@@ -1,8 +1,9 @@
-import io
+import os
+import uuid
 
 from PIL import Image
+from django.conf import settings
 from django.contrib.auth.models import User
-from django.test import Client
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -10,7 +11,44 @@ from rest_framework.test import APITestCase
 from apps.api.api_product.models import ProductType, Product, Vendor, Country, Characteristics, ProductCharacteristics
 
 
-class ApiUserTest(APITestCase):
+class ImageData:
+    image = None
+    image_name = None
+    test_folder_name = None
+    products_folder_name = settings.MEDIA_ROOT + '\product\\'
+
+    @classmethod
+    def create_image_data(cls):
+        cls.test_folder_name = cls.products_folder_name + 'test' + str(uuid.uuid4()) + '\\'
+        cls.image_name = str(uuid.uuid4()) + '.png'
+        cls.generate_image_file(cls.test_folder_name, cls.image_name)
+        cls.image = open(cls.test_folder_name + cls.image_name, 'rb')
+
+    @classmethod
+    def generate_image_file(cls, folder, name):
+        try:
+            os.mkdir(folder)
+        except FileExistsError:
+            pass
+        image = Image.new('RGB', (512, 512))
+        image.save(folder+name)
+
+    @classmethod
+    def delete_image_data(cls):
+        cls.image.close()
+        remove_list = [cls.products_folder_name + cls.image_name, cls.test_folder_name + cls.image_name]
+        for file in remove_list:
+            try:
+                os.remove(file)
+            except FileNotFoundError:
+                continue
+        try:
+            os.rmdir(cls.test_folder_name)
+        except FileNotFoundError:
+            pass
+
+
+class ApiUserTest(APITestCase, ImageData):
     """
     python manage.py test .\apps\api\api_product
 
@@ -29,8 +67,6 @@ class ApiUserTest(APITestCase):
     #       ++product/2 UPDATE
     #       ++characteristics POST/DELETE/UPDATE TO PRODUCT
     #       ++get all types
-
-
     """
 
     def setUp(self):
@@ -39,7 +75,6 @@ class ApiUserTest(APITestCase):
         user.save()
 
         self.client.login(username='test', password='12121212')
-        self.unauthorized_client = Client()
 
         product_type_list = [
             ProductType(id=1, type_name="Видеокарты"),
@@ -96,13 +131,9 @@ class ApiUserTest(APITestCase):
         ]
         ProductCharacteristics.objects.bulk_create(product_chars_list)
 
-        image_path = 'media/product/test.png'
-        self.generate_image_file(image_path)
-        self.image = open(image_path, 'rb')
-
-    def generate_image_file(self, path):
-        image = Image.new('RGB', (512, 512))
-        image.save(path)
+    @classmethod
+    def setUpTestData(cls):
+        cls.create_image_data()
 
     def test_product_list(self):
         response = self.client.get(reverse('Products List'))
@@ -111,7 +142,6 @@ class ApiUserTest(APITestCase):
         self.assertEqual(response.data.get('next'), None)
         self.assertEqual(response.data.get('previous'), None)
         self.assertEqual(len(response.data.get('results')), 3)
-
 
     def test_product_filtering(self):
         response = self.client.get(reverse('Products List'), {'product_type': 1})
@@ -137,20 +167,24 @@ class ApiUserTest(APITestCase):
         response = self.client.get(reverse('Products List'), {'product_price_max': 16000})
         self.assertEqual(len(response.data.get('results')), 0)
 
-
     def test_product_add(self):
         vendor = Vendor.objects.get(pk=1)
         product_type=ProductType.objects.get(pk=1)
         product_data = dict(product_type=product_type.id, product_vendor=vendor.id, product_name='TEST',
                     product_price=26000, product_amount=3, product_description="Видеокарта прямо из США",
                     product_image=self.image)
-
-        # response = self.unauthorized_client.post(reverse('Products List'), product_data)
-        # self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         response = self.client.post(reverse('Products List'), product_data, format='multipart')
-        print(response.data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Product.objects.get(pk=1).product_name, 'TEST')
+        self.client.logout()
+        response = self.client.post(reverse('Products List'), product_data, format='multipart')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.delete_image_data()
+
+
     #
     # def test_product_update(self):
     #     pass

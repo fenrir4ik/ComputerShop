@@ -167,6 +167,3 @@ REST_KNOX = {'TOKEN_TTL': timedelta(hours=24)}
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
-
-if 'test' in sys.argv :
-    DEFAULT_FILE_STORAGE = 'inmemorystorage.InMemoryStorage'
