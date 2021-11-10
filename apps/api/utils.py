@@ -23,5 +23,7 @@ def get_methods_from_url(urlpattern):
         api_class = getattr(urlpattern.callback, 'cls', None)
         if api_class:
             api_methods += api_class.http_method_names
-    api_methods = [(name, color) for name, color in ALLOWED_HTTP_METHODS.items() if name.lower() in api_methods]
-    return api_methods
+    list_of_methods = []
+    for name, color in ALLOWED_HTTP_METHODS.items():
+        list_of_methods.append((name.lower() in api_methods, name, color))
+    return list_of_methods
