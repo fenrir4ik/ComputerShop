@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import ProductViewSet, ProductCharacteristicsAPI, ProductTypeCharacteristicsAPI, ProductTypeAPI
+from .views import ProductViewSet, ProductCharacteristicsAPI, ProductTypeAPI
 from ..views import SingleApiList
 
 #TODO   ++product/
@@ -11,8 +11,6 @@ from ..views import SingleApiList
 #       ++product/2 DELETE
 #       ++product/2 UPDATE
 #       ++characteristics POST/DELETE/UPDATE TO PRODUCT
-#       ++GET CHARACTERISTICS PER TYPE
-#       --product/?chars=5 CHARS настройка и еще vendor и product_type которые вообще не связаны с вендором
 #       ++get all types
 
 product_list = ProductViewSet.as_view({
@@ -32,7 +30,6 @@ urlpatterns = [
     path('product/', product_list, name='Products List'),
     path('product/<int:pk>/', product_detail, name='Product Details'),
     path('product_characteristics/<int:pk>/', ProductCharacteristicsAPI.as_view(), name='Product Characteristics'),
-    path('product_type_characteristics/<int:pk>/', ProductTypeCharacteristicsAPI.as_view(), name='Product Type Characteristics'),
     path('product_types/', ProductTypeAPI.as_view(), name='Product Type List')
 ]
 

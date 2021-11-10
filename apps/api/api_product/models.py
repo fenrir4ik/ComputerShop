@@ -51,7 +51,7 @@ class Product(models.Model):
         db_table = 'product'
 
     product_type = models.ForeignKey(ProductType, on_delete=models.RESTRICT)
-    product_vendor = models.ForeignKey(Vendor, on_delete=models.RESTRICT)
+    product_vendor = models.ForeignKey(Vendor, on_delete=models.RESTRICT, related_name='products')
     product_characteristics = models.ManyToManyField(Characteristics, related_name='products', through='ProductCharacteristics')
     product_name = models.CharField(max_length=100, db_index=True)
     product_price = models.DecimalField(decimal_places=2,max_digits=9)
@@ -76,6 +76,9 @@ class ProductCharacteristics(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     char = models.ForeignKey(Characteristics, on_delete=models.CASCADE)
     char_value = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.char.char_name}: {self.char_value}"
 
 
 @receiver(pre_save, sender=Product)

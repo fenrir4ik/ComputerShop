@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from .filters import ProductFilter
 from .models import Product, Characteristics, ProductType, ProductCharacteristics
 from .serializers import ProductSerializerDisplay, ProductCharacteristicsSerializer, TypeSerializer, \
-    TypeCharacteristicsSerializer, ProductCharacteristicsDisplaySerializer, ProductSerializer
+    ProductCharacteristicsDisplaySerializer, ProductSerializer
 
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -97,45 +97,6 @@ class ProductCharacteristicsAPI(generics.RetrieveUpdateDestroyAPIView):
                 product_instance.product_characteristics.clear()
             finally:
                 product_instance.save()
-
-
-class ProductTypeCharacteristicsAPI(generics.ListAPIView):
-    serializer_class = TypeCharacteristicsSerializer
-    permission_classes = (permissions.AllowAny,)
-    http_method_names = ['get']
-
-    def get_object(self):
-        id = self.request.parser_context.get('kwargs').get('pk')
-        return get_object_or_404(ProductType, pk=id)
-
-    def get(self, request, *args, **kwargs):
-        product_type = self.get_object()
-        product_type_chars = self.get_product_type_characteristics(product_type.id)
-
-        result_dict = {}
-        for char_name, char_value in product_type_chars:
-            if char_name in result_dict:
-                result_dict[char_name].append(char_value)
-            else:
-                result_dict[char_name] = [char_value]
-        data = {'characteristcs_list': result_dict}
-
-        serializer = self.get_serializer(data=data)
-        serializer.is_valid()
-
-        return Response({**serializer.data}, status=status.HTTP_200_OK)
-
-    def get_product_type_characteristics(self, pt_id):
-        sql_query = """SELECT DISTINCT t1.char_name, t2.char_value 
-                       FROM characteristics t1
-                       JOIN product_chars t2 on t1.id = t2.char_id
-                       JOIN product t3 on t3.id = t2.product_id
-                       JOIN product_type t4 on t4.id = t3.product_type_id
-                       WHERE t4.id = %s
-                       """
-        with connection.cursor() as cursor:
-            cursor.execute(sql_query, [pt_id])
-            return cursor.fetchall()
 
 
 class ProductTypeAPI(generics.ListAPIView):

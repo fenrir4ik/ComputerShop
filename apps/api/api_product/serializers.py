@@ -21,11 +21,16 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         exclude = ['product_characteristics']
 
+
 class ProductSerializerDisplay(serializers.ModelSerializer):
+    product_type = serializers.StringRelatedField()
+    product_vendor = serializers.StringRelatedField()
+    product_characteristics = ProductCharacteristicsDisplaySerializer(source='productcharacteristics_set', many=True)
+
     class Meta:
         model = Product
-        exclude = ['product_characteristics']
-        depth = 1
+        fields = '__all__'
+
 
 class TypeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -36,7 +41,3 @@ class TypeSerializer(serializers.ModelSerializer):
 class DictionaryWrapper(object):
     def __init__(self, dictionary):
         self.dict = dictionary
-
-
-class TypeCharacteristicsSerializer(serializers.Serializer):
-    characteristcs_list = serializers.DictField(child=serializers.ListField())
