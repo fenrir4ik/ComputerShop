@@ -1,5 +1,6 @@
 import io
 
+from PIL import Image
 from django.contrib.auth.models import User
 from django.test import Client
 from django.urls import reverse
@@ -95,6 +96,14 @@ class ApiUserTest(APITestCase):
         ]
         ProductCharacteristics.objects.bulk_create(product_chars_list)
 
+        image_path = 'media/product/test.png'
+        self.generate_image_file(image_path)
+        self.image = open(image_path, 'rb')
+
+    def generate_image_file(self, path):
+        image = Image.new('RGB', (512, 512))
+        image.save(path)
+
     def test_product_list(self):
         response = self.client.get(reverse('Products List'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -132,18 +141,16 @@ class ApiUserTest(APITestCase):
     def test_product_add(self):
         vendor = Vendor.objects.get(pk=1)
         product_type=ProductType.objects.get(pk=1)
-        with open("media/product/TEST.png", 'rb') as image:
-            image_file = io.FileIO(image.fileno())
-            product_data = dict(product_type=product_type.id, product_vendor=vendor.id, product_name='RTX 2060',
-                        product_price=26000, product_amount=3, product_description="Видеокарта прямо из США",
-                        product_image=image)
+        product_data = dict(product_type=product_type.id, product_vendor=vendor.id, product_name='TEST',
+                    product_price=26000, product_amount=3, product_description="Видеокарта прямо из США",
+                    product_image=self.image)
 
-            print(product_data)
-            # response = self.unauthorized_client.post(reverse('Products List'), product_data)
-            # self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-            response = self.client.post(reverse('Products List'), product_data, format='multipart')
-            print(response.data)
-            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        # response = self.unauthorized_client.post(reverse('Products List'), product_data)
+        # self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        response = self.client.post(reverse('Products List'), product_data, format='multipart')
+        print(response.data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Product.objects.get(pk=1).product_name, 'TEST')
     #
     # def test_product_update(self):
     #     pass
