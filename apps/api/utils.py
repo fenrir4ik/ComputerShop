@@ -7,7 +7,7 @@ def get_current_api_folder(request):
         path = f"/{'/'.join(path_items[:2])}/"
         return {'name': name, 'link': path}
     else:
-        return 'WARNING'
+        return dict.fromkeys(['name', 'link'])
 
 def get_methods_from_url(urlpattern):
     ALLOWED_HTTP_METHODS = {'GET': '#1E8449',

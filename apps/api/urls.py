@@ -4,6 +4,6 @@ from .api_product import urls as api_product_urlpatterns
 
 
 urlpatterns = [
-    path('api_user/', include(api_user_urlpatterns)),
-    path('api_product/', include(api_product_urlpatterns)),
+    path('api_user/', include(api_user_urlpatterns), name='User API'),
+    path('api_product/', include(api_product_urlpatterns), name='Product API'),
 ]
