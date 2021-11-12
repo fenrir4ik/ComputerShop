@@ -57,7 +57,7 @@ class Product(models.Model):
     product_price = models.DecimalField(decimal_places=2,max_digits=9)
     product_amount = models.PositiveIntegerField()
     product_description = models.TextField()
-    product_image = models.ImageField(upload_to='product')
+    product_image = models.ImageField(upload_to='product', default='product/default.png', blank=True)
 
     def __str__(self):
         return self.product_name
@@ -85,5 +85,8 @@ class ProductCharacteristics(models.Model):
 def delete_old_image(sender, instance, *args, **kwargs):
     if instance.pk:
         product = Product.objects.get(pk=instance.pk)
-        if instance.product_image and product.product_image != instance.product_image:
+        print(product.product_image.name)
+        if instance.product_image \
+                and product.product_image != instance.product_image \
+                and product.product_image.name != 'default.png':
             product.product_image.delete(False)
