@@ -1,4 +1,4 @@
-from django.db import connection, transaction, DatabaseError
+from django.db import transaction, DatabaseError
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, permissions, generics, status
@@ -41,15 +41,20 @@ class ProductViewSet(viewsets.ModelViewSet):
             self.perform_destroy(instance)
             return Response(status=status.HTTP_200_OK)
         else:
-            return Response({"detail": ["Product exists in shopping cart of user"]}, status=status.HTTP_200_OK)
-
+            return Response({"detail": ["Product exists in shopping cart of user"]}, status=status.HTTP_403_FORBIDDEN)
 
 
 class ProductCharacteristicsAPI(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ProductCharacteristicsSerializer
-    permission_classes = (permissions.IsAdminUser,)
     queryset = Characteristics.objects.all()
     http_method_names = ['get', 'put', 'delete']
+
+    def get_permissions(self):
+        if self.request.method in ['PUT', 'DELETE']:
+            permission_classes = [permissions.IsAdminUser]
+        else:
+            permission_classes = [permissions.AllowAny]
+        return [permission() for permission in permission_classes]
 
     def get_object(self):
         id = self.request.parser_context.get('kwargs').get('pk')
@@ -64,6 +69,8 @@ class ProductCharacteristicsAPI(generics.RetrieveUpdateDestroyAPIView):
     def put(self, request, *args, **kwargs):
         product = self.get_object()
         chars_list = self.retrieve_chars_list(request)
+        if len(chars_list) == 0:
+            return Response({"detail": ["Characteristics list is empty"]}, status=status.HTTP_400_BAD_REQUEST)
         self.set_product_chars(product, chars_list)
         product_characteristics = self.get_product_characteristics(product)
         serializer = ProductCharacteristicsDisplaySerializer(product_characteristics, many=True)
@@ -80,12 +87,11 @@ class ProductCharacteristicsAPI(generics.RetrieveUpdateDestroyAPIView):
     def delete_chars(self, product_instance):
         for char in product_instance.product_characteristics.all():
             product_instance.product_characteristics.remove(char)
-            if not ProductCharacteristics.objects.select_related('char_name') \
-                .filter(char_name__char_name=char.char_name) \
+            if not ProductCharacteristics.objects.select_related('char') \
+                .filter(char__char_name=char.char_name) \
                 .exists():
                 char.delete()
         product_instance.save()
-        print(product_instance.product_characteristics.all())
 
     def retrieve_chars_list(self, request):
         is_many = isinstance(request.data, list)

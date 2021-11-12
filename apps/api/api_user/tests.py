@@ -13,9 +13,7 @@ class ApiUserTest(APITestCase):
     api_user/logout/
     api_user/register/
     api_user/change_password/
-
     """
-
     def setUp(self):
         user_data = dict(username="TestUser", password='test_password', email="testemail@test.com")
         User.objects.create_user(**user_data)

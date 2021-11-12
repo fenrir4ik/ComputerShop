@@ -17,15 +17,13 @@ class ImageData:
     test_folder_name = None
     products_folder_name = settings.MEDIA_ROOT + '\product\\'
 
-    @classmethod
-    def create_image_data(cls):
-        cls.test_folder_name = cls.products_folder_name + 'test' + str(uuid.uuid4()) + '\\'
-        cls.image_name = str(uuid.uuid4()) + '.png'
-        cls.generate_image_file(cls.test_folder_name, cls.image_name)
-        cls.image = open(cls.test_folder_name + cls.image_name, 'rb')
+    def create_image_data(self):
+        self.test_folder_name = self.products_folder_name + 'test' + str(uuid.uuid4()) + '\\'
+        self.image_name = str(uuid.uuid4()) + '.png'
+        self.generate_image_file(self.test_folder_name, self.image_name)
+        self.image = open(self.test_folder_name + self.image_name, 'rb')
 
-    @classmethod
-    def generate_image_file(cls, folder, name):
+    def generate_image_file(self, folder, name):
         try:
             os.mkdir(folder)
         except FileExistsError:
@@ -33,17 +31,16 @@ class ImageData:
         image = Image.new('RGB', (512, 512))
         image.save(folder+name)
 
-    @classmethod
-    def delete_image_data(cls):
-        cls.image.close()
-        remove_list = [cls.products_folder_name + cls.image_name, cls.test_folder_name + cls.image_name]
+    def delete_image_data(self):
+        self.image.close()
+        remove_list = [self.products_folder_name + self.image_name, self.test_folder_name + self.image_name]
         for file in remove_list:
             try:
                 os.remove(file)
             except FileNotFoundError:
                 continue
         try:
-            os.rmdir(cls.test_folder_name)
+            os.rmdir(self.test_folder_name)
         except FileNotFoundError:
             pass
 
@@ -57,24 +54,14 @@ class ApiUserTest(APITestCase, ImageData):
     api_product/product/{id}/
     api_product/product_characteristics/{id}/
     api_product/product_types/
-
-    #       ++product/
-    #       ++product/?page=2
-    #       ++product/?page=2&type=5&asc desc&!!!!
-    #       ++product/2 GET
-    #       ++product/ POST
-    #       ++product/2 DELETE
-    #       ++product/2 UPDATE
-    #       ++characteristics POST/DELETE/UPDATE TO PRODUCT
-    #       ++get all types
     """
-
     def setUp(self):
         user = User.objects.create(username='test', is_staff=True)
         user.set_password('12121212')
         user.save()
-
         self.client.login(username='test', password='12121212')
+
+        self.create_image_data()
 
         product_type_list = [
             ProductType(id=1, type_name="Видеокарты"),
@@ -131,9 +118,8 @@ class ApiUserTest(APITestCase, ImageData):
         ]
         ProductCharacteristics.objects.bulk_create(product_chars_list)
 
-    @classmethod
-    def setUpTestData(cls):
-        cls.create_image_data()
+    def tearDown(self):
+        self.delete_image_data()
 
     def test_product_list(self):
         response = self.client.get(reverse('Products List'))
@@ -180,35 +166,101 @@ class ApiUserTest(APITestCase, ImageData):
         response = self.client.post(reverse('Products List'), product_data, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    @classmethod
-    def tearDownClass(cls):
-        cls.delete_image_data()
+    def test_product_details(self):
+        response = self.client.get(reverse('Product Details', kwargs={'pk': 2}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data.get('id'), 2)
+        self.assertEqual(len(response.data.get('product_characteristics')), 3)
+        response = self.client.get(reverse('Product Details', kwargs={'pk': 1}))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_product_update(self):
+        partial_data = {"product_type": 1, "product_name": "GTX 1660 TI NEW"}
+        product = Product.objects.get(pk=2)
+        put_data = dict(product_name='GTX 1660 TI NEW', product_price=28000, product_amount=product.product_amount,
+                        product_description=product.product_description, product_image=self.image,
+                        product_type=product.product_type_id, product_vendor=product.product_vendor.id)
+        response = self.client.put(reverse('Product Details', kwargs={'pk': 2}), partial_data, format='multipart')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        response = self.client.put(reverse('Product Details', kwargs={'pk': 2}), put_data, format='multipart')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data.get("product_name"), "GTX 1660 TI NEW")
+        self.client.logout()
+        response = self.client.put(reverse('Product Details', kwargs={'pk': 2}), put_data, format='multipart')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        response = self.client.put(reverse('Product Details', kwargs={'pk': 2}), partial_data, format='multipart')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
-    #
-    # def test_product_update(self):
-    #     pass
-    #
-    # def test_product_partial_update(self):
-    #     pass
-    #
-    # def test_product_delete(self):
-    #     pass
-    #
-    # def test_product_details(self):
-    #     pass
-    #
-    # def test_product_types_retrieve(self):
-    #     response = self.client.get(self.relative_path + 'product_types/')
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(len(response.data), 3)
-    #     self.assertEqual(response.data[0].get('type_name'), "Видеокарты")
-    #
-    # def test_product_characteristics_add(self):
-    #     pass
-    #
-    # def test_product_characteristics_delete(self):
-    #     pass
-    #
-    # def test_product_characteristics_update(self):
-    #     pass
+    def test_product_partial_update(self):
+        data = {"product_type": 1, "product_name": "GTX 1660 TI NEW"}
+        response = self.client.patch(reverse('Product Details', kwargs={'pk': 2}), data, format='multipart')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data.get('product_name'), "GTX 1660 TI NEW")
+        self.client.logout()
+        response = self.client.patch(reverse('Product Details', kwargs={'pk': 2}), data, format='multipart')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_product_delete(self):
+        response = self.client.delete(reverse('Product Details', kwargs={'pk': 2}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response = self.client.delete(reverse('Product Details', kwargs={'pk': 1}))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.client.logout()
+        response = self.client.delete(reverse('Product Details', kwargs={'pk': 3}))
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_product_types_retrieve(self):
+        response = self.client.get(reverse('Product Type List'))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 3)
+        self.assertEqual(response.data[0].get('type_name'), "Видеокарты")
+
+    def test_product_characteristics_get(self):
+        response = self.client.get(reverse('Product Characteristics', kwargs={'pk': 2}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.client.logout()
+        response = self.client.get(reverse('Product Characteristics', kwargs={'pk': 2}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 3)
+
+    def test_product_characteristics_add(self):
+        chars = [ {"char_name": "Тип памяти", "char_value": "DDR4"},
+                            {"char_name": "Частота памяти", "char_value": "2400"} ]
+        chars_larger = chars + [{"char_name": "Объем памяти", "char_value": "8 ГБ"}]
+        response = self.client.put(reverse('Product Characteristics', kwargs={'pk': 2}), chars, format='json')
+        product_characteristics_result = Product.objects.get(pk=2).product_characteristics
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(product_characteristics_result.count(), 2)
+        self.assertEqual(product_characteristics_result.filter(char_name="Тип памяти").count(), 1)
+        response = self.client.put(reverse('Product Characteristics', kwargs={'pk': 2}), chars_larger, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(product_characteristics_result.count(), 3)
+        self.assertEqual(product_characteristics_result.filter(char_name="Тип памяти").count(), 1)
+        response = self.client.put(reverse('Product Characteristics', kwargs={'pk': 3}), chars_larger, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(product_characteristics_result.count(), 3)
+        response = self.client.put(reverse('Product Characteristics', kwargs={'pk': 3}), [], format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertTrue('detail' in response.data)
+        self.client.logout()
+        response = self.client.put(reverse('Product Characteristics', kwargs={'pk': 2}), chars, format='json')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_product_characteristics_delete(self):
+        product_characteristics = Product.objects.get(pk=2).product_characteristics
+        untouched_product = Product.objects.get(pk=3).product_characteristics
+        characteristics = Characteristics.objects
+        response = self.client.delete(reverse('Product Characteristics', kwargs={'pk': 2}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(product_characteristics.count(), 0)
+        self.assertEqual(untouched_product.count(), 3)
+        self.assertEqual(characteristics.count(), 4)
+        response = self.client.delete(reverse('Product Characteristics', kwargs={'pk': 3}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(product_characteristics.count(), 0)
+        self.assertEqual(untouched_product.count(), 0)
+        self.assertEqual(characteristics.count(), 3)
+        self.client.logout()
+        response = self.client.delete(reverse('Product Characteristics', kwargs={'pk': 2}))
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
