@@ -1,0 +1,47 @@
+{% extends "rest_framework/base.html" %}
+{% load rest_framework %}
+{% load i18n %}
+{% load static %}
+
+
+{% block branding %}
+    <a class="navbar-brand">Computer Shop API</a>
+{% endblock %}
+
+{% block breadcrumbs %}
+  <ul class="breadcrumb">
+    <li><a href="{{ api_root }}">API</a></li>
+    <li><a href="{{ current_api_folder.link }}">{{ current_api_folder.name }}</a></li>
+    {% for breadcrumb_name, breadcrumb_url in breadcrumblist %}
+      {% if forloop.last %}
+        <li class="active"><a href="{{ breadcrumb_url }}">{{ breadcrumb_name }}</a></li>
+      {% else %}
+        <li><a href="{{ breadcrumb_url }}">{{ breadcrumb_name }}</a></li>
+      {% endif %}
+    {% empty %}
+      {% block breadcrumbs_empty %}&nbsp;{% endblock breadcrumbs_empty %}
+    {% endfor %}
+  </ul>
+{% endblock %}
+
+
+
+{% block content %}
+    <link rel="stylesheet" href="{% static 'css/api.css' %}">
+    <div id='content'>
+        <div id='api_list'>
+                <p class="content_font">List of available package endpoints</p>
+                {% for api_name, api_details in api_dict.items %}
+                    <div>
+                        <p class="content_font_api_name">{{ api_name }}</p>
+                        <div>
+                            {% for available, method, color in api_details.api_methods %}
+                            <a style="color:{{color}}">{{ available }} {{method}}</a>
+                        {% endfor %}
+                        </div>
+                        <a href="{{api_details.real_uri}}">{{ api_details.display_uri }}</a>
+                    </div>
+                {% endfor %}
+            </div>
+    </div>
+{% endblock %}
