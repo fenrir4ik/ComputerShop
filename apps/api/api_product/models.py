@@ -85,7 +85,6 @@ class ProductCharacteristics(models.Model):
 def delete_old_image(sender, instance, *args, **kwargs):
     if instance.pk:
         product = Product.objects.get(pk=instance.pk)
-        print(product.product_image.name)
         if instance.product_image \
                 and product.product_image != instance.product_image \
                 and product.product_image.name != 'default.png':
