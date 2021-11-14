@@ -36,8 +36,3 @@ class TypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductType
         fields = '__all__'
-
-
-class DictionaryWrapper(object):
-    def __init__(self, dictionary):
-        self.dict = dictionary

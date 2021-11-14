@@ -18,6 +18,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     search_fields = ['product_name']
     ordering_fields = ['product_price']
     ordering = ['product_price']
+    http_method_names = ['get', 'post', 'put', 'patch', 'delete']
 
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve', 'destroy'):
