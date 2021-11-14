@@ -47,7 +47,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'knox',
-    'rest_framework_swagger'
 ]
 
 MIDDLEWARE = [
