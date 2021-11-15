@@ -64,7 +64,9 @@ ROOT_URLCONF = 'computershop.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR, os.path.join(BASE_DIR, 'YOUR_APP_DIR', 'templates')],
+        'DIRS': [BASE_DIR,
+                 os.path.join(BASE_DIR, 'apps/api', 'templates'),
+                 os.path.join(BASE_DIR, 'apps/client', 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
