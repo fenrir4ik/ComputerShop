@@ -164,7 +164,7 @@ class ApiUserTest(APITestCase, ImageData):
         self.assertEqual(Product.objects.get(pk=1).product_name, 'TEST')
         self.client.logout()
         response = self.client.post(reverse('Product'), product_data, format='multipart')
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_product_details(self):
         response = self.client.get(reverse('Product Details', kwargs={'pk': 2}))
@@ -187,9 +187,9 @@ class ApiUserTest(APITestCase, ImageData):
         self.assertEqual(response.data.get("product_name"), "GTX 1660 TI NEW")
         self.client.logout()
         response = self.client.put(reverse('Product Details', kwargs={'pk': 2}), put_data, format='multipart')
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         response = self.client.put(reverse('Product Details', kwargs={'pk': 2}), partial_data, format='multipart')
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
     def test_product_partial_update(self):
@@ -199,7 +199,7 @@ class ApiUserTest(APITestCase, ImageData):
         self.assertEqual(response.data.get('product_name'), "GTX 1660 TI NEW")
         self.client.logout()
         response = self.client.patch(reverse('Product Details', kwargs={'pk': 2}), data, format='multipart')
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_product_delete(self):
         response = self.client.delete(reverse('Product Details', kwargs={'pk': 2}))
@@ -208,7 +208,7 @@ class ApiUserTest(APITestCase, ImageData):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.client.logout()
         response = self.client.delete(reverse('Product Details', kwargs={'pk': 3}))
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_product_types_retrieve(self):
         response = self.client.get(reverse('Product Type List'))
@@ -245,7 +245,7 @@ class ApiUserTest(APITestCase, ImageData):
         self.assertTrue('detail' in response.data)
         self.client.logout()
         response = self.client.put(reverse('Product Characteristics', kwargs={'pk': 2}), chars, format='json')
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_product_characteristics_delete(self):
         product_characteristics = Product.objects.get(pk=2).product_characteristics
@@ -263,4 +263,4 @@ class ApiUserTest(APITestCase, ImageData):
         self.assertEqual(characteristics.count(), 3)
         self.client.logout()
         response = self.client.delete(reverse('Product Characteristics', kwargs={'pk': 2}))
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
