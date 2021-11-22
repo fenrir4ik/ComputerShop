@@ -10,7 +10,7 @@ from .serializers import UserSerializer, RegisterSerializer, ChangePasswordSeria
 class RegisterAPI(generics.CreateAPIView):
     serializer_class = RegisterSerializer
     permission_classes = (permissions.AllowAny,)
-    http_method_names = ['post']
+    http_method_names = ['post', 'options']
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -22,7 +22,7 @@ class RegisterAPI(generics.CreateAPIView):
 class LoginAPI(KnoxLoginView):
     serializer_class = AuthTokenSerializer
     permission_classes = (permissions.AllowAny,)
-    http_method_names = ['post']
+    http_method_names = ['post', 'options']
 
     def post(self, request, format=None):
         serializer = self.serializer_class(data=request.data)
@@ -35,7 +35,7 @@ class LoginAPI(KnoxLoginView):
 class ChangePasswordAPI(generics.UpdateAPIView):
     serializer_class = ChangePasswordSerializer
     permission_classes = (permissions.IsAuthenticated,)
-    http_method_names = ['put']
+    http_method_names = ['put', 'options']
 
     def get_object(self, queryset=None):
         obj = self.request.user
@@ -47,18 +47,12 @@ class ChangePasswordAPI(generics.UpdateAPIView):
 
         if serializer.is_valid():
             if not self.object.check_password(serializer.data.get("old_password")):
-                return Response({"details": ["Wrong old password"]}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"detail": "Wrong old password"}, status=status.HTTP_400_BAD_REQUEST)
             self.object.set_password(serializer.data.get("new_password"))
             self.object.save()
-            response = {
-                'status': 'success',
-                'code': status.HTTP_200_OK,
-                'message': 'Password updated successfully',
-                'data': []
-            }
-            return Response(response, status=status.HTTP_200_OK)
+            return Response({'detail': 'Password updated successfully'}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LogoutAPI(KnoxLogoutView):
-    http_method_names = ['post']
+    http_method_names = ['post', 'options']

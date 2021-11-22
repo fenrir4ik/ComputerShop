@@ -18,7 +18,7 @@ product_detail = ProductViewSet.as_view({
 
 
 urlpatterns = [
-    path('product/', product_list, name='Products List'),
+    path('product/', product_list, name='Product'),
     path('product/<int:pk>/', product_detail, name='Product Details'),
     path('product_characteristics/<int:pk>/', ProductCharacteristicsAPI.as_view(), name='Product Characteristics'),
     path('product_types/', ProductTypeAPI.as_view(), name='Product Type List')

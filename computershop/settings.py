@@ -64,7 +64,9 @@ ROOT_URLCONF = 'computershop.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR, os.path.join(BASE_DIR, 'YOUR_APP_DIR', 'templates')],
+        'DIRS': [BASE_DIR,
+                 os.path.join(BASE_DIR, 'apps/api', 'templates'),
+                 os.path.join(BASE_DIR, 'apps/client', 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -153,11 +155,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'DEFAULT_METADATA_CLASS': 'rest_framework.metadata.SimpleMetadata',
     'PAGE_SIZE': 10,
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
         'knox.auth.TokenAuthentication',
-        # 'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication'
     ],
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',

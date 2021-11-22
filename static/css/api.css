@@ -4,11 +4,26 @@
     padding: 8px;
 }
 
-.content_font {
-    font-size: 25px;
+.methods {
+    border-radius: 4px;
+    color: #fff;
+    display: inline-block;
+    font-weight: 500;
+    padding: 1px 0;
+    text-align: center;
+    width: 70px;
+    height: 30px;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    border-width: 0px;
+}
+
+.api_name {
+    font-weight: 300;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
-.content_font_api_name {
-    font-size: 15px;
+.content_font {
+    font-size: 25px;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }

@@ -18,6 +18,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     search_fields = ['product_name']
     ordering_fields = ['product_price']
     ordering = ['product_price']
+    http_method_names = ['get', 'post', 'put', 'patch', 'delete', 'options']
 
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve', 'destroy'):
@@ -47,7 +48,7 @@ class ProductViewSet(viewsets.ModelViewSet):
 class ProductCharacteristicsAPI(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ProductCharacteristicsSerializer
     queryset = Characteristics.objects.all()
-    http_method_names = ['get', 'put', 'delete']
+    http_method_names = ['get', 'put', 'delete', 'options']
 
     def get_permissions(self):
         if self.request.method in ['PUT', 'DELETE']:
@@ -119,5 +120,5 @@ class ProductTypeAPI(generics.ListAPIView):
     permission_classes = (permissions.AllowAny,)
     queryset = ProductType.objects.all()
     pagination_class = None
-    http_method_names = ['get']
+    http_method_names = ['get', 'options']
 
