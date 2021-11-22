@@ -5,9 +5,10 @@ from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.response import Response
 
 from .serializers import UserSerializer, RegisterSerializer, ChangePasswordSerializer
+from ..views import APIBaseView
 
 
-class RegisterAPI(generics.CreateAPIView):
+class RegisterAPI(generics.CreateAPIView, APIBaseView):
     serializer_class = RegisterSerializer
     permission_classes = (permissions.AllowAny,)
     http_method_names = ['post', 'options']
@@ -18,8 +19,18 @@ class RegisterAPI(generics.CreateAPIView):
         user = serializer.save()
         return Response({"user": UserSerializer(user, context=self.get_serializer_context()).data}, status=status.HTTP_200_OK)
 
+    @classmethod
+    def document(cls) -> dict:
+        cls.doc = {
+            'post': {
+                'in': {'email': 'string', 'username': 'string', 'password': 'string'},
+                'out': {'user': {'id': 'integer','username': 'string','email': 'string'}}
+            }
+        }
+        return super(RegisterAPI, cls).document()
 
-class LoginAPI(KnoxLoginView):
+
+class LoginAPI(KnoxLoginView, APIBaseView):
     serializer_class = AuthTokenSerializer
     permission_classes = (permissions.AllowAny,)
     http_method_names = ['post', 'options']
@@ -31,8 +42,15 @@ class LoginAPI(KnoxLoginView):
         login(request, user)
         return super(LoginAPI, self).post(request, format=None)
 
+    @classmethod
+    def document(cls) -> dict:
+        cls.doc = {
+            'post': {'in': {'username': 'string', 'password': 'string'}, 'out': {'expiry': 'string', 'token': 'string'}}
+        }
+        return super(LoginAPI, cls).document()
 
-class ChangePasswordAPI(generics.UpdateAPIView):
+
+class ChangePasswordAPI(generics.UpdateAPIView, APIBaseView):
     serializer_class = ChangePasswordSerializer
     permission_classes = (permissions.IsAuthenticated,)
     http_method_names = ['put', 'options']
@@ -53,6 +71,20 @@ class ChangePasswordAPI(generics.UpdateAPIView):
             return Response({'detail': 'Password updated successfully'}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @classmethod
+    def document(cls) -> dict:
+        cls.doc = {
+            'put': {'in': {'old_password': 'string', 'new_password': 'string'}, 'out': {'detail': 'string'}}
+        }
+        return super(ChangePasswordAPI, cls).document()
 
-class LogoutAPI(KnoxLogoutView):
+
+class LogoutAPI(KnoxLogoutView, APIBaseView):
     http_method_names = ['post', 'options']
+
+    @classmethod
+    def document(cls) -> dict:
+        cls.doc = {
+            'post': {'in': {}, 'out': {}}
+        }
+        return super(LogoutAPI, cls).document()

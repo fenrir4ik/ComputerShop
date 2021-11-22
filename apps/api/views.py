@@ -1,30 +1,48 @@
-from django.shortcuts import render
-from django.views import View
+from abc import ABC, abstractmethod
+from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from apps.api.utils import get_current_api_folder, get_methods_from_url
+
+class ApiRepository(APIView):
+    renderer_classes = [JSONRenderer, TemplateHTMLRenderer]
+    template_name = 'api/api_repository.html'
+
+    def get(self, request):
+        data = ''
+        return Response({'data': data})
 
 
-class SingleApiList(View):
-    template_name = 'api/api_list.html'
-    urlpatterns = None
+class APIBaseView(ABC):
+    """
+    Child class should implement document and set doc to its proper description
+    Documentation dict will be returned for methods available in http_method_names from API class
+    If class has no http_method_names in it, doc will be empty
+    After implementation call return super(class_name, cls).document()
+    For proper work API classes with details options should have **kwargs in it
+    Doc example:
+    {
+        'get': {
+            'in': {'field': 'type'},
+            'out': {'field': 'type'}
+        },
+        'post': {
+            'in': {'field': 'type'},
+            'out': {'field': 'type'}
+        }
+    }
+    """
+    http_method_names = []
+    doc = {}
 
-    def get(self, request, *args, **kwargs):
-        absolute_uri = request.build_absolute_uri()
-        current_api_folder = get_current_api_folder(request)
-        api_details = {}
-
-        for urlpattern in self.urlpatterns:
-            api_path = urlpattern.pattern._route
-            real_uri = absolute_uri + api_path
-            api_methods = get_methods_from_url(urlpattern)
-
-            # FOR details links like api/api_folder/instance/1/
-            if '<int:pk>' in api_path:
-                display_uri = absolute_uri + api_path.replace('<int:pk>', '{id}')
-                real_uri = real_uri.replace('<int:pk>', '1')
-            # FOR simple links like api/api_folder/instance/
-            else:
-                display_uri = real_uri
-            api_details[urlpattern.name + ' API'] = {'real_uri': real_uri, 'display_uri': display_uri, 'api_methods': api_methods}
-
-        return render(request, self.template_name, {'api_dict': api_details, 'current_api_folder': current_api_folder,'api_root': '/api/'})
+    @classmethod
+    @abstractmethod
+    def document(cls, **kwargs) -> dict:
+        api_dict = cls.doc
+        documented_methods = set(api_dict.keys())
+        available_methods = set(cls.http_method_names)
+        documented_available_methods = list(documented_methods & available_methods)
+        description_dict = {}
+        for method in documented_available_methods:
+            description_dict[method] = api_dict[method]
+        return description_dict
