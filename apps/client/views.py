@@ -33,5 +33,5 @@ def index(request):
     token = get_token(request)
     cookies = {'csrftoken': token,
                'sessionid': ses_id}
-    response = requests.get('', cookies=cookies)
+    response = requests.get('http://127.0.0.1:8000/api/api_product/product_types', cookies=cookies)
     return HttpResponse(f'CSRFToken {token} SessiongId {ses_id}')
