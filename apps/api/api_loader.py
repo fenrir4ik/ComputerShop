@@ -51,7 +51,7 @@ class ApiLoader:
                     pass
                 finally:
                     # api documentation is not implemented or API is not inherited from APIBaseView
-                    if api_documentation is None:
+                    if not api_documentation:
                         api_documentation = {method: {'in': {}, 'out': {}} for method in
                                              single_api.callback.cls.http_method_names if method != 'options'}
                 ApiLoader.api_data[package_name].append(
@@ -62,7 +62,7 @@ class ApiLoader:
     def update_repository(api_data, **kwargs):
         """
         :param api_data: dict[api_package_name] = [{name: string, url: string, doc: dict} ...]
-        :param kwargs: dict, clear_db key if true clear database with default clear time delta
+        :param kwargs: dict, clear_db key if set to true perform database clear with default clear time delta
                        Clearing db is used to delete old api older then timezone.now() - timedelta
                        In such way old api will be removed from repository on startup, but an API with
                        appropriate time which not included into the project or have improper url settings
@@ -102,15 +102,17 @@ class ApiLoader:
                                 endpoint.endpoint_name = endpoint_name
                             endpoint.save()
 
-                            EndpointMethod.objects.update_or_create(in_params=doc.get('in'), out_params=doc.get('out'),
-                                                                    method=http_method, endpoint=endpoint)
+                            endpoint_method, created = EndpointMethod.objects.get_or_create(method=http_method,
+                                                                                            endpoint=endpoint)
+                            endpoint_method.in_params = doc.get('in')
+                            endpoint_method.out_params = doc.get('out')
+                            endpoint_method.save()
                             # try to delete previous endpoint package if it was changed
                             if package_to_delete is not None:
                                 ApiPackage.objects.filter(package_name=package_to_delete.package_name,
-                                                              endpoint=None).delete()
+                                                          endpoint=None).delete()
                     except DatabaseError:
                         pass
-
 
     @staticmethod
     def get_package_name(api_package):
