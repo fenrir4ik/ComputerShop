@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 
 class ApiRepository(APIView):
     renderer_classes = [JSONRenderer, TemplateHTMLRenderer]
-    template_name = 'api/api_repository.html'
+    template_name = 'repository/api_repository.html'
 
     def get(self, request):
         data = ''
@@ -15,10 +15,11 @@ class ApiRepository(APIView):
 
 class APIBaseView(ABC):
     """
-    Child class should implement document and set doc to its proper description
+    Child class should implement document class method and set doc to its proper API description
     Documentation dict will be returned for methods available in http_method_names from API class
     If class has no http_method_names in it, doc will be empty
-    After implementation call return super(class_name, cls).document()
+    Http methods in resulting documentation is a result of intersection http_method_names and doc.keys
+    After document(cls, **kwargs) body return super(class_name, cls).document() required
     For proper work API classes with details options should have **kwargs in it
     Doc example:
     {

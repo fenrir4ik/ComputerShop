@@ -78,7 +78,7 @@ class ProductViewSet(viewsets.ModelViewSet, APIBaseView):
             cls.doc = {
                 'get': {'in': {'id': 'integer'}, 'out': product},
                 'put': {'in': product, 'out': product},
-                'putch': {'in': product, 'out': product},
+                'patch': {'in': product, 'out': product},
                 'delete': {'in': {'id': 'integer'}, 'out': {'detail': 'string'}}
             }
         return super(ProductViewSet, cls).document()
@@ -124,15 +124,6 @@ class ProductCharacteristicsAPI(generics.RetrieveUpdateDestroyAPIView, APIBaseVi
     def get_product_characteristics(self, product):
         return ProductCharacteristics.objects.filter(product_id=product.id).all()
 
-    def delete_chars(self, product_instance):
-        for char in product_instance.product_characteristics.all():
-            product_instance.product_characteristics.remove(char)
-            if not ProductCharacteristics.objects.select_related('char') \
-                    .filter(char__char_name=char.char_name) \
-                    .exists():
-                char.delete()
-        product_instance.save()
-
     def retrieve_chars_list(self, request):
         is_many = isinstance(request.data, list)
         serializer = self.get_serializer(data=request.data, many=is_many)
@@ -140,18 +131,29 @@ class ProductCharacteristicsAPI(generics.RetrieveUpdateDestroyAPIView, APIBaseVi
         chars_list = serializer.data if is_many else [serializer.data]
         return chars_list
 
+    def delete_chars(self, product_instance):
+        try:
+            with transaction.atomic():
+                for char in product_instance.product_characteristics.select_for_update():
+                    product_instance.product_characteristics.remove(char)
+                    Characteristics.objects.filter(char_name=char.char_name, products=None).delete()
+                    # if not ProductCharacteristics.objects.select_related('char') \
+                    #         .filter(char__char_name=char.char_name) \
+                    #         .exists():
+                    #     char.delete()
+        except DatabaseError:
+            pass
+
     def set_product_chars(self, product_instance, chars_list):
-        self.delete_chars(product_instance)
-        for char in chars_list:
-            try:
-                with transaction.atomic():
+        try:
+            with transaction.atomic():
+                self.delete_chars(product_instance)
+                for char in chars_list:
                     obj, created = Characteristics.objects.get_or_create(char_name=char.get('char_name'))
                     product_instance.product_characteristics.add(obj, through_defaults={
                         'char_value': char.get('char_value')})
-            except DatabaseError:
-                product_instance.product_characteristics.clear()
-            finally:
-                product_instance.save()
+        except DatabaseError:
+            pass
 
     @classmethod
     def document(cls, **kwargs) -> dict:

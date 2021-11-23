@@ -11,4 +11,4 @@ urlpatterns = [
     path('', ApiRepository.as_view(), name='API Repository')
 ]
 
-ApiLoader.load_api(urlpatterns)
+ApiLoader.load_api(urlpatterns, clear_db=True)
