@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+import simplejson
 from django.db.models import F
 from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer
 from rest_framework.response import Response
@@ -7,7 +8,7 @@ from rest_framework.views import APIView
 
 from apps.api.models import Endpoint
 from apps.api.serializers import RepositorySerializer
-
+import requests
 
 class ApiRepository(APIView):
     renderer_classes = [JSONRenderer, TemplateHTMLRenderer]
@@ -18,10 +19,17 @@ class ApiRepository(APIView):
                                            package_name=F("package__package_name"),
                                            method_name = F("methods__method_name"),
                                            in_params = F("endpointmethod__in_params"),
-                                           out_params= F("endpointmethod__out_params"))
+                                           out_params= F("endpointmethod__out_params")).order_by('package_name')
+
         for i in range(len(queryset)):
             queryset[i]['index'] = i
-            queryset[i]['available'] = True
+            response = requests.request(queryset[i]['method_name'], request.build_absolute_uri(queryset[i]['endpoint_url']))
+            try:
+                response.json()
+                queryset[i]['available'] = True
+            except simplejson.errors.JSONDecodeError:
+                queryset[i]['available'] = False
+
         serializer = RepositorySerializer(queryset, many=True)
         return Response({'endpoints':serializer.data})
 

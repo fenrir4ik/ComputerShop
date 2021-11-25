@@ -9,9 +9,12 @@ from ..views import APIBaseView
 
 
 class RegisterAPI(generics.CreateAPIView, APIBaseView):
+    """
+        Register in system
+    """
     serializer_class = RegisterSerializer
     permission_classes = (permissions.AllowAny,)
-    http_method_names = ['post', 'options']
+    http_method_names = ['post']
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -31,9 +34,12 @@ class RegisterAPI(generics.CreateAPIView, APIBaseView):
 
 
 class LoginAPI(KnoxLoginView, APIBaseView):
+    """
+        Retrieve auth token based on auth credentials provided
+    """
     serializer_class = AuthTokenSerializer
     permission_classes = (permissions.AllowAny,)
-    http_method_names = ['post', 'options']
+    http_method_names = ['post']
 
     def post(self, request, format=None):
         serializer = self.serializer_class(data=request.data)
@@ -51,9 +57,12 @@ class LoginAPI(KnoxLoginView, APIBaseView):
 
 
 class ChangePasswordAPI(generics.UpdateAPIView, APIBaseView):
+    """
+        Change user password
+    """
     serializer_class = ChangePasswordSerializer
     permission_classes = (permissions.IsAuthenticated,)
-    http_method_names = ['put', 'options']
+    http_method_names = ['put']
 
     def get_object(self, queryset=None):
         obj = self.request.user
@@ -80,7 +89,7 @@ class ChangePasswordAPI(generics.UpdateAPIView, APIBaseView):
 
 
 class LogoutAPI(KnoxLogoutView, APIBaseView):
-    http_method_names = ['post', 'options']
+    http_method_names = ['post']
 
     @classmethod
     def document(cls) -> dict:

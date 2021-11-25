@@ -33,29 +33,31 @@ class ApiLoader:
             if package_name is None:
                 # app.urls.app_name is not set
                 package_name = DEFAULT_API_PACKAGE_NAME
-            if package_name not in ApiLoader.api_data:
-                ApiLoader.api_data[package_name] = []
-
-            for single_api in api_package.urlconf_name.urlpatterns:
-                if not single_api.pattern._is_endpoint or \
-                        len(single_api.callback.__dict__.keys()) <= 1:
-                    # if path has include() in it or view is not API
-                    continue
-                api_name = ApiLoader.get_api_name(single_api)
-                api_url = ApiLoader.get_api_path(single_api, package_url)
-                api_documentation = None
-                try:
-                    api_documentation = ApiLoader.get_api_documentation(single_api, api_url)
-                except:
-                    # api documentation is not implemented
-                    pass
-                finally:
-                    # api documentation is not implemented or API is not inherited from APIBaseView
-                    if not api_documentation:
-                        api_documentation = {method: {'in': {}, 'out': {}} for method in
-                                             single_api.callback.cls.http_method_names if method != 'options'}
-                ApiLoader.api_data[package_name].append(
-                    {'name': api_name, 'url': api_url.replace('<int:pk>', '0'), 'doc': api_documentation})
+            try:
+                if package_name not in ApiLoader.api_data:
+                    ApiLoader.api_data[package_name] = []
+                for single_api in api_package.urlconf_name.urlpatterns:
+                    if not single_api.pattern._is_endpoint or \
+                            len(single_api.callback.__dict__.keys()) <= 1:
+                        # if path has include() in it or view is not API
+                        continue
+                    api_name = ApiLoader.get_api_name(single_api)
+                    api_url = ApiLoader.get_api_path(single_api, package_url)
+                    api_documentation = None
+                    try:
+                        api_documentation = ApiLoader.get_api_documentation(single_api, api_url)
+                    except:
+                        # api documentation is not implemented
+                        pass
+                    finally:
+                        # api documentation is not implemented or API is not inherited from APIBaseView
+                        if not api_documentation:
+                            api_documentation = {method: {'in': {}, 'out': {}} for method in
+                                                 single_api.callback.cls.http_method_names if method != 'options'}
+                    ApiLoader.api_data[package_name].append(
+                        {'name': api_name, 'url': api_url.replace('<int:pk>', '0'), 'doc': api_documentation})
+            except:
+                pass
         ApiLoader.update_repository(ApiLoader.api_data, **kwargs)
 
     @staticmethod

@@ -1,5 +1,6 @@
 {% load static %}
 {% load rest_framework %}
+{% load extras %}
 
 
 <html lang="">
@@ -62,8 +63,12 @@
                         </td>
                         <td><p class="api_name">{{ endpoint.package_name }}</p></td>
                         <td><p class="api_name">{{ endpoint.endpoint_name }}</p></td>
-                        <td><a class="api_link" href="{{ endpoint.endpoint_url }}">{{ endpoint.endpoint_url }}</a></td>
-                        <td>
+                        {% if endpoint.available %}
+                            <td><a class="api_link" href="{{ endpoint.endpoint_url }}">{{ endpoint.endpoint_url }}</a></td>
+                        {% else %}
+                            <td><a class="api_link" style="color: #A30000;">{{ endpoint.endpoint_url }}</a></td>
+                        {% endif %}
+                        <td class = "http_method">
                             {% if endpoint.method_name.upper == 'GET' %}
                                 <p style="color: #68b641;">{{ endpoint.method_name.upper }}</p>
                             {% elif endpoint.method_name.upper == 'POST' %}
@@ -79,21 +84,21 @@
                             {% endif %}
                         </td>
                         {% if endpoint.available %}
-                            <td style="text-align: center; color: green;"><i class="fa fa-circle"
-                                                                             aria-hidden="true"></i></td>
+                            <td style="text-align: center; color: green;"><i class="fa fa-circle" aria-hidden="true"></i></td>
                         {% else %}
                             <td style="text-align: center; color: red;"><i class="fa fa-circle" aria-hidden="true"></i>
                             </td>
                         {% endif %}
-                        {#                                    <td><p class="api_name">{{ endpoint.available }}</p></td>#}
                     </tr>
                     <tr>
-                        <td colspan="6" class="hiddenRow">
+                        <td colspan="6" class="hiddenRow" >
                             <div id="dtarget{{ endpoint.index }}" class="accordian-body collapse">
-                                <h2>Input parameters:</h2>
-                                <p class="api_name">{{ endpoint.in_params }}</p>
-                                <h2>Output parameters:</h2>
-                                <p class="api_name">{{ endpoint.out_params }}</p>
+                                <div class = "params">
+                                    <h6 class="params_title">Parameters</h6>
+                                    <pre>{{ endpoint.in_params | pretty_json  }}</pre>
+                                    <h6 class="params_title">Response</h6>
+                                    <pre>{{ endpoint.out_params  | pretty_json  }}</pre>
+                                </div>
                             </div>
                         </td>
                     </tr>
