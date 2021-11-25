@@ -1,29 +1,89 @@
-#api_list {
-    background-color: #f7f7f9;
-    border: 1px;
-    padding: 8px;
-}
+/*#api_list {*/
+/*    background-color: #f7f7f9;*/
+/*    border: 1px;*/
+/*    padding: 8px;*/
+/*}*/
 
-.methods {
-    border-radius: 4px;
-    color: #fff;
-    display: inline-block;
+/*.methods {*/
+/*    border-radius: 4px;*/
+/*    color: #fff;*/
+/*    display: inline-block;*/
+/*    font-weight: 500;*/
+/*    padding: 1px 0;*/
+/*    text-align: center;*/
+/*    width: 70px;*/
+/*    height: 30px;*/
+/*    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;*/
+/*    font-size: 15px;*/
+/*    border-width: 0;*/
+/*}*/
+
+.thead_label {
     font-weight: 500;
-    padding: 1px 0;
-    text-align: center;
-    width: 70px;
-    height: 30px;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 15px;
-    border-width: 0px;
-}
-
-.api_name {
-    font-weight: 300;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
-.content_font {
-    font-size: 25px;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+/*.content_font {*/
+/*    font-size: 25px;*/
+/*    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;*/
+/*}*/
+
+
+body{
+    background: url(../img/grid.png) repeat-x fixed;
+}
+
+.hiddenRow {
+    padding: 0 !important;
+}
+
+
+.nav_outer {
+    background-color: #A30000;
+    height: 55px;
+    padding-top: 5px;
+}
+
+.nav_inner{
+    background-color: #2C2C2C;
+    height: 50px;
+}
+
+.api_back {
+    color: #A30000;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+    line-height: 1.42857143;
+    padding: 8px 15px;
+    border-radius: 4px;
+    background-color: #f7f7f9;
+}
+
+.api_link {
+    color: #A30000;
+}
+
+.main_content {
+    padding-top: 15px;
+}
+
+.api_table {
+    border: 1px solid #e1e1e8;
+}
+
+#api_title {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    line-height: 1.1;
+    color: inherit;
+    font-weight: 400;
+    font-size: 36px;
+}
+
+#brand_link {
+    color: #9d9d9d;
+}
+
+.nav_link * {
+    color: white;
 }

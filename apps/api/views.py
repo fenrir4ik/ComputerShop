@@ -1,7 +1,12 @@
 from abc import ABC, abstractmethod
+
+from django.db.models import F
 from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from apps.api.models import Endpoint
+from apps.api.serializers import RepositorySerializer
 
 
 class ApiRepository(APIView):
@@ -9,8 +14,16 @@ class ApiRepository(APIView):
     template_name = 'repository/api_repository.html'
 
     def get(self, request):
-        data = ''
-        return Response({'data': data})
+        queryset = Endpoint.objects.values("endpoint_name", "endpoint_url",
+                                           package_name=F("package__package_name"),
+                                           method_name = F("methods__method_name"),
+                                           in_params = F("endpointmethod__in_params"),
+                                           out_params= F("endpointmethod__out_params"))
+        for i in range(len(queryset)):
+            queryset[i]['index'] = i
+            queryset[i]['available'] = True
+        serializer = RepositorySerializer(queryset, many=True)
+        return Response({'endpoints':serializer.data})
 
 
 class APIBaseView(ABC):

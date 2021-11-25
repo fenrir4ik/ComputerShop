@@ -63,3 +63,52 @@
         </div>
     </div>
 {% endblock %}
+
+
+
+            <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Package</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Url</th>
+                                        <th scope="col">Input</th>
+                                        <th scope="col">Output</th>
+                                        <th scope="col">HTTP Method</th>
+                                        <th scope="col">Available</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for endpoint in endpoints %}
+                                    <tr>
+                                        <td><p class="api_name">{{ endpoint.package_name }}</p></td>
+                                        <td><p class="api_name">{{ endpoint.endpoint_name }}</p></td>
+                                        <td><a href="{{ endpoint.endpoint_url }}">{{ endpoint.endpoint_url }}</a></td>
+                                        {% if endpoint.method_name.upper == 'GET' %}
+                                            <td class="methods" style="max-width: 80px; min-width: 80px; color: #68b641;"><p class="api_name">{{ endpoint.method_name.upper }}</p></td>
+                                        {% elif endpoint.method_name.upper == 'POST' %}
+                                            <td class="methods" style="max-width: 80px; min-width: 80px; color: #337ab7;"><p class="api_name">{{ endpoint.method_name.upper }}</p></td>
+                                        {% elif endpoint.method_name.upper == 'PUT' %}
+                                            <td class="methods" style="max-width: 80px; min-width: 80px; color: #F1C40F;"><p class="api_name">{{ endpoint.method_name.upper }}</p></td>
+                                        {% elif endpoint.method_name.upper == 'PATCH' %}
+                                            <td class="methods" style="max-width: 80px; min-width: 80px; color: #E67E22;"><p class="api_name">{{ endpoint.method_name.upper }}</p></td>
+                                        {% elif endpoint.method_name.upper == 'DELETE' %}
+                                            <td class="methods" style="max-width: 80px; min-width: 80px; color: #d9534f;"><p class="api_name">{{ endpoint.method_name.upper }}</p></td>
+                                        {% else %}
+                                            <td class="methods" style="max-width: 80px; min-width: 80px; color: grey;"><p class="api_name">{{ endpoint.method_name.upper }}</p></td>
+                                        {% endif %}
+                                        <td><p class="api_name">{{ endpoint.available }}</p></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="col">Input</th>
+                                        <th scope="col">Output</th>
+                                    </tr>
+                                    <tr>
+                                        <td><p class="api_name">{{ endpoint.in_params }}</p></td>
+                                        <td><p class="api_name">{{ endpoint.out_params }}</p></td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>

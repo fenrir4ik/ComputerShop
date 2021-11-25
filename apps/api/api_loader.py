@@ -111,8 +111,8 @@ class ApiLoader:
                             if package_to_delete is not None:
                                 ApiPackage.objects.filter(package_name=package_to_delete.package_name,
                                                           endpoint=None).delete()
-                    except DatabaseError:
-                        pass
+                    except DatabaseError as ex:
+                        print(ex)
 
     @staticmethod
     def get_package_name(api_package):

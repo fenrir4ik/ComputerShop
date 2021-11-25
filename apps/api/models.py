@@ -29,8 +29,9 @@ class Endpoint(models.Model):
 class EndpointMethod(models.Model):
     class Meta:
         db_table = 'endpoint_has_method'
+        unique_together = (('endpoint', 'method'),)
 
-    in_params = models.JSONField()
-    out_params = models.JSONField()
+    in_params = models.JSONField(default=dict)
+    out_params = models.JSONField(default=dict)
     endpoint = models.ForeignKey(Endpoint, on_delete=models.CASCADE)
     method = models.ForeignKey(HttpMethod, on_delete=models.CASCADE)
