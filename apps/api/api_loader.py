@@ -8,7 +8,7 @@ from django.utils import timezone
 
 from apps.api.models import HttpMethod, ApiPackage, Endpoint, EndpointMethod
 from apps.api.settings import DEFAULT_API_PACKAGE_NAME, DEFAULT_API_NAME, DEFAULT_API_ROOT, \
-    DEFAULT_API_REGISTER_CLEAR_TIME, API_REPOSITORY, API_KEY
+    DEFAULT_API_REGISTER_CLEAR_TIME, API_REPOSITORY, API_KEY, CLEAR_DB
 
 
 class ApiLoader:
@@ -25,18 +25,18 @@ class ApiLoader:
     api_data = {}
 
     @staticmethod
-    def load_api(urlpatterns, **kwargs):
+    def load_api(urlpatterns):
         for api_package in urlpatterns:
-            if api_package.__dict__.get('urlconf_name') is None:
-                # case when api_package is view in current app like following
-                # path('', ApiRepository.as_view(), name='API Repository')
-                continue
-            package_name = ApiLoader.get_package_name(api_package)
-            package_url = ApiLoader.get_package_url(api_package)
-            if package_name is None:
-                # app.urls.app_name is not set
-                package_name = DEFAULT_API_PACKAGE_NAME
             try:
+                if api_package.__dict__.get('urlconf_name') is None:
+                    # case when api_package is view in current app like following
+                    # path('', ApiRepository.as_view(), name='API Repository')
+                    continue
+                package_name = ApiLoader.get_package_name(api_package)
+                package_url = ApiLoader.get_package_url(api_package)
+                if package_name is None:
+                    # app.urls.app_name is not set
+                    package_name = DEFAULT_API_PACKAGE_NAME
                 if package_name not in ApiLoader.api_data:
                     ApiLoader.api_data[package_name] = []
                 for single_api in api_package.urlconf_name.urlpatterns:
@@ -60,18 +60,17 @@ class ApiLoader:
                     ApiLoader.api_data[package_name].append(
                         {'name': api_name, 'url': api_url.replace('<int:pk>', '0'), 'doc': api_documentation})
             except:
-                pass
-        ApiLoader.update_repository(ApiLoader.api_data, **kwargs)
+                continue
+        ApiLoader.update_repository(ApiLoader.api_data)
 
     @staticmethod
-    def update_repository(api_data, **kwargs):
+    def update_repository(api_data):
         """
         :param api_data: dict[api_package_name] = [{name: string, url: string, doc: dict} ...]
-        :param kwargs: dict, clear_db key if set to true perform database clear with default clear time delta
-                       Clearing db is used to delete old api older then timezone.now() - timedelta
-                       In such way old api will be removed from repository on startup, but an API with
-                       appropriate time which not included into the project or have improper url settings
-                       are still available in repository, and will be used for display with not available status
+        Clearing db is used to delete old api older then timezone.now() - timedelta
+        In such way old api will be removed from repository on startup, but an API with
+        appropriate time which not included into the project or have improper url settings
+        are still available in repository, and will be used for display with not available status
         :return: None
         """
         if API_REPOSITORY:
@@ -87,7 +86,7 @@ class ApiLoader:
             finally:
                 return
 
-        if kwargs.get('clear_db', False):
+        if CLEAR_DB:
             time_bound = timezone.now() - datetime.timedelta(seconds=DEFAULT_API_REGISTER_CLEAR_TIME)
             Endpoint.objects.filter(date_updated__lt=time_bound).all().delete()
             ApiPackage.objects.filter(endpoint=None).delete()
