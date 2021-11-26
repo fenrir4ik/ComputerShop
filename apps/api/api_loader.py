@@ -1,11 +1,14 @@
 import datetime
+import hashlib
+import json
+import requests
 
 from django.db import transaction, DatabaseError
 from django.utils import timezone
 
 from apps.api.models import HttpMethod, ApiPackage, Endpoint, EndpointMethod
 from apps.api.settings import DEFAULT_API_PACKAGE_NAME, DEFAULT_API_NAME, DEFAULT_API_ROOT, \
-    DEFAULT_API_REGISTER_CLEAR_TIME
+    DEFAULT_API_REGISTER_CLEAR_TIME, API_REPOSITORY, API_KEY
 
 
 class ApiLoader:
@@ -71,6 +74,19 @@ class ApiLoader:
                        are still available in repository, and will be used for display with not available status
         :return: None
         """
+        if API_REPOSITORY:
+            try:
+                hash = hashlib.sha256(API_KEY.encode())
+                data = {'hash': hash.hexdigest(), 'data': api_data}
+                json_data = json.dumps(data)
+                request = requests.post(API_REPOSITORY, json=json_data)
+                if not request:
+                    return print(f'Request to remote repository failed with CODE {request.status_code}')
+            except:
+                pass
+            finally:
+                return
+
         if kwargs.get('clear_db', False):
             time_bound = timezone.now() - datetime.timedelta(seconds=DEFAULT_API_REGISTER_CLEAR_TIME)
             Endpoint.objects.filter(date_updated__lt=time_bound).all().delete()

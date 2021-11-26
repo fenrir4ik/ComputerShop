@@ -10,28 +10,42 @@ from apps.api.models import Endpoint
 from apps.api.serializers import RepositorySerializer
 import requests
 
+from apps.api.settings import API_REPOSITORY
+
+
 class ApiRepository(APIView):
     renderer_classes = [JSONRenderer, TemplateHTMLRenderer]
     template_name = 'repository/api_repository.html'
 
     def get(self, request):
-        queryset = Endpoint.objects.values("endpoint_name", "endpoint_url",
-                                           package_name=F("package__package_name"),
-                                           method_name = F("methods__method_name"),
-                                           in_params = F("endpointmethod__in_params"),
-                                           out_params= F("endpointmethod__out_params")).order_by('package_name')
-
-        for i in range(len(queryset)):
-            queryset[i]['index'] = i
-            response = requests.request(queryset[i]['method_name'], request.build_absolute_uri(queryset[i]['endpoint_url']))
+        if API_REPOSITORY:
             try:
-                response.json()
-                queryset[i]['available'] = True
-            except simplejson.errors.JSONDecodeError:
-                queryset[i]['available'] = False
+                response = requests.get(API_REPOSITORY)
+                data = response.json()
+                data = data.get('endpoints', [])
+                serializer = RepositorySerializer(data=data, many=True)
+                serializer.is_valid()
+                return Response({'endpoints': serializer.data})
+            except:
+                return Response()
+        else:
+            queryset = Endpoint.objects.values("endpoint_name", "endpoint_url",
+                                               package_name=F("package__package_name"),
+                                               method_name = F("methods__method_name"),
+                                               in_params = F("endpointmethod__in_params"),
+                                               out_params= F("endpointmethod__out_params")).order_by('package_name')
 
-        serializer = RepositorySerializer(queryset, many=True)
-        return Response({'endpoints':serializer.data})
+            for i in range(len(queryset)):
+                queryset[i]['index'] = i
+                response = requests.request(queryset[i]['method_name'], request.build_absolute_uri(queryset[i]['endpoint_url']))
+                try:
+                    response.json()
+                    queryset[i]['available'] = True
+                except simplejson.errors.JSONDecodeError:
+                    queryset[i]['available'] = False
+
+            serializer = RepositorySerializer(queryset, many=True)
+            return Response({'endpoints':serializer.data})
 
 
 class APIBaseView(ABC):
