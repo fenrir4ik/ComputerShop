@@ -99,6 +99,7 @@ class ApiLoader:
                 endpoint_documentation = endpoint.get("doc")
                 if endpoint_documentation is None:
                     continue
+                endpoint_history = True
                 for method, doc in endpoint_documentation.items():
                     try:
                         with transaction.atomic():
@@ -119,6 +120,10 @@ class ApiLoader:
                                 # change data to current package and change endpoint name to current
                                 endpoint.package = api_package
                                 endpoint.endpoint_name = endpoint_name
+                                #delete endpoints inout params before updating
+                                if endpoint_history:
+                                    EndpointMethod.objects.filter(endpoint=endpoint).delete()
+                                    endpoint_history = False
                             endpoint.save()
 
                             endpoint_method, created = EndpointMethod.objects.get_or_create(method=http_method,

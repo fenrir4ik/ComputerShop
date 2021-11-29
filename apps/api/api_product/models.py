@@ -49,12 +49,15 @@ class Vendor(models.Model):
 class Product(models.Model):
     class Meta:
         db_table = 'product'
+        constraints = [
+            models.CheckConstraint(check=models.Q(product_price__gte='0'), name='product_price_non_negative'),
+        ]
 
     product_type = models.ForeignKey(ProductType, on_delete=models.RESTRICT)
     product_vendor = models.ForeignKey(Vendor, on_delete=models.RESTRICT, related_name='products')
     product_characteristics = models.ManyToManyField(Characteristics, related_name='products', through='ProductCharacteristics')
     product_name = models.CharField(max_length=100, db_index=True)
-    product_price = models.DecimalField(decimal_places=2,max_digits=9)
+    product_price = models.DecimalField(decimal_places=2, max_digits=9)
     product_amount = models.PositiveIntegerField()
     product_description = models.TextField()
     product_image = models.ImageField(upload_to='product', default='product/default.png', blank=True)

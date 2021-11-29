@@ -1,6 +1,6 @@
 import django_filters
 
-from apps.api.api_product.models import Product, ProductType, Vendor
+from .models import Product, ProductType, Vendor
 
 
 class ProductFilter(django_filters.FilterSet):
