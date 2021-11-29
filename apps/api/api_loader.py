@@ -1,6 +1,8 @@
 import datetime
 import hashlib
 import json
+import sys
+
 import requests
 
 from django.db import transaction, DatabaseError
@@ -80,9 +82,9 @@ class ApiLoader:
                 json_data = json.dumps(data)
                 request = requests.post(API_REPOSITORY, json=json_data)
                 if not request:
-                    return print(f'Request to remote repository failed with CODE {request.status_code}')
-            except:
-                pass
+                    print(f'Request to remote repository failed with CODE {request.status_code}')
+            except Exception as ex:
+                print(ex)
             finally:
                 return
 

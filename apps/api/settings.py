@@ -6,7 +6,7 @@ DEFAULT_API_ROOT = '/api/'
 
 #  value '' is used if current app is used for default repository
 # 'http://127.0.0.1:9000/repository/'
-API_REPOSITORY = 'http://127.0.0.1:9000/repository/'
+API_REPOSITORY = ''
 
 # seconds passed from api endpoint date_updated to now
 DEFAULT_API_REGISTER_CLEAR_TIME = 60 * 60 * 24 * 7
