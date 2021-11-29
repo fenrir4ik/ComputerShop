@@ -1,29 +1,133 @@
-#api_list {
-    background-color: #f7f7f9;
-    border: 1px;
-    padding: 8px;
+body {
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #333;
+    background-color: #fff;
+    background: url(../img/grid.png) repeat-x fixed;
 }
 
-.methods {
-    border-radius: 4px;
-    color: #fff;
-    display: inline-block;
+.thead_label {
     font-weight: 500;
-    padding: 1px 0;
-    text-align: center;
-    width: 70px;
-    height: 30px;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 15px;
-    border-width: 0px;
-}
-
-.api_name {
-    font-weight: 300;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
-.content_font {
-    font-size: 25px;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+.hiddenRow {
+    padding: 0 !important;
 }
+
+
+.nav_outer {
+    background-color: #A30000;
+    height: 55px;
+    padding-top: 5px;
+}
+
+.nav_inner{
+    background-color: #2C2C2C;
+    height: 50px;
+}
+
+.api_back {
+    color: #A30000;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+    line-height: 1.42857143;
+    padding: 8px;
+    border-radius: 4px;
+    background-color: #f7f7f9;
+}
+
+.api_link {
+    color: #A30000;
+}
+
+.main_content {
+    padding-top: 70px;
+}
+
+.api_table {
+    border: 1px solid #e1e1e8;
+}
+
+#api_title {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    line-height: 1.1;
+    color: inherit;
+    font-weight: 400;
+    font-size: 36px;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-menu {
+    all: initial;
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    padding: 8px 10px;
+    z-index: 1;
+    list-style: none;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+    border-radius: 3px;
+}
+
+.dropdown-toggle {
+    pointer-events: none;
+    text-decoration: none;
+}
+
+.dropdown:hover .dropdown-menu {
+    position: absolute;
+    display: block;
+}
+
+.dropdown:active .dropdown-menu {
+    color: red;
+}
+
+.navbar-brand {
+    padding-top: 0;
+}
+
+.dropdown-menu>li>a {
+    display: block;
+    clear: both;
+    font-weight: 400;
+    line-height: 1.42857143;
+    color: #333;
+    white-space: nowrap;
+}
+
+.navbar-nav>li>.dropdown-menu {
+    margin-top: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.params {
+    background-color: white;
+    align-self: center;
+    border-radius: 4px;
+
+    border: 1px solid; /* Параметры границы */
+    padding: 10px;
+}
+
+.params_title {
+    color: #128ede;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.thead_label {
+    text-shadow: 0.5px 0.5px 0 rgba(0,0,0,0.43);
+}
+

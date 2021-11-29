@@ -1,7 +1,6 @@
 from django.urls import path
 
 from .views import ProductViewSet, ProductCharacteristicsAPI, ProductTypeAPI
-from ..views import SingleApiList
 
 
 product_list = ProductViewSet.as_view({
@@ -16,12 +15,11 @@ product_detail = ProductViewSet.as_view({
     'delete': 'destroy',
 })
 
+app_name = 'Product API'
 
 urlpatterns = [
-    path('product/', product_list, name='Product'),
+    path('product/', product_list, name='Product List'),
     path('product/<int:pk>/', product_detail, name='Product Details'),
     path('product_characteristics/<int:pk>/', ProductCharacteristicsAPI.as_view(), name='Product Characteristics'),
-    path('product_types/', ProductTypeAPI.as_view(), name='Product Type List')
+    path('product_types/', ProductTypeAPI.as_view(), name='Product Types')
 ]
-
-urlpatterns.append(path('', SingleApiList.as_view(urlpatterns=urlpatterns.copy()), name='Product API'))

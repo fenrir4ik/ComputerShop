@@ -1,14 +1,12 @@
 from django.urls import path
 
 from .views import RegisterAPI, LoginAPI, ChangePasswordAPI, LogoutAPI
-from ..views import SingleApiList
 
-#TODO disable api_user, knox auth from django setting should be deleted, api_user app deleted, csrf token auth
+app_name = 'User API'
+
 urlpatterns = [
     path('login/', LoginAPI.as_view(), name='Login'),
     path('logout/', LogoutAPI.as_view(), name='Logout'),
     path('register/', RegisterAPI.as_view(), name='Registration'),
-    path('change_password/', ChangePasswordAPI.as_view(), name='Password Changing'),
+    path('change_password/', ChangePasswordAPI.as_view(), name='Change Password')
 ]
-
-urlpatterns.append(path('', SingleApiList.as_view(urlpatterns=urlpatterns.copy()), name='User API'))

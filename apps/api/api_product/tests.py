@@ -122,7 +122,7 @@ class ApiUserTest(APITestCase, ImageData):
         self.delete_image_data()
 
     def test_product_list(self):
-        response = self.client.get(reverse('Product'))
+        response = self.client.get(reverse('Product API:Product List'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data.get('count'), 3)
         self.assertEqual(response.data.get('next'), None)
@@ -130,27 +130,27 @@ class ApiUserTest(APITestCase, ImageData):
         self.assertEqual(len(response.data.get('results')), 3)
 
     def test_product_filtering(self):
-        response = self.client.get(reverse('Product'), {'product_type': 1})
+        response = self.client.get(reverse('Product API:Product List'), {'product_type': 1})
         self.assertEqual(len(response.data.get('results')), 3)
-        response = self.client.get(reverse('Product'), {'product_type': 2})
+        response = self.client.get(reverse('Product API:Product List'), {'product_type': 2})
         self.assertEqual(len(response.data.get('results')), 0)
-        response = self.client.get(reverse('Product'), {'product_vendor': 1})
+        response = self.client.get(reverse('Product API:Product List'), {'product_vendor': 1})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        response = self.client.get(reverse('Product'), {'product_type': 1, 'product_vendor': 1})
+        response = self.client.get(reverse('Product API:Product List'), {'product_type': 1, 'product_vendor': 1})
         self.assertEqual(len(response.data.get('results')), 1)
-        response = self.client.get(reverse('Product'), {'product_type': 1, 'product_vendor': 2})
+        response = self.client.get(reverse('Product API:Product List'), {'product_type': 1, 'product_vendor': 2})
         self.assertEqual(len(response.data.get('results')), 2)
-        response = self.client.get(reverse('Product'), {'product_type': 1, 'product_vendor': (1, 2)})
+        response = self.client.get(reverse('Product API:Product List'), {'product_type': 1, 'product_vendor': (1, 2)})
         self.assertEqual(len(response.data.get('results')), 3)
-        response = self.client.get(reverse('Product'), {'product_type': 1, 'product_vendor': (1, 2, 3)})
+        response = self.client.get(reverse('Product API:Product List'), {'product_type': 1, 'product_vendor': (1, 2, 3)})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        response = self.client.get(reverse('Product'), {'product_price_min': 16000, 'product_price_max': 24000})
+        response = self.client.get(reverse('Product API:Product List'), {'product_price_min': 16000, 'product_price_max': 24000})
         self.assertEqual(len(response.data.get('results')), 1)
-        response = self.client.get(reverse('Product'), {'product_price_min': 16000, 'product_price_max': 27000})
+        response = self.client.get(reverse('Product API:Product List'), {'product_price_min': 16000, 'product_price_max': 27000})
         self.assertEqual(len(response.data.get('results')), 3)
-        response = self.client.get(reverse('Product'), {'product_price_min': 16000})
+        response = self.client.get(reverse('Product API:Product List'), {'product_price_min': 16000})
         self.assertEqual(len(response.data.get('results')), 3)
-        response = self.client.get(reverse('Product'), {'product_price_max': 16000})
+        response = self.client.get(reverse('Product API:Product List'), {'product_price_max': 16000})
         self.assertEqual(len(response.data.get('results')), 0)
 
     def test_product_add(self):
@@ -159,19 +159,19 @@ class ApiUserTest(APITestCase, ImageData):
         product_data = dict(product_type=product_type.id, product_vendor=vendor.id, product_name='TEST',
                     product_price=26000, product_amount=3, product_description="Видеокарта прямо из США",
                     product_image=self.image)
-        response = self.client.post(reverse('Product'), product_data, format='multipart')
+        response = self.client.post(reverse('Product API:Product List'), product_data, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Product.objects.get(pk=1).product_name, 'TEST')
         self.client.logout()
-        response = self.client.post(reverse('Product'), product_data, format='multipart')
+        response = self.client.post(reverse('Product API:Product List'), product_data, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_product_details(self):
-        response = self.client.get(reverse('Product Details', kwargs={'pk': 2}))
+        response = self.client.get(reverse('Product API:Product Details', kwargs={'pk': 2}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data.get('id'), 2)
         self.assertEqual(len(response.data.get('product_characteristics')), 3)
-        response = self.client.get(reverse('Product Details', kwargs={'pk': 1}))
+        response = self.client.get(reverse('Product API:Product Details', kwargs={'pk': 1}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_product_update(self):
@@ -180,47 +180,47 @@ class ApiUserTest(APITestCase, ImageData):
         put_data = dict(product_name='GTX 1660 TI NEW', product_price=28000, product_amount=product.product_amount,
                         product_description=product.product_description, product_image=self.image,
                         product_type=product.product_type_id, product_vendor=product.product_vendor.id)
-        response = self.client.put(reverse('Product Details', kwargs={'pk': 2}), partial_data, format='multipart')
+        response = self.client.put(reverse('Product API:Product Details', kwargs={'pk': 2}), partial_data, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        response = self.client.put(reverse('Product Details', kwargs={'pk': 2}), put_data, format='multipart')
+        response = self.client.put(reverse('Product API:Product Details', kwargs={'pk': 2}), put_data, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data.get("product_name"), "GTX 1660 TI NEW")
         self.client.logout()
-        response = self.client.put(reverse('Product Details', kwargs={'pk': 2}), put_data, format='multipart')
+        response = self.client.put(reverse('Product API:Product Details', kwargs={'pk': 2}), put_data, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        response = self.client.put(reverse('Product Details', kwargs={'pk': 2}), partial_data, format='multipart')
+        response = self.client.put(reverse('Product API:Product Details', kwargs={'pk': 2}), partial_data, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
     def test_product_partial_update(self):
         data = {"product_type": 1, "product_name": "GTX 1660 TI NEW"}
-        response = self.client.patch(reverse('Product Details', kwargs={'pk': 2}), data, format='multipart')
+        response = self.client.patch(reverse('Product API:Product Details', kwargs={'pk': 2}), data, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data.get('product_name'), "GTX 1660 TI NEW")
         self.client.logout()
-        response = self.client.patch(reverse('Product Details', kwargs={'pk': 2}), data, format='multipart')
+        response = self.client.patch(reverse('Product API:Product Details', kwargs={'pk': 2}), data, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_product_delete(self):
-        response = self.client.delete(reverse('Product Details', kwargs={'pk': 2}))
+        response = self.client.delete(reverse('Product API:Product Details', kwargs={'pk': 2}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        response = self.client.delete(reverse('Product Details', kwargs={'pk': 1}))
+        response = self.client.delete(reverse('Product API:Product Details', kwargs={'pk': 1}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.client.logout()
-        response = self.client.delete(reverse('Product Details', kwargs={'pk': 3}))
+        response = self.client.delete(reverse('Product API:Product Details', kwargs={'pk': 3}))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_product_types_retrieve(self):
-        response = self.client.get(reverse('Product Type List'))
+        response = self.client.get(reverse('Product API:Product Types'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 3)
         self.assertEqual(response.data[0].get('type_name'), "Видеокарты")
 
     def test_product_characteristics_get(self):
-        response = self.client.get(reverse('Product Characteristics', kwargs={'pk': 2}))
+        response = self.client.get(reverse('Product API:Product Characteristics', kwargs={'pk': 2}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.client.logout()
-        response = self.client.get(reverse('Product Characteristics', kwargs={'pk': 2}))
+        response = self.client.get(reverse('Product API:Product Characteristics', kwargs={'pk': 2}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 3)
 
@@ -228,39 +228,39 @@ class ApiUserTest(APITestCase, ImageData):
         chars = [ {"char_name": "Тип памяти", "char_value": "DDR4"},
                             {"char_name": "Частота памяти", "char_value": "2400"} ]
         chars_larger = chars + [{"char_name": "Объем памяти", "char_value": "8 ГБ"}]
-        response = self.client.put(reverse('Product Characteristics', kwargs={'pk': 2}), chars, format='json')
+        response = self.client.put(reverse('Product API:Product Characteristics', kwargs={'pk': 2}), chars, format='json')
         product_characteristics_result = Product.objects.get(pk=2).product_characteristics
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(product_characteristics_result.count(), 2)
         self.assertEqual(product_characteristics_result.filter(char_name="Тип памяти").count(), 1)
-        response = self.client.put(reverse('Product Characteristics', kwargs={'pk': 2}), chars_larger, format='json')
+        response = self.client.put(reverse('Product API:Product Characteristics', kwargs={'pk': 2}), chars_larger, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(product_characteristics_result.count(), 3)
         self.assertEqual(product_characteristics_result.filter(char_name="Тип памяти").count(), 1)
-        response = self.client.put(reverse('Product Characteristics', kwargs={'pk': 3}), chars_larger, format='json')
+        response = self.client.put(reverse('Product API:Product Characteristics', kwargs={'pk': 3}), chars_larger, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(product_characteristics_result.count(), 3)
-        response = self.client.put(reverse('Product Characteristics', kwargs={'pk': 3}), [], format='json')
+        response = self.client.put(reverse('Product API:Product Characteristics', kwargs={'pk': 3}), [], format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertTrue('detail' in response.data)
         self.client.logout()
-        response = self.client.put(reverse('Product Characteristics', kwargs={'pk': 2}), chars, format='json')
+        response = self.client.put(reverse('Product API:Product Characteristics', kwargs={'pk': 2}), chars, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_product_characteristics_delete(self):
         product_characteristics = Product.objects.get(pk=2).product_characteristics
         untouched_product = Product.objects.get(pk=3).product_characteristics
         characteristics = Characteristics.objects
-        response = self.client.delete(reverse('Product Characteristics', kwargs={'pk': 2}))
+        response = self.client.delete(reverse('Product API:Product Characteristics', kwargs={'pk': 2}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(product_characteristics.count(), 0)
         self.assertEqual(untouched_product.count(), 3)
         self.assertEqual(characteristics.count(), 4)
-        response = self.client.delete(reverse('Product Characteristics', kwargs={'pk': 3}))
+        response = self.client.delete(reverse('Product API:Product Characteristics', kwargs={'pk': 3}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(product_characteristics.count(), 0)
         self.assertEqual(untouched_product.count(), 0)
         self.assertEqual(characteristics.count(), 3)
         self.client.logout()
-        response = self.client.delete(reverse('Product Characteristics', kwargs={'pk': 2}))
+        response = self.client.delete(reverse('Product API:Product Characteristics', kwargs={'pk': 2}))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
