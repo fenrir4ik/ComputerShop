@@ -1,24 +1,79 @@
 from django.db import connection
-from django.shortcuts import render
-
-# Create your views here.
-
-from rest_framework import generics
+from rest_framework import generics, status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from .models import ShoppingCart
+from .permissions import ClientPermission
+from .serializers import ShoppingCartSerializer
 
-class TestApi(generics.ListAPIView):
-    http_method_names = ['get']
+
+class ShoppingCartAPI(generics.RetrieveUpdateAPIView, generics.ListCreateAPIView):
+    http_method_names = ['get', 'put', 'post']
+    permission_classes = [IsAuthenticated & ClientPermission]
+
+    def get_serializer_class(self):
+        return ShoppingCartSerializer
+
+    def get_queryset(self):
+        return ShoppingCart.objects.all()
 
     def get(self, request, *args, **kwargs):
-        print('Get')
+        user = request.user
+        cart = self.get_queryset().filter(order__user=user).all()
+        serializer = self.get_serializer(cart, many=True)
+        return Response(serializer.data)
 
+    def update(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        user_id = request.user.id
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        amount = serializer.data.get('amount')
+        product_id = serializer.data.get('product')
+
+        if amount > 0:
+            try:
+                with connection.cursor() as cursor:
+                    cursor.execute(f"call add_product_to_cart({product_id}, {user_id}, {amount})")
+            except Exception as ex:
+                print(ex)
+                return Response({'detail': 'Internal error. Wrong amount or product_id'},
+                                status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'detail': 'Wrong product amount'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'amount': amount, 'product_id': product_id}, status=status.HTTP_201_CREATED)
+
+
+class ClearCartAPI(generics.DestroyAPIView):
+    http_method_names = ['delete']
+    permission_classes = [IsAuthenticated & ClientPermission]
+
+    def delete(self, request, *args, **kwargs):
+        user_id = request.user.id
         try:
             with connection.cursor() as cursor:
-                mas = [10, 4, 3]
-                cursor.execute("call add_product_to_cart({}, {}, {})".format(*mas))
-        except Exception as ex:
-            print(ex)
-            print('except')
-            pass
-        return Response({})
+                cursor.execute(f"call clear_cart({user_id})")
+                return Response(status=status.HTTP_200_OK)
+        except:
+            return Response({'detail': 'Internal error'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class DeleteProductAPI(generics.DestroyAPIView):
+    http_method_names = ['delete']
+    permission_classes = [IsAuthenticated & ClientPermission]
+
+    def delete(self, request, *args, **kwargs):
+        user_id = request.user.id
+        product_id = kwargs.get('pk')
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(f"call del_product_from_cart({product_id}, {user_id})")
+                return Response(status=status.HTTP_200_OK)
+        except:
+            return Response({'detail': 'Internal error'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+

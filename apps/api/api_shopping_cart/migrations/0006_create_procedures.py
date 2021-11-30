@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
                 DECLARE dif INT;
             begin
                 LOCK TABLE product IN SHARE MODE;
-
+            
                 SELECT id INTO ord_id FROM "order" WHERE user_id = usr_id AND order_status_id is NULL LIMIT 1;
                 IF EXISTS(SELECT * FROM shopping_cart where product_id=prod_id AND order_id = ord_id) THEN
                     SELECT amount INTO dif FROM shopping_cart where product_id=prod_id AND order_id = ord_id;
@@ -29,11 +29,11 @@ class Migration(migrations.Migration):
                     dif := -n;
                 END IF;
                 UPDATE product SET product_amount = product_amount + dif WHERE id = prod_id;
-
+            
                 IF NOT EXISTS(SELECT id FROM product WHERE id = prod_id AND product_amount>=0) THEN
-                    ROLLBACK;
+                    RAISE EXCEPTION 'Товар % не может быть добавлен в корзину', prod_id;
                 ELSIF NOT EXISTS(SELECT id FROM "order" WHERE id = ord_id AND order_status_id IS NULL) THEN
-                    ROLLBACK;
+                    RAISE EXCEPTION 'Заказ % не является корзиной', ord_id;
                 ELSE
                     commit;
                 END IF;

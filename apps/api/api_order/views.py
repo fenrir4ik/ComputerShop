@@ -38,7 +38,7 @@ class OrderViewSet(viewsets.ModelViewSet, APIBaseView):
     def get_serializer_class(self):
         if self.action in ('create',):
             return CreateOrderSerializer
-        elif self.action in ('update', 'partial_update'): #TODO БАГ ЧТО МОЖНО ЗАСЕТАТЬ ОРДЕР СТАТУС НАЛЛ
+        elif self.action in ('update', 'partial_update'):
             return UpdateOrderSerializer
         else:
             return OrderSerializer
