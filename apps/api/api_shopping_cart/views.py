@@ -74,3 +74,27 @@ class DeleteProductAPI(generics.DestroyAPIView):
                 return Response(status=status.HTTP_200_OK)
         except:
             return Response({'detail': 'Internal error'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class OrderCartAPI(generics.RetrieveAPIView):
+    http_method_names = ['get']
+    permission_classes = [IsAuthenticated]
+
+    def get_serializer_class(self):
+        return ShoppingCartSerializer
+
+    def get_queryset(self):
+        return ShoppingCart.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        order_id = kwargs.get('pk')
+
+        # check if order belongs to user and if it is created
+        if (not Order.objects.filter(id=order_id).exclude(order_status=None).exists()) or \
+                (not user.is_staff and not Order.objects.filter(id=order_id, user=user).exists()):
+            return Response({'detail': 'Order not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        cart = self.get_queryset().filter(order_id=order_id).all()
+        serializer = self.get_serializer(cart, many=True)
+        return Response(serializer.data)

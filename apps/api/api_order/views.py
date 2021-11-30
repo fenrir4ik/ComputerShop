@@ -50,7 +50,7 @@ class OrderViewSet(viewsets.ModelViewSet, APIBaseView):
         if not order.order_status:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
         if not request.user.is_staff and request.user.id != order.user_id:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
         serializer = self.get_serializer(order)
         return Response(serializer.data)
 
