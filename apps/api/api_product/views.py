@@ -9,7 +9,6 @@ from .filters import ProductFilter
 from .models import Product, Characteristics, ProductType, ProductCharacteristics
 from .serializers import ProductSerializerDisplay, ProductCharacteristicsSerializer, TypeSerializer, \
     ProductCharacteristicsDisplaySerializer, ProductSerializer
-from .utils import API_SHOPPING_CART_in_any_cart
 from ..views import APIBaseView
 
 
@@ -39,10 +38,10 @@ class ProductViewSet(viewsets.ModelViewSet, APIBaseView):
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        if not API_SHOPPING_CART_in_any_cart(instance.id):
+        try:
             self.perform_destroy(instance)
             return Response(status=status.HTTP_200_OK)
-        else:
+        except:
             return Response({"detail": ["Product exists in shopping cart of user"]}, status=status.HTTP_403_FORBIDDEN)
 
     @classmethod
@@ -97,8 +96,8 @@ class ProductCharacteristicsAPI(generics.RetrieveUpdateDestroyAPIView, APIBaseVi
         return [permission() for permission in permission_classes]
 
     def get_object(self):
-        id = self.request.parser_context.get('kwargs').get('pk')
-        return get_object_or_404(Product, pk=id)
+        product_id = self.request.parser_context.get('kwargs').get('pk')
+        return get_object_or_404(Product, pk=product_id)
 
     def get(self, request, *args, **kwargs):
         product = self.get_object()

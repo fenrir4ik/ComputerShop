@@ -1,10 +1,8 @@
 import datetime
 import hashlib
 import json
-import sys
 
 import requests
-
 from django.db import transaction, DatabaseError
 from django.utils import timezone
 
@@ -77,8 +75,8 @@ class ApiLoader:
         """
         if API_REPOSITORY:
             try:
-                hash = hashlib.sha256(API_KEY.encode())
-                data = {'hash': hash.hexdigest(), 'data': api_data}
+                api_hash = hashlib.sha256(API_KEY.encode())
+                data = {'hash': api_hash.hexdigest(), 'data': api_data}
                 json_data = json.dumps(data)
                 request = requests.post(API_REPOSITORY, json=json_data)
                 if not request:
@@ -99,6 +97,7 @@ class ApiLoader:
                 endpoint_documentation = endpoint.get("doc")
                 if endpoint_documentation is None:
                     continue
+                endpoint_history = True
                 for method, doc in endpoint_documentation.items():
                     try:
                         with transaction.atomic():
@@ -119,6 +118,10 @@ class ApiLoader:
                                 # change data to current package and change endpoint name to current
                                 endpoint.package = api_package
                                 endpoint.endpoint_name = endpoint_name
+                                #delete endpoints inout params before updating
+                                if endpoint_history:
+                                    EndpointMethod.objects.filter(endpoint=endpoint).delete()
+                                    endpoint_history = False
                             endpoint.save()
 
                             endpoint_method, created = EndpointMethod.objects.get_or_create(method=http_method,

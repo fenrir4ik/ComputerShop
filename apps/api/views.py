@@ -33,7 +33,8 @@ class ApiRepository(APIView):
                                                package_name=F("package__package_name"),
                                                method_name = F("methods__method_name"),
                                                in_params = F("endpointmethod__in_params"),
-                                               out_params= F("endpointmethod__out_params")).order_by('package_name')
+                                               out_params= F("endpointmethod__out_params"))\
+                .order_by('package_name', 'endpoint_name')
 
             for i in range(len(queryset)):
                 queryset[i]['index'] = i
