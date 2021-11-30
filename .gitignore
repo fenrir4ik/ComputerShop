@@ -1,5 +1,6 @@
 media/product/*
 !media/product/default.png
 *.pyc
+env/
 .idea/
 __pycache__/
