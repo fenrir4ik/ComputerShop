@@ -4,8 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.middleware.csrf import get_token
 from django.shortcuts import render, redirect
-
-from apps.client.forms import LoginForm
+from .forms import LoginForm
 
 
 def login(request):
