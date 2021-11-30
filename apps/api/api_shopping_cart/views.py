@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from .models import ShoppingCart
 from .permissions import ClientPermission
 from .serializers import ShoppingCartSerializer
+from ..api_order.models import Order
 
 
 class ShoppingCartAPI(generics.RetrieveUpdateAPIView, generics.ListCreateAPIView):
@@ -20,7 +21,7 @@ class ShoppingCartAPI(generics.RetrieveUpdateAPIView, generics.ListCreateAPIView
 
     def get(self, request, *args, **kwargs):
         user = request.user
-        cart = self.get_queryset().filter(order__user=user).all()
+        cart = self.get_queryset().filter(order__user=user, order__order_status=None).all()
         serializer = self.get_serializer(cart, many=True)
         return Response(serializer.data)
 
@@ -33,13 +34,12 @@ class ShoppingCartAPI(generics.RetrieveUpdateAPIView, generics.ListCreateAPIView
         serializer.is_valid(raise_exception=True)
         amount = serializer.data.get('amount')
         product_id = serializer.data.get('product')
-
         if amount > 0:
             try:
                 with connection.cursor() as cursor:
+                    Order.objects.get_or_create(user=request.user, order_status=None)
                     cursor.execute(f"call add_product_to_cart({product_id}, {user_id}, {amount})")
-            except Exception as ex:
-                print(ex)
+            except:
                 return Response({'detail': 'Internal error. Wrong amount or product_id'},
                                 status=status.HTTP_400_BAD_REQUEST)
         else:
@@ -74,6 +74,3 @@ class DeleteProductAPI(generics.DestroyAPIView):
                 return Response(status=status.HTTP_200_OK)
         except:
             return Response({'detail': 'Internal error'}, status=status.HTTP_400_BAD_REQUEST)
-
-
-

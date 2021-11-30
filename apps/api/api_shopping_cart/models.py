@@ -12,6 +12,6 @@ class ShoppingCart(models.Model):
         ]
     unique_together = (('product', 'order'),)
 
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, blank=False, null=False)
+    product = models.ForeignKey(Product, on_delete=models.RESTRICT, blank=False, null=False)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     amount = models.PositiveIntegerField(blank=False, null=False, )

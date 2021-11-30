@@ -7,14 +7,13 @@ from rest_framework import viewsets
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
+from apps.api.views import APIBaseView
 from .filters import OrderFilter
 from .models import Order, OrderStatus
 from .permissions import ClientPermission
 from .serializers import OrderSerializer, CreateOrderSerializer, UpdateOrderSerializer
-from apps.api.views import APIBaseView
-from .utils import SHOPPING_CART_IS_EMPTY
+from ..api_shopping_cart.models import ShoppingCart
 
 
 class OrderViewSet(viewsets.ModelViewSet, APIBaseView):
@@ -29,7 +28,7 @@ class OrderViewSet(viewsets.ModelViewSet, APIBaseView):
     def get_permissions(self):
         if self.action in ('update', 'partial_update'):
             permission_classes = [IsAdminUser]
-        elif self.action in ('post', ):
+        elif self.action in ('post',):
             permission_classes = [IsAuthenticated & ClientPermission]
         else:
             permission_classes = [IsAuthenticated]
@@ -71,7 +70,7 @@ class OrderViewSet(viewsets.ModelViewSet, APIBaseView):
             with transaction.atomic():
                 order = Order.objects.filter(user=request.user, order_status=None).select_for_update().get()
                 if order:
-                    if SHOPPING_CART_IS_EMPTY(order.id):
+                    if not ShoppingCart.objects.filter(order=order).exists():
                         return Response({'detail': 'Shopping cart is empty'},
                                         status=status.HTTP_400_BAD_REQUEST)
                     else:
@@ -86,8 +85,7 @@ class OrderViewSet(viewsets.ModelViewSet, APIBaseView):
                         return Response(data={'order_id': order.id})
                 else:
                     raise Exception()
-        except Exception as ex:
-            print(ex)
+        except:
             return Response({'detail': 'User has no shopping cart'},
                             status=status.HTTP_400_BAD_REQUEST)
 
@@ -106,22 +104,3 @@ class OrderViewSet(viewsets.ModelViewSet, APIBaseView):
                 'delete': {'in': {}, 'out': {}}
             }
         return super(OrderViewSet, cls).document()
-
-
-class ShoppingCartGetAPI(APIView):
-    http_method_names = ['post']
-    permission_classes = [IsAuthenticated & ClientPermission]
-
-    def get_object(self, queryset=None):
-        obj = self.request.user
-        return obj
-
-    def post(self, request, *args, **kwargs):
-        user = self.get_object()
-        try:
-            with transaction.atomic():
-                order, created = Order.objects.get_or_create(user=user, order_status=None)
-            return Response({'cart_id': order.id})
-        except Exception as ex:
-            print(ex)
-            return Response({'detail': 'Internal error'}, status=status.HTTP_400_BAD_REQUEST)

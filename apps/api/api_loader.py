@@ -1,10 +1,8 @@
 import datetime
 import hashlib
 import json
-import sys
 
 import requests
-
 from django.db import transaction, DatabaseError
 from django.utils import timezone
 
@@ -77,8 +75,8 @@ class ApiLoader:
         """
         if API_REPOSITORY:
             try:
-                hash = hashlib.sha256(API_KEY.encode())
-                data = {'hash': hash.hexdigest(), 'data': api_data}
+                api_hash = hashlib.sha256(API_KEY.encode())
+                data = {'hash': api_hash.hexdigest(), 'data': api_data}
                 json_data = json.dumps(data)
                 request = requests.post(API_REPOSITORY, json=json_data)
                 if not request:
