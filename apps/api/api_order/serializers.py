@@ -5,6 +5,7 @@ from .models import Order
 
 class OrderSerializer(serializers.ModelSerializer):
     order_status = serializers.StringRelatedField(read_only=True)
+    payment_type = serializers.StringRelatedField(read_only=True)
 
     class Meta:
         model = Order

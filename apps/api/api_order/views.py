@@ -75,6 +75,7 @@ class OrderViewSet(viewsets.ModelViewSet, APIBaseView):
                                         status=status.HTTP_400_BAD_REQUEST)
                     else:
                         order.order_status = OrderStatus.objects.get(status_name='Новый')
+                        order.payment_type = serializer.data.get('payment_type')
                         order.order_date = timezone.now().date()
                         order.to_name = serializer.data.get('to_name')
                         order.to_surname = serializer.data.get('to_surname')
