@@ -111,6 +111,7 @@ class ApiLoader:
                                 # create endpoint and set all data
                                 endpoint = Endpoint(endpoint_name=endpoint_name, endpoint_url=endpoint_url,
                                                     package=api_package)
+                                endpoint_history = False
                             else:
                                 # there is an endpoint with url endpoint_url
                                 # save previous package for delete attempt
@@ -126,6 +127,7 @@ class ApiLoader:
 
                             endpoint_method, created = EndpointMethod.objects.get_or_create(method=http_method,
                                                                                             endpoint=endpoint)
+
                             endpoint_method.in_params = doc.get('in')
                             endpoint_method.out_params = doc.get('out')
                             endpoint_method.save()
