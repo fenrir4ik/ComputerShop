@@ -17,6 +17,7 @@ from ..api_shopping_cart.models import ShoppingCart
 
 
 class OrderViewSet(viewsets.ModelViewSet, APIBaseView):
+    queryset = Order.objects.exclude(order_status=None).order_by('id').all()
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = OrderFilter
     search_fields = ['=id', '=to_telno', '=to_email', '=to_surname', '=to_name']
@@ -42,9 +43,6 @@ class OrderViewSet(viewsets.ModelViewSet, APIBaseView):
         else:
             return OrderSerializer
 
-    def get_queryset(self):
-        return Order.objects.exclude(order_status=None).all()
-
     def retrieve(self, request, *args, **kwargs):
         order = get_object_or_404(Order, pk=kwargs.get('pk'))
         if not order.order_status:
@@ -55,12 +53,12 @@ class OrderViewSet(viewsets.ModelViewSet, APIBaseView):
         return Response(serializer.data)
 
     def list(self, request, *args, **kwargs):
-        if request.user.is_staff:
-            orders = self.get_queryset().order_by('id')
-        else:
-            orders = self.get_queryset().filter(user=request.user).order_by('id')
-        serializer = self.get_serializer(orders, many=True)
-        return Response(serializer.data)
+        orders = self.filter_queryset(self.get_queryset())
+        if not request.user.is_staff:
+            orders = orders.filter(user=request.user)
+        paginated_orders = self.paginate_queryset(orders)
+        serializer = self.get_serializer(paginated_orders, many=True)
+        return self.get_paginated_response(serializer.data)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -73,7 +71,7 @@ class OrderViewSet(viewsets.ModelViewSet, APIBaseView):
                     if not ShoppingCart.objects.filter(order=order).exists():
                         return Response({'detail': 'Shopping cart is empty'},
                                         status=status.HTTP_400_BAD_REQUEST)
-                    else:
+                    else: #TODO shorter way
                         order.order_status = OrderStatus.objects.get(status_name='Новый')
                         order.payment_type = serializer.data.get('payment_type')
                         order.order_date = timezone.now().date()
