@@ -1,13 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="dropdown d-flex flex-row-reverse">
-        <button class="btn dropdown-toggle shadow-none" type="button" id="dropdownMenuButton1"
-                data-bs-toggle="dropdown" aria-expanded="false">Отсортировать</button>
-        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-            <li><a class="dropdown-item" href="?ordering=-product_price">Возрастание цены</a></li>
-            <li><a class="dropdown-item" href="?ordering=product_price">Убывание цены</a></li>
-        </ul>
+    <div class="dropdown">
         <button class="btn dropdown-toggle shadow-none" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown"
                 aria-expanded="false">Тип товара</button>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
@@ -15,6 +9,12 @@
             {% for p_type in product_types %}
                 <li><a class="dropdown-item" href="?product_type={{ p_type.id }}">{{ p_type.type_name }}</a></li>
             {% endfor %}
+        </ul>
+        <button class="btn dropdown-toggle shadow-none" type="button" id="dropdownMenuButton1"
+                    data-bs-toggle="dropdown" aria-expanded="false">Отсортировать</button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+            <li><a class="dropdown-item" href="?ordering=-product_price">Возрастание цены</a></li>
+            <li><a class="dropdown-item" href="?ordering=product_price">Убывание цены</a></li>
         </ul>
     </div>
     <div class="row">
@@ -27,8 +27,11 @@
                         </a>
                     </div>
                     <div class="card-body">
-                        <h5 class="card-title">{{ product.product_name }}</h5>
-                        <p class="card-text">{{ product.product_price }}₴</p>
+                        <h6 class="card-title">{{ product.product_name }}</h6>
+                        <p class="card-text">Цена: {{ product.product_price }}₴</p>
+                    </div>
+                    <div class="productbutton">
+                        <a class="btn btn-secondary" href="{% url 'product details' product.id %}" role="button">Просмотреть</a>
                     </div>
                 </div>
             </div>
