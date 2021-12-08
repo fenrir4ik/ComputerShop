@@ -90,5 +90,5 @@ def delete_old_image(sender, instance, *args, **kwargs):
         product = Product.objects.get(pk=instance.pk)
         if instance.product_image \
                 and product.product_image != instance.product_image \
-                and product.product_image.name != 'default.png':
+                and product.product_image.name != 'product/default.png':
             product.product_image.delete(False)
