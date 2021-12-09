@@ -109,7 +109,6 @@ def checkout(request):
             url = create_api_request_url(request, reverse('Order API:Order List'))
             credentials = CookieManager.get_auth_credentials(request)
             response = requests.post(url, order_data, **credentials)
-            print(response.json())
             if response.status_code == 200:
                 return redirect('orders')
             else:

@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'apps.api.api_shopping_cart',
     'apps.api.api_order',
     'apps.orders',
-    'apps.client',
     'apps.accounts',
     'rest_framework',
     'django_filters',

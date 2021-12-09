@@ -5,8 +5,8 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('api_auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('api/', include('apps.api.urls')),
-    path('', include('apps.store.urls')),
     path('accounts/', include('apps.accounts.urls')),
+    path('', include('apps.store.urls')),
     path('', include('apps.orders.urls'))
 ]
 
