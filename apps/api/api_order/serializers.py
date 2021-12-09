@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Order
+from .models import Order, PaymentType, OrderStatus
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -23,3 +23,15 @@ class UpdateOrderSerializer(CreateOrderSerializer):
         model = Order
         exclude = ['order_date', 'user']
         extra_kwargs = {'order_status': {'required': True, 'allow_null': False}}
+
+
+class PaymentTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PaymentType
+        fields = '__all__'
+
+
+class OrderStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderStatus
+        fields = '__all__'

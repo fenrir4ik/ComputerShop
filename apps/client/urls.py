@@ -1,9 +1,7 @@
 from django.urls import path
 
-from apps.client.views import login, logout, index
+from apps.client.views import index
 
-# urlpatterns = [
-#     path('login/', login),
-#     path('logout/', logout),
-#     path('', index),
-# ]
+urlpatterns = [
+    path('test/', index),
+]

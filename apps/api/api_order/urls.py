@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import OrderViewSet
+from .views import OrderViewSet, PaymentTypeAPI, OrderStatusAPI
 
 order_list = OrderViewSet.as_view({
     'get': 'list',
@@ -16,5 +16,7 @@ app_name = 'Order API'
 
 urlpatterns = [
     path('order/', order_list, name='Order List'),
-    path('order/<int:pk>/', order_detail, name='Order Details')
+    path('order/<int:pk>/', order_detail, name='Order Details'),
+    path('payment_types/', PaymentTypeAPI.as_view(), name='Payment Types'),
+    path('orders_status/', OrderStatusAPI.as_view(), name='Orders Status')
 ]

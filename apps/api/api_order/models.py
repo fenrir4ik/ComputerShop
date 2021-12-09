@@ -27,10 +27,10 @@ class Order(models.Model):
 
     user = models.ForeignKey(User, models.RESTRICT)
     order_status = models.ForeignKey(OrderStatus, models.RESTRICT, null=True)
-    payment_type = models.ForeignKey(PaymentType, models.RESTRICT, null=False)
+    payment_type = models.ForeignKey(PaymentType, models.RESTRICT, null=True)
     order_date = models.DateField(blank=True, null=True, db_index=True)
     to_name = models.CharField(max_length=30, db_index=True)
-    to_telno = models.CharField(max_length=30, db_index=True)
+    to_telno = models.CharField(max_length=12, db_index=True)
     to_surname = models.CharField(max_length=30, db_index=True)
     to_email = models.EmailField(db_index=True)
     address = models.CharField(max_length=255, blank=True, null=True)

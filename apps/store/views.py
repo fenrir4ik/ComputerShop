@@ -1,9 +1,11 @@
 import requests
-from django.http import HttpResponse
-from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseNotFound, HttpResponseRedirect
+from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from .forms import SearchForm
+from .forms import SearchForm, ProductAmountForm, CheckoutForm
+from ..accounts.cookie_manager import CookieManager
 from ..api.utils import create_api_request_url
 
 
@@ -42,5 +44,86 @@ def index(request):
                                           'product_types': product_types})
 
 
-def details(request, pk):
-    return HttpResponse(pk)
+def product_details(request, pk):
+    current_amount = 0
+    if request.user.is_authenticated:
+        url = create_api_request_url(request, reverse('Shopping Cart API:Cart'))
+        credentials = CookieManager.get_auth_credentials(request)
+
+        if request.method == 'POST':
+            form = ProductAmountForm(request.POST)
+            if form.is_valid():
+                product_amount = form.cleaned_data.get('product_amount')
+                requests.post(url, {"amount": product_amount, "product": pk}, **credentials)
+
+        response = requests.get(url, **credentials)
+        if response.status_code == 200:
+            current_amount = next((cart_row['amount'] for cart_row in response.json() if cart_row['product']['id'] == pk), 0)
+
+    form = ProductAmountForm()
+    url = create_api_request_url(request, reverse('Product API:Product Details', kwargs={'pk': pk}))
+    product_response = requests.get(url)
+    if product_response.status_code == 200:
+        product = product_response.json()
+        return render(request, 'product_details.html', {'form': form, 'product': product,
+                                                        'current_amount': current_amount})
+    else:
+        return HttpResponseNotFound()
+
+
+@login_required
+def product_remove(request, pk):
+    url = create_api_request_url(request, reverse('Shopping Cart API:Remove Product From Cart', kwargs={'pk': pk}))
+    credentials = CookieManager.get_auth_credentials(request)
+    requests.delete(url, **credentials)
+    next_url = request.GET.get('next')
+    return HttpResponseRedirect(next_url)
+
+
+@login_required
+def shopping_cart(request):
+    url = create_api_request_url(request, reverse('Shopping Cart API:Cart'))
+    credentials = CookieManager.get_auth_credentials(request)
+    response = requests.get(url, **credentials)
+    if response.status_code == 200:
+        cart = response.json()
+        cart_total = 0
+        for cart_item in cart:
+            cart_total += int(cart_item['amount']) * float(cart_item['product']['product_price'])
+        return render(request, 'shopping_cart.html', {'cart': cart, 'cart_total': cart_total})
+    else:
+        return HttpResponseNotFound()
+
+
+@login_required
+def checkout(request):
+    url = create_api_request_url(request, reverse('Order API:Payment Types'))
+    response = requests.get(url)
+    payment_types = response.json() if response.status_code == 200 else None
+    payment_types = [(p['id'], p['type']) for p in payment_types]
+    if request.method == 'POST':
+        form = CheckoutForm(request.POST)
+        form.fields['payment_type'].choices = payment_types
+        if form.is_valid():
+            order_data = form.cleaned_data
+            url = create_api_request_url(request, reverse('Order API:Order List'))
+            credentials = CookieManager.get_auth_credentials(request)
+            response = requests.post(url, order_data, **credentials)
+            print(response.json())
+            if response.status_code == 200:
+                return redirect('orders')
+            else:
+                form.add_error(None, 'Internal error')
+    else:
+        form = CheckoutForm()
+        form.fields['payment_type'].choices = payment_types
+    return render(request, 'checkout.html', {'form': form})
+
+
+@login_required
+def clear_cart(request):
+    url = create_api_request_url(request, reverse('Shopping Cart API:Clear Cart'))
+    credentials = CookieManager.get_auth_credentials(request)
+    requests.delete(url, **credentials)
+    next_url = request.GET.get('next')
+    return HttpResponseRedirect(next_url)

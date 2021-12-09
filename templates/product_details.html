@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container py-4">
+        <div class="details_card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="white-box text-center">
+                            <img src="{{ product.product_image }}" class="img-responsive" alt="product_image">
+                        </div>
+                    </div>
+                    <div class="col-lg-8">
+                        <h3 class="card-title details_name">{{ product.product_name }}</h3>
+                        <h4 class="box-title mt-6">Цена: {{ product.product_price }} ₴</h4>
+                        <h5 class="product_description">Описание:</h5>
+                        <p>{{ product.product_description }}</p>
+                        <p class="box-title mt-6">Производитель: {{ product.product_vendor }}</p>
+                        {% if user.is_authenticated and not user.is_staff %}
+                            <p class="prod_amount box-title mt-6">В корзине: {{ current_amount }}</p>
+                            {% if current_amount < 1 %}
+                                <form method="POST"> {% csrf_token %}
+                                    <input class="num_input" type="number" id="product_amount" name="product_amount"
+                                           value="1" min="1" max="{{ product.product_amount }}" step="1">
+                                    <label for="product_amount"></label>
+                                    <button class="btn btn-primary btn-rounded">Купить</button>
+                                </form>
+                            {% else %}
+                                <form method="POST"> {% csrf_token %}
+                                    <input class="num_input" type="number" id="product_amount" name="product_amount"
+                                           value="{{ current_amount }}" min="1" max="{{ product.product_amount }}" step="1">
+                                    <label for="product_amount"></label>
+                                    <button class="btn btn-primary btn-rounded">Изменить</button>
+                                </form>
+                                <a class="del_prod_from_cart btn btn-danger btn-rounded"
+                                   href="{% url 'remove from cart' product.id %}?next={% url 'product details' product.id %}">Удалить из корзины</a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                    <div class="col-lg-6 col-md-12 col-sm-12">
+                        <h3 class="box-title mt-5">Характеристики</h3>
+                        <div class="table-responsive">
+                            <table class="table table-product">
+                                <tbody>
+                                {% for char in product.product_characteristics %}
+                                    <tr>
+                                        <td>{{ char.char_name }}</td>
+                                        <td>{{ char.char_value }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

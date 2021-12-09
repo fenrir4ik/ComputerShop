@@ -5,7 +5,7 @@
         <button class="btn dropdown-toggle shadow-none" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown"
                 aria-expanded="false">Тип товара</button>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
-            <li><a class="dropdown-item" href="/">Все</a></li>
+            <li><a class="dropdown-item" href="?product_type=">Любой</a></li>
             {% for p_type in product_types %}
                 <li><a class="dropdown-item" href="?product_type={{ p_type.id }}">{{ p_type.type_name }}</a></li>
             {% endfor %}

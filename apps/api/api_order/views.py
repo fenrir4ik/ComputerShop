@@ -2,17 +2,18 @@ from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework import viewsets
 from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from rest_framework.response import Response
 
 from apps.api.views import APIBaseView
 from .filters import OrderFilter
-from .models import Order, OrderStatus
+from .models import Order, OrderStatus, PaymentType
 from .permissions import ClientPermission
-from .serializers import OrderSerializer, CreateOrderSerializer, UpdateOrderSerializer
+from .serializers import OrderSerializer, CreateOrderSerializer, UpdateOrderSerializer, PaymentTypeSerializer, \
+    OrderStatusSerializer
 from ..api_shopping_cart.models import ShoppingCart
 
 
@@ -71,9 +72,9 @@ class OrderViewSet(viewsets.ModelViewSet, APIBaseView):
                     if not ShoppingCart.objects.filter(order=order).exists():
                         return Response({'detail': 'Shopping cart is empty'},
                                         status=status.HTTP_400_BAD_REQUEST)
-                    else: #TODO shorter way
+                    else:
                         order.order_status = OrderStatus.objects.get(status_name='Новый')
-                        order.payment_type = serializer.data.get('payment_type')
+                        order.payment_type = PaymentType.objects.get(pk=serializer.data.get('payment_type'))
                         order.order_date = timezone.now().date()
                         order.to_name = serializer.data.get('to_name')
                         order.to_surname = serializer.data.get('to_surname')
@@ -103,3 +104,33 @@ class OrderViewSet(viewsets.ModelViewSet, APIBaseView):
                 'delete': {'in': {}, 'out': {}}
             }
         return super(OrderViewSet, cls).document()
+
+
+class PaymentTypeAPI(generics.ListAPIView, APIBaseView):
+    serializer_class = PaymentTypeSerializer
+    permission_classes = (AllowAny,)
+    queryset = PaymentType.objects.all()
+    pagination_class = None
+    http_method_names = ['get']
+
+    @classmethod
+    def document(cls) -> dict:
+        cls.doc = {
+            'get': {'in': {}, 'out': {'list': {'id': 'integer', 'type': 'string'}} }
+        }
+        return super(PaymentTypeAPI, cls).document()
+
+
+class OrderStatusAPI(generics.ListAPIView, APIBaseView):
+    serializer_class = OrderStatusSerializer
+    permission_classes = (AllowAny,)
+    queryset = OrderStatus.objects.all()
+    pagination_class = None
+    http_method_names = ['get']
+
+    @classmethod
+    def document(cls) -> dict:
+        cls.doc = {
+            'get': {'in': {}, 'out': {'list': {'id': 'integer', 'status_name': 'string'}} }
+        }
+        return super(OrderStatusAPI, cls).document()
