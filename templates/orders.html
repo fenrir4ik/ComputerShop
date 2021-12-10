@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="dropdown d-flex flex-row-reverse">
+        <button class="btn shadow-none dropdown-toggle" type="button" id="dropdownMenuButton2"
+                data-bs-toggle="dropdown" aria-expanded="false">
+            Статус заказа
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+            <li><a class="dropdown-item" href="?order_status=">Любой</a></li>
+            {% for o_status in orders_status %}
+                <li><a class="dropdown-item" href="?order_status={{ o_status.id }}">{{ o_status.status_name }}</a></li>
+            {% endfor %}
+        </ul>
+        <button class="btn shadow-none dropdown-toggle" type="button" id="dropdownMenuButton2"
+                data-bs-toggle="dropdown" aria-expanded="false">
+            Отсортировать
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+            <li><a class="dropdown-item" href="?ordering=-id">Сначала новые</a></li>
+            <li><a class="dropdown-item" href="?ordering=id">Сначала старые</a></li>
+        </ul>
+    </div>
+    <div class="table-responsive-md">
+        <table class="table">
+            <thead class="thead-dark">
+            <tr>
+                <th scope="col">№</th>
+                <th scope="col">Номер телефона</th>
+                <th scope="col">Почта</th>
+                <th scope="col">Тип оплаты</th>
+                <th scope="col">Дата заказа</th>
+                <th scope="col">Статус</th>
+                <th scope="col" class="arrowcol"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for order in orders.results %}
+                <tr>
+                    <th scope="row">{{ order.id }}</th>
+                    <td>{{ order.to_telno }}</td>
+                    <td>{{ order.to_email }}</td>
+                    <td>{{ order.payment_type }}</td>
+                    <td>{{ order.order_date }}</td>
+                    <td>{{ order.order_status }}</td>
+                    <td><a class="arrowbtn arrowright" href="{% url 'order details' order.id %}"></a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <ul class="pagination justify-content-center">
+        {% if orders.previous %}
+            <li class="page-item">
+                <a class="page-link" href="{{ orders.previous }}" tabindex="-1">Назад</a>
+            </li>
+            <li class="page-item"><a class="page-link" href="{{ orders.previous }}">{{ current_page|add:"-1" }}</a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <a class="page-link" href="#" tabindex="-1">Назад</a>
+            </li>
+        {% endif %}
+        <li class="page-item"><a class="page-link" style="color: deepskyblue">{{ current_page }}</a></li>
+        {% if orders.next %}
+            <li class="page-item"><a class="page-link" href="{{ orders.next }}">{{ current_page|add:"1" }}</a></li>
+            <li class="page-item">
+                <a class="page-link" href="{{ orders.next }}">Далее</a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <a class="page-link" href="#">Далее</a>
+            </li>
+        {% endif %}
+    </ul>
+{% endblock %}
+
+
+
+

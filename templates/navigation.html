@@ -1,0 +1,41 @@
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="/">Computer Shop</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="navbar-collapse collapse w-100 order-3 dual-collapse2" id="navbarSupportedContent">
+        {% if request.get_full_path == '/' %}
+            <form method="POST" class="form-inline my-2 my-lg-0">{% csrf_token %}
+                <input class="form-control mr-sm-3" type="search" name="search_request" placeholder="Название товара..." aria-label="Search">
+                <button class="btn btn-sm btn-outline-secondary" type="submit">Поиск</button>
+            </form>
+        {% endif %}
+        <ul class="navbar-nav ml-auto">
+            {% if user.is_authenticated %}
+                {% if user.is_staff %}
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{% url 'orders' %}">Обработка заказов</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{% url 'orders' %}">Мои заказы</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{% url 'shopping cart' %}">Корзина</a>
+                    </li>
+                {% endif %}
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'logout' %}">Выход</a>
+                </li>
+            {% else %}
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'login' %}">Вход</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'register' %}">Регистрация</a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>

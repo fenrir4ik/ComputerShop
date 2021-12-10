@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="row d-flex justify-content-center align-items-center">
+        <div class="col-12 col-md-8 col-lg-6 col-xl-6">
+            <div class="checkout_div card-body p-5 text-center" style="border-radius: 1rem; background-color: #707B7C">
+                <div class="mb-md-4">
+                    <h2 class="checkout_title fw-bold mb-2 text-uppercase">Оформление заказа</h2>
+                    <p class="text-white-50 mb-2">Введите контактные данные и способ оплаты для оформления
+                        заказа</p>
+                    <form method="POST" class="post-form">{% csrf_token %}
+                        <div class="form-outline form-white mb-4">
+                            {% for field, errors in form.errors.items %}
+                                {% for error in errors %}
+                                     <p class="error_text">{{ error }}</p>
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                        <div class="form-outline form-white mb-2">
+                            <input id="checkout_name" class="form-control form-control-lg" maxlength="30"
+                                   name="to_name" value="{{form.to_name.value|default:''}}" required/>
+                            <label class="form-label" for="checkout_name">Имя</label>
+                        </div>
+                        <div class="form-outline form-white mb-2">
+                            <input id="checkout_surname" class="form-control form-control-lg" maxlength="30"
+                                   name="to_surname" value="{{form.to_surname.value|default:''}}" required/>
+                            <label class="form-label" for="checkout_surname">Фамилия</label>
+                        </div>
+                        <div class="form-outline form-white mb-2">
+                            <input id="checkout_telno" class="form-control form-control-lg" maxlength="12"
+                                   name="to_telno" value="{{form.to_telno.value|default:''}}" required/>
+                            <label class="form-label" for="checkout_telno">Номер телефона</label>
+                        </div>
+                        <div class="form-outline form-white mb-2">
+                            <input type="email" id="checkout_email" class="form-control form-control-lg"
+                                   name="to_email" value="{{form.to_email.value|default:''}}" required/>
+                            <label class="form-label" for="checkout_email">Почта</label>
+                        </div>
+                        <div class="form-outline form-white mb-2">
+                            <textarea id="checkout_address" class="form-control" aria-label="With textarea"
+                                      maxlength="255" name="address">{{form.address.value|default:''}}</textarea>
+                            <label class="form-label" for="checkout_address">Адрес</label>
+                        </div>
+                        <label class="form-label" for="checkout_payment">Тип оплаты</label>
+                        <select class="form-select form-select-lg mb-2" name="payment_type" id="checkout_payment">
+                            {% for val, name in form.fields.payment_type.choices %}
+                               <option value="{{ val }}">{{name}}</option>
+                            {% endfor %}
+                        </select>
+                        <button class="btn btn-outline-light btn-lg px-5" type="submit">Отправить в обработку</button>
+                    </form>
+                    <div style="margin-top: 25px">
+                        <p class="mb-0">Продолжить покупки? <a href="{% url 'index' %}" class="text-white-50 fw-bold">Товары</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

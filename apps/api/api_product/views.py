@@ -1,8 +1,9 @@
 from django.db import transaction, DatabaseError
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, permissions, generics, status
+from rest_framework import viewsets, generics, status
 from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.permissions import IsAdminUser, AllowAny
 from rest_framework.response import Response
 
 from .filters import ProductFilter
@@ -17,7 +18,7 @@ class ProductViewSet(viewsets.ModelViewSet, APIBaseView):
     filterset_class = ProductFilter
     search_fields = ['product_name']
     ordering_fields = ['product_price']
-    ordering = ['product_price']
+    ordering = ['id']
     http_method_names = ['get', 'post', 'put', 'patch', 'delete']
 
     def get_serializer_class(self):
@@ -28,13 +29,13 @@ class ProductViewSet(viewsets.ModelViewSet, APIBaseView):
 
     def get_permissions(self):
         if self.action in ('update', 'partial_update', 'destroy', 'create'):
-            permission_classes = [permissions.IsAdminUser]
+            permission_classes = [IsAdminUser]
         else:
-            permission_classes = [permissions.AllowAny]
+            permission_classes = [AllowAny]
         return [permission() for permission in permission_classes]
 
     def get_queryset(self):
-        return Product.objects.all().order_by('id')
+        return Product.objects.all()
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -90,9 +91,9 @@ class ProductCharacteristicsAPI(generics.RetrieveUpdateDestroyAPIView, APIBaseVi
 
     def get_permissions(self):
         if self.request.method in ['PUT', 'DELETE']:
-            permission_classes = [permissions.IsAdminUser]
+            permission_classes = [IsAdminUser]
         else:
-            permission_classes = [permissions.AllowAny]
+            permission_classes = [AllowAny]
         return [permission() for permission in permission_classes]
 
     def get_object(self):
@@ -163,7 +164,7 @@ class ProductCharacteristicsAPI(generics.RetrieveUpdateDestroyAPIView, APIBaseVi
 
 class ProductTypeAPI(generics.ListAPIView, APIBaseView):
     serializer_class = TypeSerializer
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (AllowAny,)
     queryset = ProductType.objects.all()
     pagination_class = None
     http_method_names = ['get']

@@ -5,7 +5,7 @@ from rest_framework.response import Response
 
 from .models import ShoppingCart
 from .permissions import ClientPermission
-from .serializers import ShoppingCartSerializer
+from .serializers import ShoppingCartSerializer, ProductAddToCartSerializer
 from ..api_order.models import Order
 
 
@@ -19,6 +19,7 @@ class ShoppingCartAPI(generics.RetrieveUpdateAPIView, generics.ListCreateAPIView
     def get_queryset(self):
         return ShoppingCart.objects.all()
 
+    #get cart while buying
     def get(self, request, *args, **kwargs):
         user = request.user
         cart = self.get_queryset().filter(order__user=user, order__order_status=None).all()
@@ -30,7 +31,7 @@ class ShoppingCartAPI(generics.RetrieveUpdateAPIView, generics.ListCreateAPIView
 
     def post(self, request, *args, **kwargs):
         user_id = request.user.id
-        serializer = self.get_serializer(data=request.data)
+        serializer = ProductAddToCartSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         amount = serializer.data.get('amount')
         product_id = serializer.data.get('product')

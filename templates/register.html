@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="row d-flex justify-content-center align-items-center">
+        <div class="col-12 col-md-8 col-lg-6 col-xl-6">
+            <div class="card-body p-5 text-center" style="border-radius: 1rem; background-color: #707B7C">
+                <div class="mb-md-4">
+                    <h2 class="fw-bold mb-2 text-uppercase">Регистрация</h2>
+                    <p class="text-white-50 mb-5">Введите почту, логин и пароль чтобы зарегистрироваться</p>
+                    <form method="POST" class="post-form">{% csrf_token %}
+                        <div class="form-outline form-white mb-4">
+                            <p class="error_text">{{ form.username.errors.as_text }}</p>
+                        </div>
+                        <div class="form-outline form-white mb-4">
+                            <input value="{{ form.email.value|default:''}}" name='email' type="email" id="register_email" class="form-control form-control-lg" required/>
+                            <label class="form-label" for="register_email">Почта</label>
+                        </div>
+                        <div class="form-outline form-white mb-4">
+                            <input value="{{ form.username.value|default:''}}"  name='username' id="register_username" class="form-control form-control-lg" required/>
+                            <label class="form-label" for="register_username">Логин</label>
+                        </div>
+                        <div class="form-outline form-white mb-4">
+                            <input value="{{ form.password.value|default:''}}" name='password' type="password" id="register_password"
+                                   class="form-control form-control-lg" required/>
+                            <label class="form-label" for="register_password">Пароль</label>
+                        </div>
+                        <button class="btn btn-outline-light btn-lg px-5" type="submit">Зарегистрироваться</button>
+                    </form>
+                    <div style="margin-top: 25px">
+                        <p class="mb-0">Есть аккаунт? <a href="{% url 'login' %}" class="text-white-50 fw-bold">Войти</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

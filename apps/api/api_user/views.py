@@ -1,7 +1,8 @@
 from django.contrib.auth import login
 from knox.views import LoginView as KnoxLoginView, LogoutView as KnoxLogoutView
-from rest_framework import permissions, generics, status
+from rest_framework import generics, status
 from rest_framework.authtoken.serializers import AuthTokenSerializer
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from .serializers import UserSerializer, RegisterSerializer, ChangePasswordSerializer
@@ -13,7 +14,7 @@ class RegisterAPI(generics.CreateAPIView, APIBaseView):
         Register in system
     """
     serializer_class = RegisterSerializer
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (AllowAny,)
     http_method_names = ['post']
 
     def post(self, request, *args, **kwargs):
@@ -38,7 +39,7 @@ class LoginAPI(KnoxLoginView, APIBaseView):
         Retrieve auth token based on auth credentials provided
     """
     serializer_class = AuthTokenSerializer
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (AllowAny,)
     http_method_names = ['post']
 
     def post(self, request, format=None):
@@ -61,7 +62,7 @@ class ChangePasswordAPI(generics.UpdateAPIView, APIBaseView):
         Change user password
     """
     serializer_class = ChangePasswordSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (IsAuthenticated,)
     http_method_names = ['put']
 
     def get_object(self, queryset=None):
