@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models.signals import pre_save
+from django.db.models.signals import pre_save, post_delete
 from django.dispatch import receiver
 
 
@@ -92,3 +92,11 @@ def delete_old_image(sender, instance, *args, **kwargs):
                 and product.product_image != instance.product_image \
                 and product.product_image.name != 'product/default.png':
             product.product_image.delete(False)
+
+
+@receiver(post_delete, sender=Product)
+def delete_old_image(sender, instance, *args, **kwargs):
+    if instance.pk:
+        product = Product.objects.get(pk=instance.pk)
+        if not product and instance.product_image.name != 'product/default.png':
+            instance.product_image.delete(False)

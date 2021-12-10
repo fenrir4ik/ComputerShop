@@ -22,7 +22,8 @@ class UpdateOrderSerializer(CreateOrderSerializer):
     class Meta:
         model = Order
         exclude = ['order_date', 'user']
-        extra_kwargs = {'order_status': {'required': True, 'allow_null': False}}
+        extra_kwargs = {'order_status': {'required': True, 'allow_null': False},
+                        'payment_type': {'required': True, 'allow_null': False}}
 
 
 class PaymentTypeSerializer(serializers.ModelSerializer):

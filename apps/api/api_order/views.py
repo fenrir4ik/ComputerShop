@@ -22,7 +22,7 @@ class OrderViewSet(viewsets.ModelViewSet, APIBaseView):
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = OrderFilter
     search_fields = ['=id', '=to_telno', '=to_email', '=to_surname', '=to_name']
-    ordering_fields = ['order_date', 'order_status']
+    ordering_fields = ['order_date', 'order_status', 'id']
     ordering = ['order_date']
     http_method_names = ['get', 'post', 'put', 'patch']
     permission_classes = [IsAuthenticated & ClientPermission]

@@ -1,0 +1,27 @@
+<div class="form-group">
+    <label for="order_name">Имя</label>
+    <input id="order_name" class="form-control" name="to_name" value="{{ form.to_name.value|default:'' }}" disabled/>
+</div>
+<div class="form-group">
+    <label class="form-label" for="order_surname">Фамилия</label>
+    <input id="order_surname" class="form-control" name="to_surname" value="{{ form.to_surname.value|default:'' }}"
+           disabled/>
+</div>
+<div class="form-group">
+    <label class="form-label" for="order_telno">Номер телефона</label>
+    <input id="order_telno" class="form-control" name="to_telno" value="{{ form.to_telno.value|default:'' }}" disabled/>
+</div>
+<div class="form-group">
+    <label class="form-label" for="order_email">Почта</label>
+    <input type="email" id="order_email" class="form-control" name="to_email"
+           value="{{ form.to_email.value|default:'' }}" disabled/>
+</div>
+<div class="form-group">
+    <label class="form-label" for="order_address">Адрес</label>
+    <textarea id="order_address" class="form-control" aria-label="With textarea" name="address"
+              disabled>{{ form.address.value|default:'' }}</textarea>
+</div>
+<div class="form-group">
+    <label class="form-label" for="order_payment">Тип оплаты</label>
+    <input id="order_payment" class="form-control" value="{{ current_payment }}" disabled/>
+</div>
