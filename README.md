@@ -4,18 +4,21 @@
 Current available functionality
 
 User:
-Login
-Register
+Login,
+Register,
 Logout
 
 Client:
-Products list
-Product details
-Shopping cart
-Checkout
-Orders list
+Products list,
+Product details,
+Shopping cart,
+Checkout,
+Orders list,
 Order details
 
 Admin:
-Orders list
-Order details
+Orders list,
+Order details,
+Product edit,
+Product add,
+Product delete
