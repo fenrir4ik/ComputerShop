@@ -1,24 +1,9 @@
 # ComputerShop
- Web project based on RESTful API
+ Web project based on Django Rest Framework and PostgreSQL
 
-Current available functionality
-
-User:
-Login,
-Register,
-Logout
-
-Client:
-Products list,
-Product details,
-Shopping cart,
-Checkout,
-Orders list,
-Order details
-
-Admin:
-Orders list,
-Order details,
-Product edit,
-Product add,
-Product delete
+![](preview/main_page.jpg)
+![](preview/login_page.jpg)
+![](preview/product_details_page.jpg)
+![](preview/cart_page.jpg)
+![](preview/orders_list_page.jpg)
+![](preview/order_details_page.jpg)
