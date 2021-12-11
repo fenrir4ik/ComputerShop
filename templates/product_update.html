@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% if 'add' in request.get_full_path %}
+        <h3>Добавление товара</h3>
+    {% else %}
+        <h3>Изменение товара</h3>
+    {% endif %}
+    <form id="product_form" method="POST" enctype="multipart/form-data">{% csrf_token %}
+        {% if request.GET.not_deleted %}
+            <p class="error_text">Товар не может быть удален из-за присутствия в корзине пользователей</p>
+        {% endif %}
+        {% if product_id %}
+            <div class="form-outline form-white mb-4">
+                {% if 'add' in request.get_full_path %}
+                    <p class="success_text">Товар №{{ product_id }} успешно добавлен</p>
+                {% else %}
+                    <p class="success_text">Товар №{{ product_id }} успешно изменен</p>
+                {% endif %}
+            </div>
+        {% endif %}
+        <div class="form-outline form-white mb-4">
+            {% for field, errors in form.errors.items %}
+                {% for error in errors %}
+                    <p class="error_text">{{ error }}</p>
+                {% endfor %}
+            {% endfor %}
+        </div>
+        <div class="form-group">
+            <label for="product_name">Название товара:</label>
+            <input id="product_name" class="form-control" maxlength="100"
+                   name="product_name" value="{{ form.product_name.value|default:'' }}" required/>
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="product_price">Цена товара:</label>
+            <input type="number" min="0" id="product_price" class="form-control"
+                   name="product_price" value="{{ form.product_price.value|default:'' }}" required/>
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="product_amount">Количество товара:</label>
+            <input type="number" min="0" id="product_amount" class="form-control"
+                   name="product_amount" value="{{ form.product_amount.value|default:'' }}" required/>
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="product_description">Описание товара:</label>
+            <textarea id="product_description" class="form-control" aria-label="With textarea"
+                      name="product_description" rows="5"
+                      required>{{ form.product_description.value|default:'' }}</textarea>
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="product_image">Изображение товара:</label>
+            <input type="file" id="product_image" name="product_image" alt=""/>
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="product_type">Тип товара:</label>
+            <select class="form-select form-select-lg mb-2" name="product_type" id="product_type">
+                {% for val, name in form.fields.product_type.choices %}
+                    <option value="{{ val }}">{{ name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="product_vendor">Производитель товара:</label>
+            <select class="form-select form-select-lg mb-2" name="product_vendor" id="product_vendor">
+                {% for val, name in form.fields.product_vendor.choices %}
+                    <option value="{{ val }}">{{ name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </form>
+    {% if user.is_staff %}
+        <div class="float-right text-right">
+            {% if 'add' in request.get_full_path %}
+                <button type="submit" form="product_form" class="btn btn-success">Добавить товар</button>
+            {% else %}
+                <button type="submit" form="product_form" class="btn btn-primary">Сохранить изменения</button>
+                <a class="btn btn-danger" href="{% url 'delete product' pk %}">Удалить товар</a>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endblock %}

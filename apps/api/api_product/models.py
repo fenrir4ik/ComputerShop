@@ -97,6 +97,6 @@ def delete_old_image(sender, instance, *args, **kwargs):
 @receiver(post_delete, sender=Product)
 def delete_old_image(sender, instance, *args, **kwargs):
     if instance.pk:
-        product = Product.objects.get(pk=instance.pk)
+        product = Product.objects.filter(pk=instance.pk).exists()
         if not product and instance.product_image.name != 'product/default.png':
             instance.product_image.delete(False)

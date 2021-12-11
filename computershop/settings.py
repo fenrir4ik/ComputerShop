@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'apps.api.api_shopping_cart',
     'apps.api.api_order',
     'apps.orders',
+    'apps.products',
     'apps.accounts',
     'rest_framework',
     'django_filters',
@@ -184,3 +185,4 @@ REST_KNOX = {'TOKEN_TTL': timedelta(hours=24)}
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
+DATA_UPLOAD_MAX_NUMBER_FIELDS = None
