@@ -3,7 +3,8 @@
 {% block content %}
     <div class="dropdown">
         <button class="btn dropdown-toggle shadow-none" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown"
-                aria-expanded="false">Тип товара</button>
+                aria-expanded="false">Тип товара
+        </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
             <li><a class="dropdown-item" href="?product_type=">Любой</a></li>
             {% for p_type in product_types %}
@@ -11,7 +12,8 @@
             {% endfor %}
         </ul>
         <button class="btn dropdown-toggle shadow-none" type="button" id="dropdownMenuButton1"
-                    data-bs-toggle="dropdown" aria-expanded="false">Отсортировать</button>
+                data-bs-toggle="dropdown" aria-expanded="false">Отсортировать
+        </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
             <li><a class="dropdown-item" href="?ordering=-product_price">Возрастание цены</a></li>
             <li><a class="dropdown-item" href="?ordering=product_price">Убывание цены</a></li>
@@ -22,16 +24,26 @@
             <div class="col col-lg-3 mb-4">
                 <div class="card h-100">
                     <div class="imagediv">
-                        <a href="{% url 'product details' product.id %}">
-                            <img href="" src="{{ product.product_image }}" class="card-img-top" alt="Product image">
-                        </a>
+                        {% if user.is_staff %}
+                            <a href="{% url 'edit product' product.id %}">
+                                <img href="" src="{{ product.product_image }}" class="card-img-top" alt="Product image">
+                            </a>
+                        {% else %}
+                            <a href="{% url 'product details' product.id %}">
+                                <img href="" src="{{ product.product_image }}" class="card-img-top" alt="Product image">
+                            </a>
+                        {% endif %}
                     </div>
                     <div class="card-body">
                         <h6 class="card-title">{{ product.product_name }}</h6>
                         <p class="card-text">Цена: {{ product.product_price }}₴</p>
                     </div>
                     <div class="productbutton">
-                        <a class="btn btn-secondary" href="{% url 'product details' product.id %}" role="button">Просмотреть</a>
+                        {% if user.is_staff %}
+                            <a class="btn btn-secondary" href="{% url 'edit product' product.id %}" role="button">Просмотреть</a>
+                        {% else %}
+                            <a class="btn btn-secondary" href="{% url 'product details' product.id %}" role="button">Просмотреть</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>

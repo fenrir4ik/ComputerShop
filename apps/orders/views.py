@@ -1,5 +1,6 @@
 import requests
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseNotFound
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
@@ -40,8 +41,10 @@ def order_details(request, pk):
 
     url = create_api_request_url(request, reverse('Order API:Order Details', kwargs={'pk': pk}))
     order_response = requests.get(url, **credentials)
-    order_data = order_response.json() if order_response.status_code == 200 else None
-
+    if order_response.status_code == 200:
+        order_data = order_response.json()
+    else:
+        return HttpResponseNotFound()
     status_is_new = order_data['order_status'] == 'Новый'
 
     url = create_api_request_url(request, reverse('Order API:Payment Types'))

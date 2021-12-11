@@ -7,9 +7,9 @@ from rest_framework.permissions import IsAdminUser, AllowAny
 from rest_framework.response import Response
 
 from .filters import ProductFilter
-from .models import Product, Characteristics, ProductType, ProductCharacteristics
+from .models import Product, Characteristics, ProductType, ProductCharacteristics, Vendor
 from .serializers import ProductSerializerDisplay, ProductCharacteristicsSerializer, TypeSerializer, \
-    ProductCharacteristicsDisplaySerializer, ProductSerializer
+    ProductCharacteristicsDisplaySerializer, ProductSerializer, VendorSerializer
 from ..views import APIBaseView
 
 
@@ -71,7 +71,6 @@ class ProductViewSet(viewsets.ModelViewSet, APIBaseView):
             }
         else:
             product = {'id': 'integer', 'product_type': 'string', 'product_vendor': 'string',
-                       'product_characteristics': {'char_name': 'string', 'char_value': 'string'},
                        'product_name': 'string', 'product_price': 'number',
                        'product_amount': 'integer', 'product_description': 'string',
                        'product_image': 'image'}
@@ -175,3 +174,18 @@ class ProductTypeAPI(generics.ListAPIView, APIBaseView):
             'get': {'in': {}, 'out': {'list': {'id': 'integer', 'type_name': 'string'}} }
         }
         return super(ProductTypeAPI, cls).document()
+
+
+class ProductVendorAPI(generics.ListAPIView, APIBaseView):
+    serializer_class = VendorSerializer
+    permission_classes = (AllowAny,)
+    queryset = Vendor.objects.all()
+    pagination_class = None
+    http_method_names = ['get']
+
+    @classmethod
+    def document(cls) -> dict:
+        cls.doc = {
+            'get': {'in': {}, 'out': {'list': {'id': 'integer', 'vendor_name': 'string'}}}
+        }
+        return super(ProductVendorAPI, cls).document()

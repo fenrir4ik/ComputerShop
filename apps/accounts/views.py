@@ -5,9 +5,11 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 
 from .forms import LoginForm, RegisterForm
+from .utils import login_excluded
 from ..api.utils import create_api_request_url
 
 
+@login_excluded('index')
 def login(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -30,6 +32,7 @@ def logout(request):
     return redirect('index')
 
 
+@login_excluded('index')
 def register(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
