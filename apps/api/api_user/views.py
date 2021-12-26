@@ -10,9 +10,6 @@ from ..views import APIBaseView
 
 
 class RegisterAPI(generics.CreateAPIView, APIBaseView):
-    """
-        Register in system
-    """
     serializer_class = RegisterSerializer
     permission_classes = (AllowAny,)
     http_method_names = ['post']
@@ -35,9 +32,6 @@ class RegisterAPI(generics.CreateAPIView, APIBaseView):
 
 
 class LoginAPI(KnoxLoginView, APIBaseView):
-    """
-        Retrieve auth token based on auth credentials provided
-    """
     serializer_class = AuthTokenSerializer
     permission_classes = (AllowAny,)
     http_method_names = ['post']
@@ -58,9 +52,6 @@ class LoginAPI(KnoxLoginView, APIBaseView):
 
 
 class ChangePasswordAPI(generics.UpdateAPIView, APIBaseView):
-    """
-        Change user password
-    """
     serializer_class = ChangePasswordSerializer
     permission_classes = (IsAuthenticated,)
     http_method_names = ['put']

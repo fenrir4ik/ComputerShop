@@ -17,22 +17,30 @@
                     <p class="box-title mt-6">Производитель: {{ product.product_vendor }}</p>
                     {% if user.is_authenticated and not user.is_staff %}
                         <p class="prod_amount box-title mt-6">В корзине: {{ current_amount }}</p>
-                        {% if current_amount < 1 %}
-                            <form method="POST"> {% csrf_token %}
-                                <input class="num_input" type="number" id="product_amount" name="product_amount"
-                                       value="1" min="1" max="{{ product.product_amount }}" step="1">
-                                <label for="product_amount"></label>
-                                <button class="btn btn-primary btn-rounded">Купить</button>
+                        {% if product.product_amount < 1 %}
+                            <form> {% csrf_token %}
+                                <button class="btn btn-secondary btn-rounded" disabled>Товара нет в наличии</button>
                             </form>
                         {% else %}
-                            <form method="POST"> {% csrf_token %}
-                                <input class="num_input" type="number" id="product_amount" name="product_amount"
-                                       value="{{ current_amount }}" min="1" max="{{ product.product_amount }}" step="1">
-                                <label for="product_amount"></label>
-                                <button class="btn btn-primary btn-rounded">Изменить</button>
-                            </form>
-                            <a class="del_prod_from_cart btn btn-danger btn-rounded"
-                               href="{% url 'remove from cart' product.id %}?next={% url 'product details' product.id %}">Удалить из корзины</a>
+                            {% if current_amount < 1 %}
+                                <form method="POST"> {% csrf_token %}
+                                    <input class="num_input" type="number" id="product_amount" name="product_amount"
+                                           value="1" min="1" max="{{ product.product_amount }}" step="1">
+                                    <label for="product_amount"></label>
+                                    <button class="btn btn-primary btn-rounded">Купить</button>
+                                </form>
+                            {% else %}
+                                <form method="POST"> {% csrf_token %}
+                                    <input class="num_input" type="number" id="product_amount" name="product_amount"
+                                           value="{{ current_amount }}" min="1" max="{{ product.product_amount }}"
+                                           step="1">
+                                    <label for="product_amount"></label>
+                                    <button class="btn btn-primary btn-rounded">Изменить</button>
+                                </form>
+                                <a class="del_prod_from_cart btn btn-danger btn-rounded"
+                                   href="{% url 'remove from cart' product.id %}?next={% url 'product details' product.id %}">Удалить
+                                    из корзины</a>
+                            {% endif %}
                         {% endif %}
                     {% endif %}
                 </div>
