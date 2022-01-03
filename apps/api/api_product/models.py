@@ -65,7 +65,6 @@ class Product(models.Model):
     def __str__(self):
         return self.product_name
 
-
     def delete(self, using=None, keep_parents=False):
         self.product_image.storage.delete(self.product_image.name)
         super().delete()
