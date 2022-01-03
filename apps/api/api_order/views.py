@@ -8,7 +8,6 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from rest_framework.response import Response
 
-from apps.api.views import APIBaseView
 from .filters import OrderFilter
 from .models import Order, OrderStatus, PaymentType
 from .permissions import ClientPermission
@@ -17,7 +16,7 @@ from .serializers import OrderSerializer, CreateOrderSerializer, UpdateOrderSeri
 from ..api_shopping_cart.models import ShoppingCart
 
 
-class OrderViewSet(viewsets.ModelViewSet, APIBaseView):
+class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.exclude(order_status=None).order_by('id').all()
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = OrderFilter
@@ -89,48 +88,18 @@ class OrderViewSet(viewsets.ModelViewSet, APIBaseView):
             return Response({'detail': 'User has no shopping cart'},
                             status=status.HTTP_400_BAD_REQUEST)
 
-    @classmethod
-    def document(cls, **kwargs) -> dict:
-        if not kwargs.get("details", False):
-            cls.doc = {
-                'get': {'in': {}, 'out': {}},
-                'post': {'in': {}, 'out': {}}
-            }
-        else:
-            cls.doc = {
-                'get': {'in': {}, 'out': {}},
-                'put': {'in': {}, 'out': {}},
-                'patch': {'in': {}, 'out': {}},
-                'delete': {'in': {}, 'out': {}}
-            }
-        return super(OrderViewSet, cls).document()
 
-
-class PaymentTypeAPI(generics.ListAPIView, APIBaseView):
+class PaymentTypeAPI(generics.ListAPIView):
     serializer_class = PaymentTypeSerializer
     permission_classes = (AllowAny,)
     queryset = PaymentType.objects.all()
     pagination_class = None
     http_method_names = ['get']
 
-    @classmethod
-    def document(cls) -> dict:
-        cls.doc = {
-            'get': {'in': {}, 'out': {'list': {'id': 'integer', 'type': 'string'}} }
-        }
-        return super(PaymentTypeAPI, cls).document()
 
-
-class OrderStatusAPI(generics.ListAPIView, APIBaseView):
+class OrderStatusAPI(generics.ListAPIView):
     serializer_class = OrderStatusSerializer
     permission_classes = (AllowAny,)
     queryset = OrderStatus.objects.all()
     pagination_class = None
     http_method_names = ['get']
-
-    @classmethod
-    def document(cls) -> dict:
-        cls.doc = {
-            'get': {'in': {}, 'out': {'list': {'id': 'integer', 'status_name': 'string'}} }
-        }
-        return super(OrderStatusAPI, cls).document()

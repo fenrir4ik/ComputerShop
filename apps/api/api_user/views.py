@@ -6,10 +6,9 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from .serializers import UserSerializer, RegisterSerializer, ChangePasswordSerializer
-from ..views import APIBaseView
 
 
-class RegisterAPI(generics.CreateAPIView, APIBaseView):
+class RegisterAPI(generics.CreateAPIView):
     """
         Register in system
     """
@@ -23,18 +22,8 @@ class RegisterAPI(generics.CreateAPIView, APIBaseView):
         user = serializer.save()
         return Response({"user": UserSerializer(user, context=self.get_serializer_context()).data}, status=status.HTTP_200_OK)
 
-    @classmethod
-    def document(cls) -> dict:
-        cls.doc = {
-            'post': {
-                'in': {'email': 'string', 'username': 'string', 'password': 'string'},
-                'out': {'user': {'id': 'integer','username': 'string','email': 'string'}}
-            }
-        }
-        return super(RegisterAPI, cls).document()
 
-
-class LoginAPI(KnoxLoginView, APIBaseView):
+class LoginAPI(KnoxLoginView):
     """
         Retrieve auth token based on auth credentials provided
     """
@@ -49,15 +38,8 @@ class LoginAPI(KnoxLoginView, APIBaseView):
         login(request, user)
         return super(LoginAPI, self).post(request, format=None)
 
-    @classmethod
-    def document(cls) -> dict:
-        cls.doc = {
-            'post': {'in': {'username': 'string', 'password': 'string'}, 'out': {'expiry': 'string', 'token': 'string'}}
-        }
-        return super(LoginAPI, cls).document()
 
-
-class ChangePasswordAPI(generics.UpdateAPIView, APIBaseView):
+class ChangePasswordAPI(generics.UpdateAPIView):
     """
         Change user password
     """
@@ -81,20 +63,6 @@ class ChangePasswordAPI(generics.UpdateAPIView, APIBaseView):
             return Response({'detail': 'Password updated successfully'}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @classmethod
-    def document(cls) -> dict:
-        cls.doc = {
-            'put': {'in': {'old_password': 'string', 'new_password': 'string'}, 'out': {'detail': 'string'}}
-        }
-        return super(ChangePasswordAPI, cls).document()
 
-
-class LogoutAPI(KnoxLogoutView, APIBaseView):
+class LogoutAPI(KnoxLogoutView):
     http_method_names = ['post']
-
-    @classmethod
-    def document(cls) -> dict:
-        cls.doc = {
-            'post': {'in': {}, 'out': {}}
-        }
-        return super(LogoutAPI, cls).document()
