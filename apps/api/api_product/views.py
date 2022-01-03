@@ -10,10 +10,9 @@ from .filters import ProductFilter
 from .models import Product, Characteristics, ProductType, ProductCharacteristics, Vendor
 from .serializers import ProductSerializerDisplay, ProductCharacteristicsSerializer, TypeSerializer, \
     ProductCharacteristicsDisplaySerializer, ProductSerializer, VendorSerializer
-from ..views import APIBaseView
 
 
-class ProductViewSet(viewsets.ModelViewSet, APIBaseView):
+class ProductViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = ProductFilter
     search_fields = ['product_name']
@@ -45,45 +44,9 @@ class ProductViewSet(viewsets.ModelViewSet, APIBaseView):
         except:
             return Response({"detail": ["Product exists in shopping cart of user"]}, status=status.HTTP_403_FORBIDDEN)
 
-    @classmethod
-    def document(cls, **kwargs) -> dict:
-        if not kwargs.get("details", False):
-            cls.doc = {
-                'get': {
-                    'in': {'product_price_min': 'number', 'product_price_max': 'number', 'product_type': 'integer',
-                           'product_vendor': 'integer', 'search': 'string', 'ordering': 'string'},
-                    'out': {'count': 'integer', 'next': 'string', 'previous': 'string',
-                            'results': {'id': 'integer', 'product_type': 'string', 'product_vendor': 'string',
-                                        'product_characteristics': {'char_name': 'string', 'char_value': 'string'},
-                                        'product_name': 'string', 'product_price': 'number',
-                                        'product_amount': 'integer', 'product_description': 'string',
-                                        'product_image': 'image'}}
-                },
-                'post': {
-                    'in': {'product_name': 'string', 'product_price': 'number', 'product_amount': 'integer',
-                           'product_description': 'string', 'product_image': 'image', 'product_type': 'integer',
-                           'product_vendor': "integer"},
-                    'out': {'id': 'integer', 'product_name': 'string', 'product_price': 'number',
-                            'product_amount': 'integer',
-                            'product_description': 'string', 'product_image': 'image', 'product_type': 'integer',
-                            'product_vendor': "integer"}
-                }
-            }
-        else:
-            product = {'id': 'integer', 'product_type': 'string', 'product_vendor': 'string',
-                       'product_name': 'string', 'product_price': 'number',
-                       'product_amount': 'integer', 'product_description': 'string',
-                       'product_image': 'image'}
-            cls.doc = {
-                'get': {'in': {'id': 'integer'}, 'out': product},
-                'put': {'in': product, 'out': product},
-                'patch': {'in': product, 'out': product},
-                'delete': {'in': {'id': 'integer'}, 'out': {'detail': 'string'}}
-            }
-        return super(ProductViewSet, cls).document()
 
 
-class ProductCharacteristicsAPI(generics.RetrieveUpdateDestroyAPIView, APIBaseView):
+class ProductCharacteristicsAPI(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ProductCharacteristicsSerializer
     queryset = Characteristics.objects.all()
     http_method_names = ['get', 'put', 'delete']
@@ -150,42 +113,21 @@ class ProductCharacteristicsAPI(generics.RetrieveUpdateDestroyAPIView, APIBaseVi
         except DatabaseError:
             pass
 
-    @classmethod
-    def document(cls, **kwargs) -> dict:
-        if kwargs.get("details", True):
-            cls.doc = {
-                'get': {'in': {'id': 'integer'}, 'out': {'list': {'char_value': 'string', 'char_name': 'string'}}},
-                'put': {'in': {'id': 'integer', 'list': {'char_value': 'string', 'char_name': 'string'}}, 'out': {}},
-                'delete': {'in': {'id': 'integer'}, 'out': {}},
-            }
-        return super(ProductCharacteristicsAPI, cls).document()
 
 
-class ProductTypeAPI(generics.ListAPIView, APIBaseView):
+class ProductTypeAPI(generics.ListAPIView):
     serializer_class = TypeSerializer
     permission_classes = (AllowAny,)
     queryset = ProductType.objects.all()
     pagination_class = None
     http_method_names = ['get']
 
-    @classmethod
-    def document(cls) -> dict:
-        cls.doc = {
-            'get': {'in': {}, 'out': {'list': {'id': 'integer', 'type_name': 'string'}} }
-        }
-        return super(ProductTypeAPI, cls).document()
 
 
-class ProductVendorAPI(generics.ListAPIView, APIBaseView):
+class ProductVendorAPI(generics.ListAPIView):
     serializer_class = VendorSerializer
     permission_classes = (AllowAny,)
     queryset = Vendor.objects.all()
     pagination_class = None
     http_method_names = ['get']
 
-    @classmethod
-    def document(cls) -> dict:
-        cls.doc = {
-            'get': {'in': {}, 'out': {'list': {'id': 'integer', 'vendor_name': 'string'}}}
-        }
-        return super(ProductVendorAPI, cls).document()

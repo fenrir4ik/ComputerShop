@@ -3,3 +3,4 @@ media/product/*
 *.pyc
 .idea/
 __pycache__/
+env/
