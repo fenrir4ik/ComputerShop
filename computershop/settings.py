@@ -40,16 +40,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'apps.api',
-    'apps.api.api_user',
-    'apps.api.api_product',
-    'apps.api.api_shopping_cart',
-    'apps.api.api_order',
-    'apps.orders',
-    'apps.products',
-    'apps.accounts',
     'rest_framework',
     'django_filters',
-    'knox',
+    'drf_yasg'
+    # 'apps.api.api_user',
+    # 'apps.api.api_product',
+    # 'apps.api.api_shopping_cart',
+    # 'apps.api.api_order',
+    # 'apps.orders',
+    # 'apps.products',
+    # 'apps.accounts',
 ]
 
 MIDDLEWARE = [
@@ -67,9 +67,7 @@ ROOT_URLCONF = 'computershop.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR,
-                 os.path.join(BASE_DIR, 'apps/api', 'templates'),
-                 os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [BASE_DIR, os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -89,23 +87,14 @@ WSGI_APPLICATION = 'computershop.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-
     'default': {
-
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-
-        'NAME': 'computershop',
-
+        'NAME': 'computershop_v2',
         'USER': 'postgres',
-
         'PASSWORD': '12121212',
-
         'HOST': 'localhost',
-
         'PORT': '',
-
     }
-
 }
 
 
@@ -145,9 +134,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
-)
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
+
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticdata')
 
 STATIC_URL = '/static/'
@@ -169,7 +157,6 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 16,
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
-        'knox.auth.TokenAuthentication',
     ],
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
@@ -180,9 +167,9 @@ REST_FRAMEWORK = {
     ]
 }
 
-REST_KNOX = {'TOKEN_TTL': timedelta(hours=24)}
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 MEDIA_URL = '/media/'
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = None
