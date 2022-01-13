@@ -29,4 +29,3 @@ class User(AbstractBaseUser):
 
     def __str__(self):
         return f'User {self.email} {self.phone_number}'
-
