@@ -42,14 +42,8 @@ INSTALLED_APPS = [
     'apps.api',
     'rest_framework',
     'django_filters',
-    'drf_yasg'
-    # 'apps.api.api_user',
-    # 'apps.api.api_product',
-    # 'apps.api.api_shopping_cart',
-    # 'apps.api.api_order',
-    # 'apps.orders',
-    # 'apps.products',
-    # 'apps.accounts',
+    'drf_yasg',
+    'apps.user',
 ]
 
 MIDDLEWARE = [
@@ -116,6 +110,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = 'user.User'
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
