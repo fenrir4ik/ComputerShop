@@ -7,7 +7,6 @@ from django.shortcuts import redirect
 def login_(request):
     username = request.GET.get('username')
     password = request.GET.get('password')
-    print(f'User {username=} {password=}')
     user=authenticate(username=username, password=password)
     login(request, user)
     return redirect('/')
