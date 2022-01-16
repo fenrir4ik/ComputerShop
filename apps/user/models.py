@@ -39,8 +39,8 @@ class User(AbstractBaseUser):
     class Meta:
         db_table = 'user'
 
-    email = models.EmailField(max_length=255, unique=True)
-    phone_number = models.CharField(max_length=12, unique=True)
+    email = models.EmailField(max_length=255, unique=True, db_index=True)
+    phone_number = models.CharField(max_length=12, unique=True, db_index=True)
     name = models.CharField(max_length=45)
     surname = models.CharField(max_length=45)
     patronymic = models.CharField(max_length=45)
@@ -56,3 +56,9 @@ class User(AbstractBaseUser):
 
     def __str__(self):
         return f'{self.email} {self.phone_number}'
+
+    def has_perm(self, perm, obj=None):
+        return self.is_admin
+
+    def has_module_perms(self, app_label):
+        return self.is_admin

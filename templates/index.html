@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/products_list.css' %}"/>
+{% endblock %}
+
+{% block content %}
+    <div>
+        <div class='outer_search'></div>
+        <div class='search_div'>
+            <form id='search' action="">
+                <label for='searchline' hidden></label>
+                <input id='searchline' placeholder="Поиск товара...">
+                <button class="main-search"></button>
+            </form>
+        </div>
+    </div>
+    <div class="container py-1">
+        <ul class="sort_list">
+            <li><p class="sort_title">Отобразить:</p></li>
+            <li class="dropdown">
+                <a class="sort_link dropdown-toggle" href="#" data-bs-toggle="dropdown">от дешевых к дорогим</a>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a class="dropdown-item" href="#">от дешевых к дорогим</a></li>
+                    <li><a class="dropdown-item" href="#">от дорогих к дешевым</a></li>
+                    <li><a class="dropdown-item" href="#">по алфавиту</a></li>
+                    <li><a class="dropdown-item" href="#">новинки</a></li>
+                </ul>
+            </li>
+        </ul>
+        <div class="main_products">
+            <div><img class="card_img"
+                      src='https://ru.gecid.com/data/video/201811100800-54131/img/00_asus_rog-strix-rtx2080ti-o11g_gaming.jpg'/>
+                <p>Asus PCI-Ex GeForce GTX 1660 Ti sus PCI-Ex GeForce GTX 1660 Ti sus PCI-Ex GeForce GTX 1660 Ti sus
+                    PCI-Ex GeForce GTX 1660 Ti </p>
+                <div class="inner_card">
+                    <div class="price_comb">
+                        <h6>цена</h6>
+                        <h5>32000 ₴</h5>
+                    </div>
+                    <a href="#">В корзину</a>
+                </div>
+            </div>
+            <div><img class="card_img"
+                      src='https://ru.gecid.com/data/video/201811100800-54131/img/00_asus_rog-strix-rtx2080ti-o11g_gaming.jpg'/>
+                <p>Asus PCI-Ex GeForce GTX 1660 Ti</p>
+                <div class="inner_card">
+                    <div class="price_comb">
+                        <h6>цена</h6>
+                        <h5>32000 ₴</h5>
+                    </div>
+                    <a href="#">В корзину</a>
+                </div>
+            </div>
+            <div><img class="card_img" src='https://i.ibb.co/8s4x9sK/1111.png'/>
+                <p>Asus PCI-Ex GeForce GTX 1660 Ti</p>
+                <div class="inner_card">
+                    <div class="price_comb">
+                        <h6>цена</h6>
+                        <h5>32000 ₴</h5>
+                    </div>
+                    <a href="#">В корзину</a>
+                </div>
+            </div>
+            <div><img class="card_img"
+                      src='https://ru.gecid.com/data/video/201811100800-54131/img/00_asus_rog-strix-rtx2080ti-o11g_gaming.jpg'/>
+                <p>Asus PCI-Ex GeForce GTX 1660 Ti</p>
+                <div class="inner_card">
+                    <div class="price_comb">
+                        <h6>цена</h6>
+                        <h5>32000 ₴</h5>
+                    </div>
+                    <a href="#">В корзину</a>
+                </div>
+            </div>
+            <div><img class="card_img"
+                      src='https://ru.gecid.com/data/video/201811100800-54131/img/00_asus_rog-strix-rtx2080ti-o11g_gaming.jpg'/>
+                <p>Asus PCI-Ex GeForce GTX 1660 Ti</p>
+                <div class="inner_card">
+                    <div class="price_comb">
+                        <h6>цена</h6>
+                        <h5>32000 ₴</h5>
+                    </div>
+                    <a href="#">В корзину</a>
+                </div>
+            </div>
+            <div><img class="card_img" src='https://cubiq.ru/wp-content/uploads/2020/06/Picture-1-20.jpeg'/>
+                <p>Asus PCI-Ex GeForce GTX 1660 Ti</p>
+                <div class="inner_card">
+                    <div class="price_comb">
+                        <h6>цена</h6>
+                        <h5>32000 ₴</h5>
+                    </div>
+                    <a href="#">В корзину</a>
+                </div>
+            </div>
+            <div><img class="card_img" src='https://cubiq.ru/wp-content/uploads/2020/06/Picture-1-20.jpeg'/>
+                <p>Asus PCI-Ex GeForce GTX 1660 Ti</p>
+                <div class="inner_card">
+                    <div class="price_comb">
+                        <h6>цена</h6>
+                        <h5>32000 ₴</h5>
+                    </div>
+                    <a href="#">В корзину</a>
+                </div>
+            </div>
+            <div><img class="card_img" src='https://cubiq.ru/wp-content/uploads/2020/06/Picture-1-20.jpeg'/>
+                <p>Asus PCI-Ex GeForce GTX 1660 Ti</p>
+                <div class="inner_card">
+                    <div class="price_comb">
+                        <h6>цена</h6>
+                        <h5>32000 ₴</h5>
+                    </div>
+                    <a href="#">В корзину</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

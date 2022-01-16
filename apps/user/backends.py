@@ -5,9 +5,7 @@ from .models import User
 
 
 class PhoneEmailBasedBackend(ModelBackend):
-    """Authenticate user against given email address OR phone number
-       Returns user with given credentials or none if user not found
-       or password is wrong"""
+    """Authenticate user against given email address OR phone number"""
 
     def authenticate(self, request, username=None, password=None, **kwargs):
         try:
