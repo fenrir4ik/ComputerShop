@@ -1,44 +1,42 @@
-<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="/">Computer Shop</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="navbar-collapse collapse w-100 order-3 dual-collapse2" id="navbarSupportedContent">
-        {% if request.get_full_path == '/' %}
-            <form method="POST" class="form-inline my-2 my-lg-0">{% csrf_token %}
-                <input class="form-control mr-sm-3" type="search" name="search_request" placeholder="Название товара..." aria-label="Search">
-                <button class="btn btn-sm btn-outline-secondary" type="submit">Поиск</button>
-            </form>
-        {% endif %}
-        <ul class="navbar-nav ml-auto">
-            {% if user.is_authenticated %}
-                {% if user.is_staff %}
-                    <li class="nav-item active">
-                        <a class="nav-link" href="{% url 'add product' %}">Добавить товар</a>
-                    </li>
-                    <li class="nav-item active">
-                        <a class="nav-link" href="{% url 'orders' %}">Обработка заказов</a>
-                    </li>
+{% load static %}
+
+<nav class="navbar navbar-expand-sm navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'index' %}">
+            <img id="brand-img" src="{% static 'img/brand-icon.png' %}" alt="brand-icon"/>
+            Computer Shop
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main_nav"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="main_nav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Главная</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Товары</a>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        <li><a class="dropdown-item" href="#">Видеокарты</a></li>
+                        <li><a class="dropdown-item" href="#">Процессоры</a></li>
+                        <li><a class="dropdown-item" href="#">Материнские платы</a></li>
+                        <li><a class="dropdown-item" href="#">Оперативная память</a></li>
+                        <li><a class="dropdown-item" href="#">Жесткие диски</a></li>
+                        <li><a class="dropdown-item" href="#">Блок питания</a></li>
+                    </ul>
+                </li>
+                {% if user.is_authenticated %}
+                    {% if user.is_admin %}
+                        <li class="nav-item"><a class="nav-link" href="#">Админ-панель</a></li>
+                    {% else %}
+                        <li class="nav-item"><a class="nav-link" href="#">Корзина</a></li>
+                    {% endif %}
+                    <li class="nav-item"><a class="nav-link" href="#">Профиль</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Выход</a></li>
                 {% else %}
-                    <li class="nav-item active">
-                        <a class="nav-link" href="{% url 'orders' %}">Мои заказы</a>
-                    </li>
-                    <li class="nav-item active">
-                        <a class="nav-link" href="{% url 'shopping cart' %}">Корзина</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'registration' %}">Регистрация</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Вход</a></li>
                 {% endif %}
-                <li class="nav-item active">
-                    <a class="nav-link" href="{% url 'logout' %}">Выход</a>
-                </li>
-            {% else %}
-                <li class="nav-item active">
-                    <a class="nav-link" href="{% url 'login' %}">Вход</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link" href="{% url 'register' %}">Регистрация</a>
-                </li>
-            {% endif %}
-        </ul>
+            </ul>
+        </div>
     </div>
 </nav>

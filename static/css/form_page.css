@@ -1,0 +1,175 @@
+.form_div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.custom_form {
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 700px;
+    border-radius: 20px;
+    padding: 50px;
+    margin-top: 50px;
+    margin-bottom: 220px;
+    backdrop-filter: blur(30px);
+    box-shadow: 3px 4px 10px black;
+}
+
+.form_title {
+    text-align: center;
+    position: relative;
+    top: -25px;
+}
+
+.form_item {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.custom_form input {
+    height: 40px;
+    width: 650px;
+    max-width: 650px;
+    background-color: black;
+    color: white;
+    border: 0;
+    border-bottom: 1px solid white;
+    padding-left: 10px;
+    font-size: 14px;
+    transition-duration: 0.5s;
+}
+
+.custom_form input::placeholder {
+    color: white;
+}
+
+.custom_form input:focus::-webkit-input-placeholder {
+    color: black;
+}
+
+.custom_form label {
+    color: red;
+    margin-top: 5px;
+    text-shadow: 1px 1px 1px black;
+    font-size: 13px;
+}
+
+.custom_form button {
+    color: white;
+    background-color: black;
+    height: 40px;
+    text-decoration: inherit;
+    border: 1px solid white;
+    border-radius: 20px;
+    text-align: center;
+}
+
+#register_btn {
+    width: 200px;
+}
+
+#login_btn {
+    width: 100px;
+}
+
+#secondary_link {
+    text-decoration: none;
+    margin-top: 10px;
+    color: white;
+    font-size: 14px;
+    text-shadow: 1px 1px 1px white;
+}
+
+.custom_form input:hover {
+    transform: scale(1.02);
+    border: 1px solid white;
+}
+
+.custom_form button:hover {
+    transform: scale(1.02);
+    color: black;
+    background: white;
+    border: 2px solid black;
+}
+
+.fullname {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 216px);
+    width: 650px;
+}
+
+.form_background {
+    z-index: 0;
+    min-height: 780px;
+    max-height: 1100px;
+    width: 100%;
+    position: absolute;
+    background: black url("../img/form-back.jpg") no-repeat center -125px;
+    background-size: cover;
+}
+
+.form_title h2,
+.form_title h6 {
+    color: white;
+    text-shadow: 1px 1px 1px black;
+}
+
+.form_title h6 {
+    font-size: 12px;
+}
+
+.form_error > ul {
+    padding: 0;
+    margin: 0;
+}
+
+.form_error > ul > li{
+    text-shadow: 3px 1px 3px black;
+    list-style: none;
+    padding: 0;
+}
+
+@media only screen and (max-width: 775px) {
+    .custom_form {
+        width: 90%;
+    }
+
+    .custom_form input {
+        transition-duration: 0s;
+        max-width: 100%;
+    }
+
+    .form_item {
+        width: 500px;
+    }
+}
+
+@media (max-width: 600px) {
+    .form_item {
+        width: 400px;
+    }
+}
+
+@media (max-width: 500px) {
+    .form_item {
+        width: 300px;
+    }
+
+    .custom_form label {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 400px) {
+    .form_item {
+        width: 200px;
+    }
+
+    #login {
+        font-size: 12px;
+    }
+}

@@ -17,7 +17,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
@@ -27,8 +26,7 @@ SECRET_KEY = 'django-insecure-m!7rugaj=($nvp+pmb5^*bk7o&emo3-w37d4sd(ygdv)6*c*+u
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['192.168.0.103']
 
 # Application definition
 
@@ -39,18 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'apps.api',
-    'apps.api.api_user',
-    'apps.api.api_product',
-    'apps.api.api_shopping_cart',
-    'apps.api.api_order',
-    'apps.orders',
-    'apps.products',
-    'apps.accounts',
-    'rest_framework',
-    'django_filters',
-    'knox',
-    'drf_yasg'
+
+    'apps.store',
+    'apps.user',
 ]
 
 MIDDLEWARE = [
@@ -68,9 +57,7 @@ ROOT_URLCONF = 'computershop.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR,
-                 os.path.join(BASE_DIR, 'apps/api', 'templates'),
-                 os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [BASE_DIR, os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -85,30 +72,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'computershop.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-
     'default': {
-
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-
-        'NAME': 'computershop',
-
+        'NAME': 'computershop_v2',
         'USER': 'postgres',
-
         'PASSWORD': '12121212',
-
         'HOST': 'localhost',
-
         'PORT': '',
-
     }
-
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -128,11 +104,18 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Custom authentication and user model
+
+AUTH_USER_MODEL = 'user.User'
+
+AUTHENTICATION_BACKENDS = [
+    'apps.user.backends.PhoneEmailBasedBackend'
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru-ru'
 
 TIME_ZONE = 'UTC'
 
@@ -142,19 +125,16 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
-)
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
+
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticdata')
 
 STATIC_URL = '/static/'
 
 STATICFILES_FINDERS = (
-
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
@@ -164,26 +144,10 @@ STATICFILES_FINDERS = (
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'DEFAULT_METADATA_CLASS': 'rest_framework.metadata.SimpleMetadata',
-    'PAGE_SIZE': 16,
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
-        'knox.auth.TokenAuthentication',
-    ],
-    'DEFAULT_RENDERER_CLASSES': [
-        'rest_framework.renderers.JSONRenderer',
-        'rest_framework.renderers.BrowsableAPIRenderer'
-    ],
-    'DEFAULT_FILTER_BACKENDS': [
-        'django_filters.rest_framework.DjangoFilterBackend'
-    ]
-}
-
-REST_KNOX = {'TOKEN_TTL': timedelta(hours=24)}
-
+# Media directory settings
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-DATA_UPLOAD_MAX_NUMBER_FIELDS = None
+# Login url settings
+LOGIN_URL = '/user/login'
+LOGIN_REDIRECT_URL = '/'

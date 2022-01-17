@@ -1,0 +1,170 @@
+.main_products {
+    margin-bottom: 200px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.main_products > div {
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 20px 20px 30px;
+}
+
+.card_img {
+    width: 300px;
+    height: 169px;
+    border-radius: 10px;
+    align-self: center;
+    transition: 0.3s;
+}
+
+.card_img:hover {
+    transform: scale(1.05);
+    transition: 0.3s;
+}
+
+.main_products p {
+    width: 300px;
+    height: 40px;
+    font-size: 14px;
+    align-self: center;
+    margin-top: 10px;
+    color: white;
+    margin-bottom: 10px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.inner_card {
+    width: 300px;
+    align-self: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.price_comb h6,
+.price_comb h5 {
+    margin: 0;
+    color: white;
+}
+
+.price_comb h6 {
+    font-size: 14px;
+}
+
+.price_comb h5 {
+    font-weight: bolder;
+}
+
+.inner_card > a {
+    color: white;
+    height: 40px;
+    width: 100px;
+    text-decoration: inherit;
+    border: 1px solid white;
+    border-radius: 20px;
+    text-align: center;
+    padding-top: 5px;
+    margin-top: 5px;
+}
+
+.inner_card > a:hover {
+    transform: scale(1.02);
+    color: black;
+    background: white;
+    border: 2px solid black;
+}
+
+@media (max-width: 1200px) {
+    .main_products {
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    }
+
+    .main_products > div {
+        margin-bottom: 20px;
+    }
+
+    .card_img {
+        width: 400px;
+        height: 225px;
+    }
+
+    .main_products p {
+        width: 400px;
+    }
+
+    .inner_card {
+        width: 400px;
+    }
+}
+
+@media (max-width: 992px) {
+    .main_products {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .main_products > div {
+        margin-bottom: 20px;
+    }
+
+    .card_img {
+        width: 600px;
+        height: 338px;
+    }
+
+    .main_products p,
+    .inner_card {
+        width: 600px;
+    }
+}
+
+@media (max-width: 625px) {
+    .card_img {
+        width: 100%;
+        height: auto;
+    }
+
+    .main_products p,
+    .inner_card {
+        width: 100%;
+    }
+}
+
+.sort_list {
+    list-style: none;
+    color: white;
+    float: right;
+    display: flex;
+    flex-direction: row;
+    margin: 0;
+}
+
+.sort_link {
+    text-decoration: none;
+    color: white;
+}
+
+.sort_title {
+    padding-right: 5px;
+}
+
+.sort_link:hover {
+    color: white;
+    -webkit-text-stroke: 0.5px white;
+}
+
+@media (max-width: 320px) {
+    .sort_list {
+        float: none;
+        justify-content: space-around;
+        font-size: 14px;
+    }
+}
