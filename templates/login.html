@@ -5,24 +5,30 @@
     <link rel="stylesheet" href="{% static 'css/form_page.css' %}"/>
 {% endblock %}
 
-<div class="form_content">
-    <div class="form_background"></div>
-    <div class="form_div">
-        <form class="custom_form">
-            <div class="form_title">
-                <h2>Вход</h2>
-                <h6>Войдите в систему с помощью почты или номера телефона</h6>
-            </div>
-            <div class="form_item">
-                <input id="login" name="login" placeholder="Эл. почта или номер телефона">
-                <label>🛈 Ошибка в введенных данных</label>
-            </div>
-            <div class="form_item">
-                <input id="password" name="password" placeholder="Пароль">
-                <label>🛈 Ошибка в введенных данных</label>
-            </div>
-            <button id="login_btn">Войти</button>
-            <a id="secondary_link" href="#">Зарегестрироваться</a>
-        </form>
+{% block content %}
+    <div class="form_content">
+        <div class="form_background"></div>
+        <div class="form_div">
+            <form class="custom_form" method="post">
+                {% csrf_token %}
+                <div class="form_title">
+                    <h2>Вход</h2>
+                    <h6>Войдите в систему с помощью почты или номера телефона</h6>
+                </div>
+                <div class="form_item">
+                    {{ form.username }}
+                </div>
+                <div class="form_item">
+                    {{ form.password }}
+                </div>
+                <div class="form_item">
+                    {% for key, error in form.errors.items %}
+                    <label class="form_error">{{ error }}</label>
+                {% endfor %}
+                </div>
+                <button id="login_btn">Войти</button>
+                <a id="secondary_link" href="{% url 'registration' %}">Зарегестрироваться</a>
+            </form>
+        </div>
     </div>
-</div>
+{% endblock %}

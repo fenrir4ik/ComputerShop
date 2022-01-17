@@ -1,28 +1,29 @@
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import logout
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import LoginView
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
+from django.views import View
 from django.views.generic import CreateView
 
-from apps.user.forms import RegistrationForm
+from apps.user.forms import RegistrationForm, LoginForm
 
 
 class UserRegister(CreateView):
-    """View for user registrations"""
+    """View is used to register a user"""
     template_name = 'register.html'
     form_class = RegistrationForm
     success_url = reverse_lazy('index')
 
 
-def login_(request):
-    username = request.GET.get('username')
-    password = request.GET.get('password')
-    user = authenticate(username=username, password=password)
-    login(request, user)
-    return redirect(reverse('index'))
+class UserLogin(LoginView):
+    """View is used to authorize user"""
+    template_name = 'login.html'
+    form_class = LoginForm
 
 
-@login_required
-def logout_(request):
-    logout(request)
-    return redirect(reverse('index'))
+class UserLogout(LoginRequiredMixin, View):
+    """View is used to logout user"""
+    def get(self, request):
+        logout(request)
+        return redirect(reverse('index'))

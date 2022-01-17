@@ -14,7 +14,7 @@
     padding: 50px;
     margin-top: 50px;
     margin-bottom: 220px;
-    backdrop-filter: blur(20px);
+    backdrop-filter: blur(30px);
     box-shadow: 3px 4px 10px black;
 }
 
@@ -108,9 +108,8 @@
     max-height: 1100px;
     width: 100%;
     position: absolute;
-    background: beige url("../img/form-back.jpg") no-repeat center -125px;
+    background: black url("../img/form-back.jpg") no-repeat center -125px;
     background-size: cover;
-    background-color: black;
 }
 
 .form_title h2,
@@ -123,6 +122,16 @@
     font-size: 12px;
 }
 
+.form_error > ul {
+    padding: 0;
+    margin: 0;
+}
+
+.form_error > ul > li{
+    text-shadow: 3px 1px 3px black;
+    list-style: none;
+    padding: 0;
+}
 
 @media only screen and (max-width: 775px) {
     .custom_form {

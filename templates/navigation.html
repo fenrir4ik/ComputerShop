@@ -24,8 +24,18 @@
                         <li><a class="dropdown-item" href="#">Блок питания</a></li>
                     </ul>
                 </li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'registration' %}">Регистрация</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Вход</a></li>
+                {% if user.is_authenticated %}
+                    {% if user.is_admin %}
+                        <li class="nav-item"><a class="nav-link" href="#">Админ-панель</a></li>
+                    {% else %}
+                        <li class="nav-item"><a class="nav-link" href="#">Корзина</a></li>
+                    {% endif %}
+                    <li class="nav-item"><a class="nav-link" href="#">Профиль</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Выход</a></li>
+                {% else %}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'registration' %}">Регистрация</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Вход</a></li>
+                {% endif %}
             </ul>
         </div>
     </div>

@@ -1,5 +1,5 @@
-from django.contrib.auth.forms import UserCreationForm
 from django import forms
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.core.validators import RegexValidator
 
 from apps.user.models import User
@@ -8,6 +8,8 @@ from core.regexps import latin_cyrillic_string, ua_phone_number
 
 
 class RegistrationForm(UserCreationForm):
+    """Form is used for user registration"""
+
     name = forms.CharField(
         widget=forms.TextInput(attrs={'placeholder': 'Имя'}),
         validators=[
@@ -27,7 +29,7 @@ class RegistrationForm(UserCreationForm):
         ]
     )
     email = forms.EmailField(
-        widget=forms.TextInput(attrs={'placeholder': 'Почта', 'autofocus': 'False'})
+        widget=forms.TextInput(attrs={'placeholder': 'Почта'})
     )
     phone_number = forms.CharField(
         widget=forms.TextInput(attrs={'placeholder': 'Номер телефона'}),
@@ -66,3 +68,22 @@ class RegistrationForm(UserCreationForm):
             raise forms.ValidationError('Номер телефона используется другим пользователем.')
         except User.DoesNotExist:
             return user_phone_number
+
+
+class LoginForm(AuthenticationForm):
+    """Form is used to authorize user"""
+    username = forms.CharField(
+        widget=forms.TextInput(
+            attrs={'autofocus': False, 'placeholder': 'Эл. почта или номер телефона'}
+        )
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={'autocomplete': 'current-password', 'placeholder': 'Пароль'}
+        )
+    )
+
+    def __init__(self, *args, **kwargs):
+        """Changes invalid_login error message"""
+        super(LoginForm, self).__init__(*args, **kwargs)
+        self.error_messages['invalid_login'] = "Введенные данные не верны. Проверьте данные и попробуйте снова."

@@ -150,3 +150,4 @@ MEDIA_URL = '/media/'
 
 # Login url settings
 LOGIN_URL = '/user/login'
+LOGIN_REDIRECT_URL = '/'
