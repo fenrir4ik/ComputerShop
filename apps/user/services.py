@@ -1,6 +1,6 @@
 from apps.user.models import User
 
 
-def get_user_by_field_value(field_name: str, field_value: str) -> User:
-    """Get single user instance by given field name and field value"""
-    return User.objects.get(**{field_name: field_value})
+def find_user_by_email(email: str) -> User:
+    """Get single user instance by given email"""
+    return User.objects.get(email__iexact=email)

@@ -13,8 +13,7 @@ class UserManager(BaseUserManager):
             raise ValueError("User should have a surname.")
         if not patronymic:
             raise ValueError("User should have a patronymic.")
-        if not phone_number:
-            raise ValueError("User should have a telephone number.")
+
         user = self.model(
             email=self.normalize_email(email),
             name=name.capitalize(),
@@ -40,7 +39,7 @@ class User(AbstractBaseUser):
         db_table = 'user'
 
     email = models.EmailField(max_length=255, unique=True, db_index=True)
-    phone_number = models.CharField(max_length=12, unique=True, db_index=True)
+    phone_number = models.CharField(max_length=12, null=True, db_index=True)
     name = models.CharField(max_length=45)
     surname = models.CharField(max_length=45)
     patronymic = models.CharField(max_length=45)
@@ -52,10 +51,10 @@ class User(AbstractBaseUser):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['name', 'surname', 'patronymic', 'phone_number']
+    REQUIRED_FIELDS = ['name', 'surname', 'patronymic']
 
     def __str__(self):
-        return f'{self.email} {self.phone_number}'
+        return f'{self.email}'
 
     def has_perm(self, perm, obj=None):
         return self.is_admin
