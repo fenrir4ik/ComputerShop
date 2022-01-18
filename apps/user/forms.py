@@ -2,8 +2,8 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
 from apps.user.models import User
-from apps.user.services import find_user_by_email
-from core import validators
+from services import user_service
+from utils import form_validators
 
 
 class RegistrationForm(UserCreationForm):
@@ -11,15 +11,15 @@ class RegistrationForm(UserCreationForm):
 
     name = forms.CharField(
         widget=forms.TextInput(attrs={'placeholder': 'Имя'}),
-        validators=[validators.name_validator]
+        validators=[form_validators.name_validator]
     )
     surname = forms.CharField(
         widget=forms.TextInput(attrs={'placeholder': 'Фамилия'}),
-        validators=[validators.surname_validator]
+        validators=[form_validators.surname_validator]
     )
     patronymic = forms.CharField(
         widget=forms.TextInput(attrs={'placeholder': 'Отчество'}),
-        validators=[validators.patronymic_validator]
+        validators=[form_validators.patronymic_validator]
     )
     email = forms.EmailField(
         widget=forms.TextInput(attrs={'placeholder': 'Почта'})
@@ -28,7 +28,7 @@ class RegistrationForm(UserCreationForm):
         widget=forms.TextInput(attrs={'placeholder': 'Номер телефона'}),
         required=False,
         empty_value=None,
-        validators=[validators.phone_number_validator]
+        validators=[form_validators.phone_number_validator]
     )
     password1 = forms.CharField(
         widget=forms.PasswordInput(attrs={'placeholder': 'Пароль', 'autocomplete': 'new-password'})
@@ -50,7 +50,7 @@ class RegistrationForm(UserCreationForm):
         """Replace validation error message when user with given email address already exists"""
         user_email = self.cleaned_data['email']
         try:
-            find_user_by_email(user_email)
+            user_service.get_user_by_email(user_email)
             raise forms.ValidationError('Адресс электронной почты используется другим пользователем.')
         except User.DoesNotExist:
             return user_email
