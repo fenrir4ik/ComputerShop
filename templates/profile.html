@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}"/>
+{% endblock %}
+
+{% block content %}
+    <div class="body_outer">
+        <div class="left_panel">
+            <div><a href="#"><img src="{% static 'img/order.png' %}" alt="menu_item"> История заказов<i class="arrow right"></i></a></div>
+            <div><a href="#"><img src="{% static 'img/cart.png' %}" alt="menu_item"> Моя корзина<i class="arrow right"></i></a></div>
+            <div><a href="#"><img src="{% static 'img/home.png' %}" alt="menu_item"> На главную<i class="arrow right"></i></a></div>
+            <div><a href="#"><img src="{% static 'img/logout.png' %}" alt="menu_item"> Выход<i class="arrow right"></i></a></div>
+        </div>
+        <div class="right_panel">
+            <div class="profile_outer">
+                <div class="profile_title">
+                    <div class="title_image">
+                    </div>
+                    <div class="title_data">
+                        <h4>Эмиль Гаджиев</h4>
+                        <h6>emil.hadzhyiev@nure.ua</h6>
+                    </div>
+                </div>
+                <div class="profile_main">
+                    <form method="post">
+                        {% csrf_token %}
+                        <h6>Личные данные</h6>
+                        <div class="personal_data profile_inner">
+                            <div class="profile_item">
+                                <label>Имя</label>
+                                {{ form.name }}
+                                {% for error in form.name.errors %}
+                                    <label class="error">{{ error }}</label>
+                                {% endfor %}
+{#                                <input type="text"/>#}
+                            </div>
+                            <div class="profile_item">
+                                <label>Фамилия</label>
+                                {{ form.surname }}
+                                {% for error in form.surname.errors %}
+                                    <label class="error">{{ error }}</label>
+                                {% endfor %}
+{#                                <input type="text"/>#}
+                            </div>
+                            <div class="profile_item">
+                                <label>Отчество</label>
+                                {{ form.patronymic }}
+                                {% for error in form.patronymic.errors %}
+                                    <label class="error">{{ error }}</label>
+                                {% endfor %}
+{#                                <input type="text"/>#}
+                            </div>
+                        </div>
+                        <h6>Контакты</h6>
+                        <div class="contact_data profile_inner">
+                            <div class="phone_number profile_item">
+                                <label>Номер телефона</label>
+                                {{ form.phone_number }}
+                                {% for error in form.phone_number.errors %}
+                                    <label class="error">{{ error }}</label>
+                                {% endfor %}
+{#                                <input type="text"/>#}
+                            </div>
+                            <div class="login profile_item">
+                                <label>Логин (электронная почта)</label>
+                                {{ form.email }}
+                                {% for error in form.email.errors %}
+                                    <label class="error">{{ error }}</label>
+                                {% endfor %}
+{#                                <input type="text"/>#}
+                            </div>
+                        </div>
+                        <h6>Изменение пароля</h6>
+                        <div class="password_data profile_inner">
+                            <div class="password profile_item">
+                                <label>Новый пароль</label>
+{#                                <input type="text"/>#}
+                            </div>
+                            <div class="password profile_item">
+                                <label>Повторите пароль</label>
+{#                                <input type="text"/>#}
+                            </div>
+                        </div>
+                        <div class="button_div">
+                            <a href="#">Перейти к выбору товаров</a>
+                            <button>Сохранить изменения</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

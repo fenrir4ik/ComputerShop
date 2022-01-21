@@ -1,6 +1,6 @@
 from django.core.validators import RegexValidator
 
-latin_cyrillic_string_regex = '[a-zA-Zа-яА-ЯЩЬьЮюЯяЇїІіЄєҐґ]'
+latin_cyrillic_string_regex = '^[a-zA-Zа-яА-ЯЩЬьЮюЯяЇїІіЄєҐґ]+$'
 ua_phone_number_regex = '^380[0-9]{9}$'
 
 name_validator = RegexValidator(
