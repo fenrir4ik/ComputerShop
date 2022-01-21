@@ -1,21 +1,26 @@
 .main_products {
-    margin-bottom: 200px;
-    width: 100%;
+    width: 95%;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+
+@media screen and (max-width: 950px) {
+    .main_products {
+        width: 100%;
+    }
 }
 
 .main_products > div {
+    margin: 30px;
     height: auto;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    margin: 20px 20px 30px;
 }
 
 .card_img {
-    width: 300px;
-    height: 169px;
+    width: 250px;
+    height: 140px;
     border-radius: 10px;
     align-self: center;
     transition: 0.3s;
@@ -27,7 +32,7 @@
 }
 
 .main_products p {
-    width: 300px;
+    width: 250px;
     height: 40px;
     font-size: 14px;
     align-self: center;
@@ -42,7 +47,7 @@
 }
 
 .inner_card {
-    width: 300px;
+    width: 250px;
     align-self: center;
     display: flex;
     flex-direction: row;
@@ -82,51 +87,7 @@
     border: 2px solid black;
 }
 
-@media (max-width: 1200px) {
-    .main_products {
-        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    }
-
-    .main_products > div {
-        margin-bottom: 20px;
-    }
-
-    .card_img {
-        width: 400px;
-        height: 225px;
-    }
-
-    .main_products p {
-        width: 400px;
-    }
-
-    .inner_card {
-        width: 400px;
-    }
-}
-
-@media (max-width: 992px) {
-    .main_products {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .main_products > div {
-        margin-bottom: 20px;
-    }
-
-    .card_img {
-        width: 600px;
-        height: 338px;
-    }
-
-    .main_products p,
-    .inner_card {
-        width: 600px;
-    }
-}
-
-@media (max-width: 625px) {
+@media (max-width: 1125px) {
     .card_img {
         width: 100%;
         height: auto;
@@ -161,10 +122,16 @@
     -webkit-text-stroke: 0.5px white;
 }
 
+
 @media (max-width: 320px) {
     .sort_list {
         float: none;
         justify-content: space-around;
         font-size: 14px;
     }
+}
+
+.left_panel img {
+    padding-bottom: -20px;
+    width: 30px;
 }

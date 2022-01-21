@@ -1,6 +1,6 @@
 {% load static %}
 
-<nav class="navbar navbar-expand-sm navbar-dark">
+<nav class="navbar navbar-expand-md navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="{% url 'index' %}">
             <img id="brand-img" src="{% static 'img/brand-icon.png' %}" alt="brand-icon"/>
@@ -30,7 +30,7 @@
                     {% else %}
                         <li class="nav-item"><a class="nav-link" href="#">Корзина</a></li>
                     {% endif %}
-                    <li class="nav-item"><a class="nav-link" href="#">Профиль</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'profile' %}">Профиль</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Выход</a></li>
                 {% else %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'registration' %}">Регистрация</a></li>
