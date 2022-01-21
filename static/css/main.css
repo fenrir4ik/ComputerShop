@@ -25,8 +25,9 @@ body {
 }
 
 .left_panel {
-    flex-basis: 23%;
-    margin-top: 56px;
+    flex-basis: 15%;
+    min-width: 250px;
+    margin-top: 80px;
     display: flex;
     flex-direction: column;
 }
@@ -40,7 +41,7 @@ body {
 .left_panel a {
     text-decoration: none;
     color: white;
-    font-size: 18px;
+    font-size: 14.5px;
     margin-bottom: 10px;
     margin-left: 5px;
 }
@@ -52,13 +53,7 @@ body {
 }
 
 .right_panel {
-    flex-basis: 73%;
-}
-
-@media screen and (max-width: 1100px) {
-    .left_panel a {
-        font-size: 14.5px;
-    }
+    flex-basis: 77%;
 }
 
 @media screen and (max-width: 950px) {

@@ -236,3 +236,35 @@
     padding-bottom: -20px;
     width: 30px;
 }
+
+.messages_div {
+    display: flex;
+    justify-content: flex-start;
+    bottom: 0;
+    padding-bottom: 5px;
+}
+
+.success_message {
+    color: green;
+    text-shadow: 1px 1px 1px green;
+}
+
+.profile_header {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.success_img {
+    height: 20px;
+    width: auto;
+    margin-right: 5px;
+}
+
+@media screen and (max-width: 525px) {
+    .profile_header {
+        display: initial;
+    }
+}

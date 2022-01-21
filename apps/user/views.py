@@ -1,6 +1,8 @@
-from django.contrib.auth import logout
+from django.contrib.auth import logout, update_session_auth_hash
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
+from django.contrib import messages
+from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.views import View
@@ -8,7 +10,6 @@ from django.views.generic import CreateView
 from django.views.generic import UpdateView
 
 from apps.user.forms import RegistrationForm, LoginForm, ProfileChangeForm
-from apps.user.models import User
 
 
 class UserRegisterView(CreateView):
@@ -37,6 +38,19 @@ class ProfileChangeView(LoginRequiredMixin, UpdateView):
     form_class = ProfileChangeForm
     template_name = 'profile.html'
     success_url = reverse_lazy('profile')
+    success_message = "Профиль успешно изменен"
 
     def get_object(self, queryset=None):
         return self.request.user
+
+    def form_valid(self, form):
+        user = form.save()
+        update_session_auth_hash(self.request, user)
+        messages.success(self.request, self.success_message)
+        return HttpResponseRedirect(self.get_success_url())
+
+    def get_context_data(self, **kwargs):
+        user = self.get_object()
+        context = super().get_context_data()
+        context['user_data'] = {'name': user.name, 'surname': user.surname, 'email': user.email}
+        return context

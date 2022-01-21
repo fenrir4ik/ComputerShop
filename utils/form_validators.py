@@ -19,3 +19,4 @@ phone_number_validator = RegexValidator(
     ua_phone_number_regex,
     'Номер телефона должен быть длинной в 12 символов и начинаться с 380.'
 )
+
