@@ -231,6 +231,14 @@
     transition: 0.5s;
 }
 
+.form_item input:-webkit-autofill{
+    -webkit-box-shadow: 0 0 0 30px white inset !important;
+}
+
+.form_item input:focus {
+    outline: none;
+}
+
 .custom_form button {
     background: white;
     color: black;
