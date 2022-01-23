@@ -27,16 +27,8 @@
 }
 
 nav {
-    background: black;
-    /*height: 50px;*/
+    background: #001540;
 }
-
-/*@media (max-width: 768px) {*/
-/*    nav {*/
-/*        height: 70px;*/
-/*    }*/
-/*}*/
-
 
 .navbar-dark .navbar-nav .nav-link {
     color: white;

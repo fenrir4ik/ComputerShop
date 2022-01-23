@@ -18,6 +18,7 @@ body {
     position: relative;
     min-height: 100vh;
     background: white;
+    color: #001540;
 }
 
 .body_outer {
@@ -62,7 +63,7 @@ body {
     flex-basis: 77%;
 }
 
-@media screen and (max-width: 950px) {
+@media screen and (max-width: 992px) {
     .left_panel {
         display: none;
     }
@@ -71,20 +72,5 @@ body {
         flex-basis: auto;
         width: 100%;
     }
-}
-
-.arrow {
-    margin-bottom: 1px;
-    width: 5px;
-    height: 5px;
-    border: solid black;
-    border-width: 0 2px 3px 0;
-    display: inline-block;
-    padding: 3px;
-}
-
-.right {
-    transform: rotate(-45deg);
-    -webkit-transform: rotate(-45deg);
 }
 
