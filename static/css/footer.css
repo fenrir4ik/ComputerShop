@@ -27,7 +27,7 @@ footer {
 }
 
 .footerdiv ul li {
-    color: white;
+    color: black;
     font-size: 16px;
     min-width: 70px;
 }
@@ -51,27 +51,27 @@ footer {
 }
 
 .footerdiv .title {
-    color: white;
+    color: black;
     font-size: 16px;
     min-width: 70px;
 
 }
 
 .footerdiv ul li a {
-    color: white;
+    color: black;
     font-size: 13px;
-    -webkit-text-stroke: 0.5px white;
+    -webkit-text-stroke: 0.5px black;
     text-decoration: none;
 }
 
 .footerdiv ul li a:hover {
-    color: white;
+    color: black;
     cursor: pointer;
-    -webkit-text-stroke: 0.5px white;
+    -webkit-text-stroke: 0.5px black;
 }
 
 #copyright {
     margin-top: 20px;
-    color: white;
+    color: black;
     font-size: 12px;
 }

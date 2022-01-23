@@ -8,7 +8,7 @@
 
 .profile_outer {
     width: 80%;
-    margin-bottom: 200px;
+    margin-bottom: 50px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -25,22 +25,17 @@
 
 .profile_item label {
     font-size: 15px;
-    color: white;
+    color: black;
 }
 
 .profile_item .error {
     color: red;
     margin-top: 5px;
-    text-shadow: 1px 1px 1px black;
     font-size: 13px;
 }
 
 .profile_title {
     align-self: flex-start;
-}
-
-.title_data h4 {
-    text-shadow: 1px 1px 1px white;
 }
 
 .profile_title {
@@ -49,18 +44,17 @@
 
 .title_data h4,
 .title_data h6 {
-    color: white;
+    color: black;
 }
 
 .profile_main h6 {
     font-size: 18px;
-    color: white;
+    color: black;
 }
 
 .profile_main form > .profile_inner {
     padding: 20px;
     margin-bottom: 30px;
-    border: 1px solid white;
     width: 100%;
 }
 
@@ -74,10 +68,10 @@
 
 .profile_item input {
     height: 40px;
-    background-color: black;
-    color: white;
+    background-color: white;
+    color: black;
     border: 0;
-    border-bottom: 1px solid white;
+    border-bottom: 1px solid black;
     padding-left: 10px;
     padding-right: 10px;
     font-size: 14px;
@@ -102,11 +96,11 @@
 }
 
 .profile_item input::placeholder {
-    color: white;
+    color: black;
 }
 
 .profile_item input:focus::-webkit-input-placeholder {
-    color: black;
+    color: white;
 }
 
 .profile_title {
@@ -128,17 +122,17 @@
 
 .button_div a {
     text-decoration: none;
-    color: white;
-    text-shadow: 1px 1px 1px white;
+    color: black;
+    font-weight: bolder;
 }
 
 
 .button_div button {
-    color: white;
-    background-color: black;
+    color: black;
+    background-color: white;
     height: 40px;
     text-decoration: inherit;
-    border: 1px solid white;
+    border: 1px solid black;
     border-radius: 5px;
     text-align: center;
     width: 200px;
@@ -147,9 +141,9 @@
 
 .button_div button:hover {
     transform: scale(1.02);
-    color: black;
-    background: white;
-    border: 2px solid black;
+    color: white;
+    background: black;
+    border: 2px solid white;
 }
 
 

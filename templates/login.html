@@ -7,28 +7,31 @@
 
 {% block content %}
     <div class="form_content">
-        <div class="form_background"></div>
-        <div class="form_div">
-            <form class="custom_form" method="post">
-                {% csrf_token %}
-                <div class="form_title">
-                    <h2>Вход</h2>
-                    <h6>Войдите в систему используя почту указанную при регистрации</h6>
-                </div>
-                <div class="form_item">
-                    {{ form.username }}
-                </div>
-                <div class="form_item">
-                    {{ form.password }}
-                </div>
-                <div class="form_item">
-                    {% for key, error in form.errors.items %}
-                    <label class="form_error">{{ error }}</label>
-                {% endfor %}
-                </div>
-                <button id="login_btn">Войти</button>
-                <a id="secondary_link" href="{% url 'registration' %}">Зарегестрироваться</a>
-            </form>
+        <div class="form_outer">
+            <div class="form_div">
+                <form class="custom_form" method="post">
+                    <div class="login_title">
+                        <h2>Вход в личный аккаунт</h2>
+                        <h5>Войдите в систему используя почту указанную при регистрации.</h5>
+                    </div>
+                    {% csrf_token %}
+                    <div class="form_item">
+                        {{ form.username }}
+                    </div>
+                    <div class="form_item">
+                        {{ form.password }}
+                    </div>
+                    <div class="form_item">
+                        {% for key, error in form.errors.items %}
+                            <label class="form_error">{{ error }}</label>
+                        {% endfor %}
+                    </div>
+                    <button id="login_btn">Войти</button>
+                    <h6>Нет аккаунта? <a id="reg_link" href="{% url 'registration' %}">Создать аккаунт</a></h6>
+                </form>
+            </div>
+            <div class="form_img login_img">
+            </div>
         </div>
     </div>
 {% endblock %}

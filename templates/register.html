@@ -7,58 +7,61 @@
 
 {% block content %}
     <div class="form_content">
-        <div class="form_background"></div>
-        <div class="form_div">
-            <form method="post" class="custom_form" autocomplete="off">
-                {% csrf_token %}
-                <div class="form_title">
-                    <h2>Регистрация</h2>
-                    <h6>Заполните личные данные для регистрации на сайте</h6>
-                </div>
-                <div class="form_item">
-                    {{ form.name }}
-                    {% for error in form.name.errors %}
-                        <label>{{ error }}</label>
-                    {% endfor %}
-                </div>
-                <div class="form_item">
-                    {{ form.surname }}
-                    {% for error in form.surname.errors %}
-                        <label>{{ error }}</label>
-                    {% endfor %}
-                </div>
-                <div class="form_item">
-                    {{ form.patronymic }}
-                    {% for error in form.patronymic.errors %}
-                        <label>{{ error }}</label>
-                    {% endfor %}
-                </div>
-                <div class="form_item">
-                    {{ form.phone_number }}
-                    {% for error in form.phone_number.errors %}
-                        <label>{{ error }}</label>
-                    {% endfor %}
-                </div>
-                <div class="form_item">
-                    {{ form.email }}
-                    {% for error in form.email.errors %}
-                        <label>{{ error }}</label>
-                    {% endfor %}
-                </div>
-                <div class="form_item">
-                    {{ form.password1 }}
-                    {% for error in form.password1.errors %}
-                        <label>{{ error }}</label>
-                    {% endfor %}
-                </div>
-                <div class="form_item">
-                    {{ form.password2 }}
-                    {% for error in form.password2.errors %}
-                        <label>{{ error }}</label>
-                    {% endfor %}
-                </div>
-                <button id="register_btn">Зарегестрироваться</button>
-            </form>
+        <div class="form_outer">
+            <div class="form_img register_img">
+            </div>
+            <div class="form_div">
+                <form class="custom_form" method="post">
+                    <div class="register_title">
+                        <h2>Регистрация</h2>
+                        <h5>Заполните личные данные для регистрации на сайте</h5>
+                    </div>
+                    {% csrf_token %}
+                    <div class="form_item">
+                        {{ form.name }}
+                        {% for error in form.name.errors %}
+                            <label>{{ error }}</label>
+                        {% endfor %}
+                    </div>
+                    <div class="form_item">
+                        {{ form.surname }}
+                        {% for error in form.surname.errors %}
+                            <label>{{ error }}</label>
+                        {% endfor %}
+                    </div>
+                    <div class="form_item">
+                        {{ form.patronymic }}
+                        {% for error in form.patronymic.errors %}
+                            <label>{{ error }}</label>
+                        {% endfor %}
+                    </div>
+                    <div class="form_item">
+                        {{ form.phone_number }}
+                        {% for error in form.phone_number.errors %}
+                            <label>{{ error }}</label>
+                        {% endfor %}
+                    </div>
+                    <div class="form_item">
+                        {{ form.email }}
+                        {% for error in form.email.errors %}
+                            <label>{{ error }}</label>
+                        {% endfor %}
+                    </div>
+                    <div class="form_item">
+                        {{ form.password1 }}
+                        {% for error in form.password1.errors %}
+                            <label>{{ error }}</label>
+                        {% endfor %}
+                    </div>
+                    <div class="form_item">
+                        {{ form.password2 }}
+                        {% for error in form.password2.errors %}
+                            <label>{{ error }}</label>
+                        {% endfor %}
+                    </div>
+                    <button id="register_btn">Зарегистрироваться</button>
+                </form>
+            </div>
         </div>
     </div>
 {% endblock %}

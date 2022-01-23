@@ -16,38 +16,46 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    box-shadow: 0 0 2px 0 rgb(0 0 0), 0 2px 6px 0 rgb(0 0 0);
+    padding: 10px;
+    background: white;
+    transition: 0.5s;
+}
+
+.main_products > div:hover {
+    transform: scale(1.1);
+    transition: 0.5s;
 }
 
 .card_img {
-    width: 250px;
-    height: 140px;
+    width: 100%;
     border-radius: 10px;
     align-self: center;
-    transition: 0.3s;
 }
 
-.card_img:hover {
-    transform: scale(1.05);
-    transition: 0.3s;
+.main_products > div a {
+    text-decoration: none;
+    cursor: pointer;
 }
 
 .main_products p {
-    width: 250px;
+    width: 100%;
     height: 40px;
     font-size: 14px;
     align-self: center;
     margin-top: 10px;
-    color: white;
+    color: black;
     margin-bottom: 10px;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
+    text-decoration: none;
 }
 
 .inner_card {
-    width: 250px;
+    width: 100%;
     align-self: center;
     display: flex;
     flex-direction: row;
@@ -57,7 +65,7 @@
 .price_comb h6,
 .price_comb h5 {
     margin: 0;
-    color: white;
+    color: black;
 }
 
 .price_comb h6 {
@@ -69,22 +77,15 @@
 }
 
 .inner_card > a {
-    color: white;
-    height: 40px;
-    width: 100px;
-    text-decoration: inherit;
-    border: 1px solid white;
-    border-radius: 20px;
-    text-align: center;
-    padding-top: 5px;
-    margin-top: 5px;
+    background: url('../img/add-to-cart.png') no-repeat center center;
+    background-size: cover;
+    width: 40px;
+    height: auto;
+    transition: 0.5s;
 }
 
 .inner_card > a:hover {
-    transform: scale(1.02);
-    color: black;
-    background: white;
-    border: 2px solid black;
+    transform: scale(1.2);
 }
 
 @media (max-width: 1125px) {
@@ -101,7 +102,7 @@
 
 .sort_list {
     list-style: none;
-    color: white;
+    color: black;
     float: right;
     display: flex;
     flex-direction: row;
@@ -110,7 +111,7 @@
 
 .sort_link {
     text-decoration: none;
-    color: white;
+    color: black;
 }
 
 .sort_title {
@@ -118,8 +119,8 @@
 }
 
 .sort_link:hover {
-    color: white;
-    -webkit-text-stroke: 0.5px white;
+    color: black;
+    -webkit-text-stroke: 0.5px black;
 }
 
 
@@ -134,4 +135,95 @@
 .left_panel img {
     padding-bottom: -20px;
     width: 30px;
+}
+
+.body_outer {
+    margin-top: 20px;
+}
+
+/* SEARCH UNDER NAVIGATION */
+
+.search_div {
+    height: 350px;
+    width: 100%;
+    background: url('../img/home-img.png') no-repeat center;
+    background-size: cover;
+}
+
+@media (max-width: 750px) {
+    .search_div {
+        height: 260px;
+    }
+}
+
+#search {
+    position: relative;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: all 1s;
+    width: 35%;
+    min-width: 170px;
+}
+
+@media screen and (max-width: 777px) {
+    #search {
+        width: 50%;
+    }
+}
+
+#search input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 43px;
+    line-height: 30px;
+    outline: 0;
+    border: 0;
+    display: block;
+    font-size: 1em;
+    border-radius: 20px;
+    padding: 0 20px;
+}
+
+.main-search {
+    padding: 10px;
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    top: 4px;
+    right: -10px;
+    color: black;
+    text-align: center;
+    background: url('../img/search.png') no-repeat;
+    background-size: 35px;
+    border: 0;
+}
+
+#searchline {
+    opacity: 0.8;
+    background: white;
+    cursor: pointer;
+}
+
+#searchline:focus {
+    cursor: initial;
+}
+
+#searchline::-webkit-input-placeholder {
+    color: black;
+    opacity: 1;
+}
+
+@media screen and (max-width: 750px) {
+    #search input {
+        font-size: 0.9em;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    #search input {
+        font-size: 0.8em;
+    }
 }
