@@ -17,10 +17,6 @@
         left: auto;
     }
 
-    .dropdown-menu > li:hover {
-        background-color: #f1f1f1
-    }
-
     .dropdown-menu > li:hover > .submenu {
         display: block;
     }
@@ -61,15 +57,20 @@ nav {
 }
 
 .dropdown-menu {
-    background: black;
+    background: #3E6190;
 }
 
 .dropdown-menu * {
     color: white;
 }
 
+.dropdown-item:hover {
+    background-color: #001540;
+    color: white;
+}
+
 .dropdown-menu *:active {
-    color: black;
-    background: white;
+    color: white;
+    background: #001540;
 }
 
