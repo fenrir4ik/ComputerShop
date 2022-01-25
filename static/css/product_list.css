@@ -1,10 +1,10 @@
 .main_products {
     width: 95%;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
 }
 
-@media screen and (max-width: 950px) {
+@media screen and (max-width: 992px) {
     .main_products {
         width: 100%;
     }
@@ -16,48 +16,94 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    border: 1px solid #001540;
+    border-radius: 10px;
+    padding: 10px;
+    background: white;
 }
 
 .card_img {
-    width: 250px;
-    height: 140px;
+    width: 100%;
     border-radius: 10px;
     align-self: center;
-    transition: 0.3s;
-}
-
-.card_img:hover {
-    transform: scale(1.05);
-    transition: 0.3s;
 }
 
 .main_products p {
-    width: 250px;
-    height: 40px;
-    font-size: 14px;
+    width: 100%;
+    height: 46px;
+    font-size: 16px;
     align-self: center;
     margin-top: 10px;
-    color: white;
+    color: black;
     margin-bottom: 10px;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
+    text-decoration: none;
 }
 
 .inner_card {
-    width: 250px;
+    width: 100%;
     align-self: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.card_buttons {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
 }
 
+.main_products > div a,
+.card_buttons a {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.card_buttons a {
+    border-radius: 5px;
+    width: 100px;
+    text-align: center;
+    height: 40px;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+@media screen and (max-width: 340px) {
+    .card_buttons a {
+        width: 90px;
+    }
+}
+
+.main_products > div a:hover {
+    color: cadetblue;
+}
+
+.details_btn {
+    border: 1px solid #001540;
+    background: white;
+    color: #001540;
+    padding-top: 7px;
+}
+
+.add_to_cart_btn {
+    border: 4px solid #001540;
+    background: #001540;
+    color: white;
+    padding-top: 3px;
+}
+
+.card_buttons {
+    margin-top: 10px;
+}
+
 .price_comb h6,
 .price_comb h5 {
     margin: 0;
-    color: white;
+    color: black;
 }
 
 .price_comb h6 {
@@ -66,25 +112,6 @@
 
 .price_comb h5 {
     font-weight: bolder;
-}
-
-.inner_card > a {
-    color: white;
-    height: 40px;
-    width: 100px;
-    text-decoration: inherit;
-    border: 1px solid white;
-    border-radius: 20px;
-    text-align: center;
-    padding-top: 5px;
-    margin-top: 5px;
-}
-
-.inner_card > a:hover {
-    transform: scale(1.02);
-    color: black;
-    background: white;
-    border: 2px solid black;
 }
 
 @media (max-width: 1125px) {
@@ -101,7 +128,7 @@
 
 .sort_list {
     list-style: none;
-    color: white;
+    color: black;
     float: right;
     display: flex;
     flex-direction: row;
@@ -110,7 +137,7 @@
 
 .sort_link {
     text-decoration: none;
-    color: white;
+    color: black;
 }
 
 .sort_title {
@@ -118,8 +145,8 @@
 }
 
 .sort_link:hover {
-    color: white;
-    -webkit-text-stroke: 0.5px white;
+    color: black;
+    -webkit-text-stroke: 0.5px black;
 }
 
 
@@ -134,4 +161,96 @@
 .left_panel img {
     padding-bottom: -20px;
     width: 30px;
+}
+
+.body_outer {
+    margin-top: 20px;
+}
+
+/* SEARCH UNDER NAVIGATION */
+
+.search_div {
+    height: 350px;
+    width: 100%;
+    background: url('../img/home-img.png') no-repeat center;
+    background-size: cover;
+}
+
+@media (max-width: 750px) {
+    .search_div {
+        height: 260px;
+    }
+}
+
+#search {
+    position: relative;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: all 1s;
+    width: 35%;
+    min-width: 170px;
+}
+
+@media screen and (max-width: 777px) {
+    #search {
+        width: 50%;
+    }
+}
+
+#search input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 33px;
+    line-height: 30px;
+    outline: 0;
+    border: 0;
+    display: block;
+    font-size: 1em;
+    border-radius: 15px;
+    padding: 0 20px;
+    padding-bottom: 2px;
+}
+
+.main-search {
+    padding: 10px;
+    width: 25px;
+    height: 25px;
+    position: absolute;
+    top: -1px;
+    right: 15px;
+    color: black;
+    text-align: center;
+    background: url('../img/search.png') no-repeat;
+    background-size: 33px;
+    border: 0;
+}
+
+#searchline {
+    opacity: 0.8;
+    background: white;
+    cursor: pointer;
+}
+
+#searchline:focus {
+    cursor: initial;
+}
+
+#searchline::-webkit-input-placeholder {
+    color: black;
+    opacity: 1;
+}
+
+@media screen and (max-width: 750px) {
+    #search input {
+        font-size: 0.9em;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    #search input {
+        font-size: 0.8em;
+    }
 }

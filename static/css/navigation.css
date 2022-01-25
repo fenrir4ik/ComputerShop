@@ -17,27 +17,14 @@
         left: auto;
     }
 
-    .dropdown-menu > li:hover {
-        background-color: #f1f1f1
-    }
-
     .dropdown-menu > li:hover > .submenu {
         display: block;
     }
 }
 
-@media (max-width: 991px) {
-    .dropdown-menu .dropdown-menu {
-        margin-left: 0.7rem;
-        margin-right: 0.7rem;
-        margin-bottom: .5rem;
-    }
-}
-
 nav {
-    background: black;
+    background: #001540;
 }
-
 
 .navbar-dark .navbar-nav .nav-link {
     color: white;
@@ -70,102 +57,20 @@ nav {
 }
 
 .dropdown-menu {
-    background: black;
+    background: #3E6190;
 }
 
 .dropdown-menu * {
     color: white;
 }
 
+.dropdown-item:hover {
+    background-color: #001540;
+    color: white;
+}
+
 .dropdown-menu *:active {
-    color: black;
-    background: white;
+    color: white;
+    background: #001540;
 }
-
-/* SEARCH UNDER NAVIGATION */
-
-.outer_search {
-    position: absolute;
-    height: 250px;
-    width: 100%;
-    background: url('../img/home-img.png') no-repeat center;
-    background-size: cover;
-    filter: blur(5px);
-    -webkit-filter: blur(5px);
-    transform: scale(1.05);
-}
-
-.search_div {
-    height: 300px;
-    width: 100%;
-}
-
-#search {
-    position: relative;
-    top: 43%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    transition: all 1s;
-    width: 35%;
-    height: 50px;
-    min-width: 170px;
-    background: white;
-    box-sizing: border-box;
-    border-radius: 20px;
-    border: 4px solid white;
-    padding: 5px;
-    cursor: pointer;
-}
-
-@media screen and (max-width: 777px) {
-    #search {
-        width: 50%;
-    }
-}
-
-#search input {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 42.5px;
-    line-height: 30px;
-    outline: 0;
-    border: 0;
-    display: block;
-    font-size: 1em;
-    border-radius: 20px;
-    padding: 0 20px;
-}
-
-.main-search {
-    padding: 10px;
-    width: 50px;
-    height: 50px;
-    position: absolute;
-    top: 4px;
-    right: -10px;
-    color: black;
-    text-align: center;
-    background: url('../img/search.png') no-repeat;
-    background-size: 35px;
-    border: 0;
-}
-
-#searchline::placeholder {
-    color: black;
-}
-
-@media screen and (max-width: 750px) {
-    #search input {
-        font-size: 0.9em;
-    }
-}
-
-@media screen and (max-width: 600px) {
-    #search input {
-        font-size: 0.8em;
-    }
-}
-
 
