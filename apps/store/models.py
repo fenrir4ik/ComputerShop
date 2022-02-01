@@ -39,12 +39,18 @@ class Product(models.Model):
 
 
 class ProductImage(models.Model):
+    class Meta:
+        db_table = 'product_image'
+
     image = models.ImageField(upload_to='product')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     is_main = models.BooleanField(default=False)
 
 
 class ProductPrice(models.Model):
+    class Meta:
+        db_table = 'product_price'
+
     price = models.DecimalField(decimal_places=2, max_digits=11, validators=[MinValueValidator(0.01)])
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     date_actual = models.DateField(auto_now_add=True)
