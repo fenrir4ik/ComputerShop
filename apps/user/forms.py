@@ -110,4 +110,3 @@ class ProfileChangeForm(UserBaseForm, forms.ModelForm):
         password2 = self.cleaned_data.get("password2")
         if password1 and password2 and password1 != password2:
             self.add_error('password2', 'Пароли не совпадают')
-

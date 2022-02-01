@@ -2,15 +2,25 @@
 {% load static %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{% static 'css/image_form.css' %}"/>
 {% endblock %}
 
 {% block content %}
     <div class="container">
-        <form method="post">
+        <form id="form-container" method="post">
             {% csrf_token %}
             {{ form.as_p }}
+            {{ form.image_formset.management_form }}
+            {% for form in form.image_formset %}
+                <div class="img-form">
+                    {{ form.as_p }}
+                </div>
+            {% endfor %}
+            <button id="add-img-button" type="button">Добавить еще одно изображение</button>
             <button class="btn btn-primary" type="submit">Добавить</button>
         </form>
     </div>
+{% endblock %}
+
+{% block javascript %}
+    <script src="{% static 'js/multiple_image.js' %}"></script>
 {% endblock %}
