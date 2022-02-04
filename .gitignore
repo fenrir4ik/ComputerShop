@@ -1,6 +1,7 @@
 media/product/*
-!media/product/default.png
+!media/product/default_product.png
 *.pyc
 .idea/
 __pycache__/
 env/
+staticdata/

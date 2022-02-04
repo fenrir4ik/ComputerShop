@@ -1,0 +1,260 @@
+.title_image {
+    position: relative;
+    top: -80px;
+    margin-bottom: -65px;
+    width: 100px;
+    height: 100px;
+    margin-left: -15px;
+    background: url('../img/profile.png') no-repeat;
+    background-size: cover;
+    border-radius: 50%;
+    border: 1px solid #001540;
+    box-shadow: 0 0 2px 0 rgb(0 0 0), 0 2px 6px 0 rgb(0 0 0);
+}
+
+.profile_outer {
+    width: 80%;
+    margin-bottom: 50px;
+    margin-top: 70px;
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    padding: 30px;
+    box-shadow: 0 0 2px 0 rgb(0 0 0), 0 2px 6px 0 rgb(0 0 0);
+}
+
+.profile_outer > div {
+    align-self: center;
+}
+
+.profile_main {
+    width: 100%;
+}
+
+.profile_item {
+    display: flex;
+    flex-direction: column;
+}
+
+.profile_item label {
+    font-size: 15px;
+    color: #001540;
+}
+
+.profile_item .error {
+    color: red;
+    margin-top: 5px;
+    font-size: 13px;
+}
+
+.title_data h4,
+.title_data h6 {
+    color: #001540;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.title_data h4 {
+    margin-right: 5px;
+    max-width: 250px;
+}
+
+.title_data h6 {
+    max-width: 250px;
+}
+
+.name_surname {
+    display: flex;
+    flex-direction: row;
+}
+
+.profile_main h6 {
+    font-size: 20px;
+    color: #001540;
+    margin-top: 30px;
+}
+
+.profile_main form > .profile_inner {
+    width: 100%;
+}
+
+.personal_data,
+.contact_data,
+.password_data {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.profile_item input {
+    height: 40px;
+    background-color: white;
+    color: #001540;
+    border: 1px solid #001540;
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 14px;
+}
+
+.personal_data input,
+.personal_data .error {
+    width: 320px;
+}
+
+.contact_data input,
+.password_data input,
+.contact_data .error,
+.password_data .error {
+    width: 440px;
+}
+
+.profile_item input::placeholder {
+    color: black;
+}
+
+.profile_item input:focus::-webkit-input-placeholder {
+    color: white;
+}
+
+.profile_title {
+    display: flex;
+    flex-direction: row;
+}
+
+.title_data {
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
+
+.button_div {
+    width: 100%;
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+}
+
+.button_div a {
+    text-decoration: none;
+    color: black;
+    font-weight: bolder;
+}
+
+.button_div button {
+    background-color: initial;
+    background-image: linear-gradient(-180deg, #3E6190, #001540);
+    border-radius: 5px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0 2px 4px;
+    color: #FFFFFF;
+    cursor: pointer;
+    display: inline-block;
+    font-family: Inter, -apple-system, system-ui, Roboto, "Helvetica Neue", Arial, sans-serif;
+    height: 44px;
+    line-height: 44px;
+    outline: 0;
+    overflow: hidden;
+    padding: 0 20px;
+    pointer-events: auto;
+    position: relative;
+    text-align: center;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+    vertical-align: top;
+    white-space: nowrap;
+    width: 100%;
+    z-index: 9;
+    border: 0;
+    margin-top: 30px;
+}
+
+.button_div button:hover {
+    background: #001540;
+}
+
+@media screen and (max-width: 1400px) {
+    .personal_data input,
+    .personal_data .error {
+        width: 250px;
+    }
+
+    .contact_data input,
+    .password_data input,
+    .contact_data .error,
+    .password_data .error {
+        width: 370px;
+    }
+}
+
+@media screen and (max-width: 1100px) {
+    .personal_data input,
+    .personal_data .error {
+        width: 200px;
+    }
+
+    .contact_data input,
+    .password_data input,
+    .contact_data .error,
+    .password_data .error {
+        width: 320px;
+    }
+}
+
+@media screen and (max-width: 950px) {
+    .profile_outer,
+    .personal_data input,
+    .contact_data input,
+    .password_data input,
+    .personal_data .error,
+    .contact_data .error,
+    .password_data .error {
+        width: 100%;
+    }
+
+    .personal_data,
+    .contact_data,
+    .password_data {
+        flex-direction: column;
+    }
+
+    .profile_item {
+        margin-bottom: 20px;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .button_div {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .button_div a {
+        display: none;
+    }
+}
+
+.left_panel img {
+    padding-bottom: -20px;
+    width: 30px;
+}
+
+.messages_div {
+    width: 100%;
+}
+
+.profile_header {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.messages_div {
+    margin-bottom: -30px;
+}
+
+@media screen and (max-width: 525px) {
+    .profile_header {
+        display: initial;
+    }
+}

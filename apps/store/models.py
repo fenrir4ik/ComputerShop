@@ -31,7 +31,7 @@ class Product(models.Model):
     amount = models.PositiveIntegerField(default=0)
     category = models.ForeignKey(Category, on_delete=models.RESTRICT)
     vendor = models.ForeignKey(Vendor, on_delete=models.RESTRICT)
-    date_created = models.DateField(auto_now_add=True)
+    date_created = models.DateTimeField(auto_now_add=True)
     description = models.TextField()
 
     def __str__(self):
@@ -42,7 +42,7 @@ class ProductImage(models.Model):
     class Meta:
         db_table = 'product_image'
 
-    image = models.ImageField(upload_to='product')
+    image = models.ImageField(upload_to='product', default='product/default_product.png', blank=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     is_main = models.BooleanField(default=False)
 
@@ -53,4 +53,4 @@ class ProductPrice(models.Model):
 
     price = models.DecimalField(decimal_places=2, max_digits=11, validators=[MinValueValidator(0.01)])
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    date_actual = models.DateField(auto_now_add=True)
+    date_actual = models.DateTimeField(auto_now_add=True)
