@@ -43,142 +43,26 @@
                 {#                </li>#}
                 {#            </ul>#}
                 <div class="main_products">
-                    <div>
-                        <a href="#">
-                            <img class="card_img" src='https://i.ibb.co/8s4x9sK/1111.png' alt=""/>
-                            <p>Asus PCI-Ex GeForce GTX 1660 Ti sus PCI-Ex GeForce GTX 1660 Ti sus PCI-Ex GeForce GTX
-                                1660 Ti sus PCI-Ex GeForce GTX 1660 Ti </p>
-                        </a>
-                        <div class="inner_card">
-                            <div class="price_comb">
-                                <h6>цена</h6>
-                                <h5>32000 ₴</h5>
-                            </div>
-                            <div class="card_buttons">
-                                <a class='details_btn' href="#">Детали</a>
-                                <a class='add_to_cart_btn' href="#">В корзину</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <a href="#">
-                            <img class="card_img" src='https://i.ibb.co/8s4x9sK/1111.png' alt=""/>
-                            <p>Asus PCI-Ex GeForce GTX 1660 Ti sus PCI-Ex GeForce GTX 1660 Ti sus PCI-Ex GeForce GTX
-                                1660 Ti sus PCI-Ex GeForce GTX 1660 Ti </p>
-                        </a>
-                        <div class="inner_card">
-                            <div class="price_comb">
-                                <h6>цена</h6>
-                                <h5>32000 ₴</h5>
-                            </div>
-                            <div class="card_buttons">
-                                <a class='details_btn' href="#">Детали</a>
-                                <a class='add_to_cart_btn' href="#">В корзину</a>
+                    {% for product in products %}
+                        <div>
+                            <a href="#">
+                                <img class="card_img"
+                                     src='{% get_media_prefix %}{{ product.image }}'
+                                     alt=""/>
+                                <p>{{ product.name }}</p>
+                            </a>
+                            <div class="inner_card">
+                                <div class="price_comb">
+                                    <h6>цена</h6>
+                                    <h5>{{ product.price }} ₴</h5>
+                                </div>
+                                <div class="card_buttons">
+                                    <a class='details_btn' href="#">Детали</a>
+                                    <a class='add_to_cart_btn' href="#">В корзину</a>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div>
-                        <a href="#">
-                            <img class="card_img" src='https://i.ibb.co/8s4x9sK/1111.png' alt=""/>
-                            <p>Asus PCI-Ex GeForce GTX 1660 Ti sus PCI-Ex GeForce GTX 1660 Ti sus PCI-Ex GeForce GTX
-                                1660 Ti sus PCI-Ex GeForce GTX 1660 Ti </p>
-                        </a>
-                        <div class="inner_card">
-                            <div class="price_comb">
-                                <h6>цена</h6>
-                                <h5>32000 ₴</h5>
-                            </div>
-                            <div class="card_buttons">
-                                <a class='details_btn' href="#">Детали</a>
-                                <a class='add_to_cart_btn' href="#">В корзину</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <a href="#">
-                            <img class="card_img" src='https://i.ibb.co/8s4x9sK/1111.png' alt=""/>
-                            <p>Asus PCI-Ex GeForce GTX 1660 Ti sus PCI-Ex GeForce GTX 1660 Ti sus PCI-Ex GeForce GTX
-                                1660 Ti sus PCI-Ex GeForce GTX 1660 Ti </p>
-                        </a>
-                        <div class="inner_card">
-                            <div class="price_comb">
-                                <h6>цена</h6>
-                                <h5>32000 ₴</h5>
-                            </div>
-                            <div class="card_buttons">
-                                <a class='details_btn' href="#">Детали</a>
-                                <a class='add_to_cart_btn' href="#">В корзину</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <a href="#">
-                            <img class="card_img" src='https://i.ibb.co/8s4x9sK/1111.png' alt=""/>
-                            <p>Asus PCI-Ex GeForce GTX 1660 Ti sus PCI-Ex GeForce GTX 1660 Ti sus PCI-Ex GeForce GTX
-                                1660 Ti sus PCI-Ex GeForce GTX 1660 Ti </p>
-                        </a>
-                        <div class="inner_card">
-                            <div class="price_comb">
-                                <h6>цена</h6>
-                                <h5>32000 ₴</h5>
-                            </div>
-                            <div class="card_buttons">
-                                <a class='details_btn' href="#">Детали</a>
-                                <a class='add_to_cart_btn' href="#">В корзину</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <a href="#">
-                            <img class="card_img" src='https://i.ibb.co/8s4x9sK/1111.png' alt=""/>
-                            <p>Asus PCI-Ex GeForce GTX 1660 Ti sus PCI-Ex GeForce GTX 1660 Ti sus PCI-Ex GeForce GTX
-                                1660 Ti sus PCI-Ex GeForce GTX 1660 Ti </p>
-                        </a>
-                        <div class="inner_card">
-                            <div class="price_comb">
-                                <h6>цена</h6>
-                                <h5>32000 ₴</h5>
-                            </div>
-                            <div class="card_buttons">
-                                <a class='details_btn' href="#">Детали</a>
-                                <a class='add_to_cart_btn' href="#">В корзину</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <a href="#">
-                            <img class="card_img" src='https://i.ibb.co/8s4x9sK/1111.png' alt=""/>
-                            <p>Asus PCI-Ex GeForce GTX 1660 Ti sus PCI-Ex GeForce GTX 1660 Ti sus PCI-Ex GeForce GTX
-                                1660 Ti sus PCI-Ex GeForce GTX 1660 Ti </p>
-                        </a>
-                        <div class="inner_card">
-                            <div class="price_comb">
-                                <h6>цена</h6>
-                                <h5>32000 ₴</h5>
-                            </div>
-                            <div class="card_buttons">
-                                <a class='details_btn' href="#">Детали</a>
-                                <a class='add_to_cart_btn' href="#">В корзину</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <a href="#">
-                            <img class="card_img" src='https://i.ibb.co/8s4x9sK/1111.png' alt=""/>
-                            <p>Asus PCI-Ex GeForce GTX 1660 Ti sus PCI-Ex GeForce GTX 1660 Ti sus PCI-Ex GeForce GTX
-                                1660 Ti sus PCI-Ex GeForce GTX 1660 Ti </p>
-                        </a>
-                        <div class="inner_card">
-                            <div class="price_comb">
-                                <h6>цена</h6>
-                                <h5>32000 ₴</h5>
-                            </div>
-                            <div class="card_buttons">
-                                <a class='details_btn' href="#">Детали</a>
-                                <a class='add_to_cart_btn' href="#">В корзину</a>
-                            </div>
-                        </div>
-                    </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>

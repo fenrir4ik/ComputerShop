@@ -22,9 +22,16 @@ class ProductAddView(CreateView):
 
 
 class ProductsListAdminView(ListView):
+    """
+    View is used for displaying products list in admin-panel
+    """
     template_name = 'admin_panel/products_list.html'
     context_object_name = 'products'
+    paginate_by = 20
+
+    #Filters needed
 
     def get_queryset(self):
         queryset = ProductManager().get_products_list
-        return queryset.values('id', 'image', 'name', 'price', 'amount', 'vendor', 'category', 'date_created')
+        return queryset.values('id', 'image', 'name', 'price', 'amount', 'vendor__name', 'category__name',
+                               'date_created')

@@ -36,8 +36,9 @@ class UserBaseForm(forms.Form):
 
 
 class RegistrationForm(UserBaseForm, UserCreationForm):
-    """Form is used for user registration"""
-
+    """
+    Form is used for user registration
+    """
     class Meta:
         model = User
         fields = ('email', 'phone_number', 'name', 'surname', 'patronymic', 'password1', 'password2')
@@ -65,8 +66,9 @@ class RegistrationForm(UserBaseForm, UserCreationForm):
 
 
 class LoginForm(AuthenticationForm):
-    """Form is used to authorize user"""
-
+    """
+    Form is used to authorize user
+    """
     def __init__(self, *args, **kwargs):
         """Changes invalid_login error message"""
         super(LoginForm, self).__init__(*args, **kwargs)
@@ -76,14 +78,20 @@ class LoginForm(AuthenticationForm):
 
 
 class ProfileChangeForm(UserBaseForm, forms.ModelForm):
-    """Form is used to change user profile information"""
+    """
+    Form is used to change user profile information
+    """
+    password1 = forms.CharField(validators=[validate_password], widget=forms.PasswordInput(), required=False)
+    password2 = forms.CharField(widget=forms.PasswordInput(), required=False)
 
     class Meta:
         model = User
         fields = ('name', 'surname', 'patronymic', 'email', 'phone_number')
 
-    password1 = forms.CharField(validators=[validate_password], widget=forms.PasswordInput(), required=False)
-    password2 = forms.CharField(widget=forms.PasswordInput(), required=False)
+    def __init__(self, *args, **kwargs):
+        """Fixes password autocomplete when profile change form loads"""
+        super().__init__(*args, **kwargs)
+        self.fields['password1'].widget.attrs['autocomplete'] = 'new-password'
 
     def clean_email(self):
         """Replace validation error message when user with given email address already exists"""

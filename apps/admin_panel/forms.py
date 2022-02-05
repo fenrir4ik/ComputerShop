@@ -1,4 +1,6 @@
 from django import forms
+from django.core.exceptions import ValidationError
+from django.core.files.images import get_image_dimensions
 from django.core.validators import MinValueValidator
 from django.forms import formset_factory
 
@@ -6,6 +8,9 @@ from apps.store.models import Product, ProductImage, ProductPrice
 
 
 class ImageForm(forms.ModelForm):
+    """
+    Form is used in ImageFormSets to add multiple images to the product
+    """
     class Meta:
         model = ProductImage
         fields = ['image']
@@ -16,11 +21,23 @@ class ImageForm(forms.ModelForm):
         for visible_field in self.visible_fields():
             visible_field.field.widget.attrs['class'] = 'form-control'
 
+    def clean_image(self):
+        image = self.cleaned_data.get('image')
+        width, height = get_image_dimensions(image)
+        if width == height:
+            return image
+        else:
+            raise ValidationError("Изображение должно быть квадратным")
 
+
+# FormSet for product images with maximum amount of 3
 ImageFormSet = formset_factory(ImageForm, extra=1, max_num=3)
 
 
 class AddProductForm(forms.ModelForm):
+    """
+    Form is used for product creation
+    """
     price = forms.DecimalField(validators=[MinValueValidator(0.01)], decimal_places=2, max_digits=11)
 
     class Meta:
