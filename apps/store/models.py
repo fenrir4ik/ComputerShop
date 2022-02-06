@@ -47,7 +47,7 @@ class ProductImage(models.Model):
     class Meta:
         db_table = 'product_image'
 
-    image = models.ImageField(upload_to='product', default=DEFAULT_PRODUCT_IMAGE, blank=True)
+    image = models.ImageField(upload_to='product', default=DEFAULT_PRODUCT_IMAGE, blank=False)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     is_main = models.BooleanField(default=False)
 

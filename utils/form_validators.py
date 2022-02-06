@@ -27,8 +27,8 @@ def phone_number_validator(phone_number):
         'Номер телефона должен быть длинной в 12 символов и начинаться с 380.')(phone_number)
 
 
-def square_image_validator(image):
-    width, height = get_image_dimensions(image)
+def square_image_validator(image, close=False):
+    width, height = get_image_dimensions(image, close=close)
     if width == height:
         return image
     else:

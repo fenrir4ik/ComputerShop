@@ -20,7 +20,9 @@
             {{ form.image_formset.management_form }}
             {% for image_form in form.image_formset %}
                 <div class="image_formset">
-                    <img src="{{ image_form.instance.image.url }}" width="200" height="200" alt="">
+                    {% if image_form.instance.image %}
+                        <img src="{{ image_form.instance.image.url }}" width="200" height="200" alt="">
+                    {% endif %}
                     {{ image_form.as_p }}
                 </div>
             {% endfor %}

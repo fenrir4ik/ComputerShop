@@ -4,7 +4,7 @@ from django.core.validators import MinValueValidator
 from django.forms import formset_factory, inlineformset_factory, BaseInlineFormSet
 
 from apps.store.models import Product, ProductImage
-from services.product_service import ProductCreateService
+from services.product_service import ProductDataManager
 from utils.form_validators import square_image_validator
 
 
@@ -12,6 +12,7 @@ class ImageForm(forms.ModelForm):
     """
     Form is used in ImageFormSets to add multiple images to the product
     """
+    image = forms.ImageField(required=False, validators=[square_image_validator])
 
     class Meta:
         model = ProductImage
@@ -20,7 +21,6 @@ class ImageForm(forms.ModelForm):
     # CSS REPLACE
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['image'].validators.append(square_image_validator)
         for visible_field in self.visible_fields():
             visible_field.field.widget.attrs['class'] = 'form-control'
 
@@ -52,22 +52,28 @@ class ProductAddForm(forms.ModelForm):
 
     def save(self, commit=True):
         product = super().save(commit=commit)
-        product_service = ProductCreateService()
-        product_service.save_product_price(product, self.cleaned_data.get('price'))
-        product_service.process_product_images(product, self.image_formset)
+        product_data_manager = ProductDataManager(product)
+        product_data_manager.add_additional_data(self.cleaned_data.get('price'), self.image_formset)
         return product
 
 
 class ProductImageUpdateInlineFormSet(BaseInlineFormSet):
     def clean(self):
         super().clean()
+        some_form_is_invalid = False
         for form in self.forms:
-            if form.cleaned_data and form.cleaned_data.get('image'):
+            # validate image if it has changed and delete checkbox is not True
+            if 'image' in form.changed_data and 'delete' not in form.changed_data:
                 try:
                     square_image_validator(form.cleaned_data.get('image'))
                 except ValidationError as ex:
-                    form.instance = form.cleaned_data.get('id')
                     form.add_error('image', ex.message)
+                    some_form_is_invalid = True
+        # if some form has changed make form.instance as pk
+        # (prevent form.image and other data disappearing)
+        if some_form_is_invalid:
+            for form in self.forms:
+                form.instance = form.cleaned_data.get('id')
 
 
 # FormSet for updating product images
