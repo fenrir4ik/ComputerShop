@@ -1,6 +1,6 @@
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models.signals import post_delete, post_save
+from django.db.models.signals import post_delete
 from django.dispatch import receiver
 
 from computershop.settings import DEFAULT_PRODUCT_IMAGE
@@ -52,7 +52,7 @@ class ProductImage(models.Model):
     is_main = models.BooleanField(default=False)
 
     def __str__(self):
-        return f'{self.image}, {self.product}, is_main: {self.is_main}'
+        return f'id={self.pk} {self.image}, {self.product}, is_main: {self.is_main}'
 
 
 class ProductPrice(models.Model):

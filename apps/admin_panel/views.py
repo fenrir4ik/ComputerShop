@@ -5,7 +5,7 @@ from django.views.generic import CreateView, ListView, DeleteView, UpdateView
 
 from apps.admin_panel.forms import ProductAddForm, ProductUpdateForm
 from apps.store.models import Product
-from services.product_service import ProductRetrieveService, ProductDestroyService
+from services import product_services
 
 
 class ProductAddView(CreateView):
@@ -34,10 +34,11 @@ class ProductsListAdminView(ListView):
     template_name = 'admin_panel/products_list.html'
     context_object_name = 'products'
     paginate_by = 20
-    #Filters needed
+
+    # Filters needed
 
     def get_queryset(self):
-        queryset = ProductRetrieveService().get_products_list()
+        queryset = product_services.ProductRetrieveService().get_products_list()
         return queryset.values('id', 'image', 'name', 'price', 'amount', 'vendor__name', 'category__name',
                                'date_created').order_by('pk')
 
@@ -53,7 +54,7 @@ class ProductDeleteView(DeleteView):
 
     def form_valid(self, form):
         success_url = self.get_success_url()
-        ProductDestroyService().delete_product(self.object)
+        product_services.ProductDestroyService(self.object).delete_product()
         return HttpResponseRedirect(success_url)
 
 
@@ -62,7 +63,7 @@ class ProductUpdateView(UpdateView):
     form_class = ProductUpdateForm
 
     def get_queryset(self):
-        return ProductRetrieveService().get_products_list(include_price=True, include_image=False)
+        return product_services.ProductRetrieveService().get_products_list(include_price=True, include_image=False)
 
     def get_success_url(self):
         return reverse('update product', kwargs={'pk': self.object.pk})

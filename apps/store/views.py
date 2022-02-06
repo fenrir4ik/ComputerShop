@@ -1,6 +1,6 @@
 from django.views.generic import ListView
 
-from services.product_service import ProductRetrieveService
+from services import product_services
 
 
 class IndexView(ListView):
@@ -10,5 +10,5 @@ class IndexView(ListView):
 
     def get_queryset(self):
         # amount and date_created not used
-        queryset = ProductRetrieveService().get_products_list()
+        queryset = product_services.ProductRetrieveService().get_products_list()
         return queryset.values('id', 'image', 'name', 'price', 'amount', 'date_created')

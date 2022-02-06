@@ -31,7 +31,7 @@
                     <td>{{ product.category__name }}</td>
                     <td>{{ product.date_created }}</td>
                     <td>
-                        <button class="btn btn-primary" type="submit">Изменить</button>
+                        <a class="btn btn-primary" href="{% url 'update product' pk=product.id %}">Изменить</a>
                     </td>
                     <td>
                         <a class="btn btn-danger" href="{% url 'delete product' pk=product.id %}">Удалить</a>

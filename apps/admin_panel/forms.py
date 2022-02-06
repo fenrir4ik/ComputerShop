@@ -4,7 +4,7 @@ from django.core.validators import MinValueValidator
 from django.forms import formset_factory, inlineformset_factory, BaseInlineFormSet
 
 from apps.store.models import Product, ProductImage
-from services.product_service import ProductDataManager
+from services import product_services
 from utils.form_validators import square_image_validator
 
 
@@ -25,8 +25,37 @@ class ImageForm(forms.ModelForm):
             visible_field.field.widget.attrs['class'] = 'form-control'
 
 
+class ProductImageUpdateInlineFormSet(BaseInlineFormSet):
+    def clean(self):
+        super().clean()
+        some_form_is_invalid = False
+        for form in self.forms:
+            # validate image if it has changed and delete checkbox is not True
+            if 'image' in form.changed_data and 'delete' not in form.changed_data:
+                try:
+                    square_image_validator(form.cleaned_data.get('image'))
+                except ValidationError as ex:
+                    form.add_error('image', ex.message)
+                    some_form_is_invalid = True
+        # if some form has changed make form.instance as pk
+        # (prevent form.image and other data disappearing)
+        if some_form_is_invalid:
+            for form in self.forms:
+                form.instance = form.cleaned_data.get('id')
+
+
 # FormSet for product images with maximum amount of 3
 ImageFormSet = formset_factory(ImageForm, extra=1, max_num=3)
+
+
+# FormSet for updating product images
+ProductImageUpdateFormSet = inlineformset_factory(Product,
+                                                  ProductImage,
+                                                  formset=ProductImageUpdateInlineFormSet,
+                                                  fields=['image'],
+                                                  can_delete=True,
+                                                  max_num=3,
+                                                  min_num=1)
 
 
 class ProductAddForm(forms.ModelForm):
@@ -52,38 +81,12 @@ class ProductAddForm(forms.ModelForm):
 
     def save(self, commit=True):
         product = super().save(commit=commit)
-        product_data_manager = ProductDataManager(product)
-        product_data_manager.add_additional_data(self.cleaned_data.get('price'), self.image_formset)
+        self.process_additional_product_data(product)
         return product
 
-
-class ProductImageUpdateInlineFormSet(BaseInlineFormSet):
-    def clean(self):
-        super().clean()
-        some_form_is_invalid = False
-        for form in self.forms:
-            # validate image if it has changed and delete checkbox is not True
-            if 'image' in form.changed_data and 'delete' not in form.changed_data:
-                try:
-                    square_image_validator(form.cleaned_data.get('image'))
-                except ValidationError as ex:
-                    form.add_error('image', ex.message)
-                    some_form_is_invalid = True
-        # if some form has changed make form.instance as pk
-        # (prevent form.image and other data disappearing)
-        if some_form_is_invalid:
-            for form in self.forms:
-                form.instance = form.cleaned_data.get('id')
-
-
-# FormSet for updating product images
-ProductImageUpdateFormSet = inlineformset_factory(Product,
-                                                  ProductImage,
-                                                  formset=ProductImageUpdateInlineFormSet,
-                                                  fields=['image'],
-                                                  can_delete=True,
-                                                  max_num=3,
-                                                  min_num=1)
+    def process_additional_product_data(self, product):
+        service = product_services.ProductDataManager(product)
+        service.add_additional_data(self.cleaned_data.get('price'), self.image_formset)
 
 
 class ProductUpdateForm(ProductAddForm):
@@ -91,3 +94,11 @@ class ProductUpdateForm(ProductAddForm):
         super().__init__(data=data, files=files, instance=instance, **kwargs)
         self.image_formset = ProductImageUpdateFormSet(data=data, files=files, instance=instance, **kwargs)
         self.fields['price'].initial = instance.price
+
+    def save(self, commit=True):
+        product = super().save(commit=commit)
+        return product
+
+    def process_additional_product_data(self, product):
+        service = product_services.ProductDataManager(product)
+        service.update_additional_data(self.cleaned_data.get('price'), self.image_formset)
