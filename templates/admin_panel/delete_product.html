@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+    <div class="container py-4">
+        <form method="post">
+            {% csrf_token %}
+            <p>Вы уверены что хотите удалить товар №{{ product.id }} {{ product.name }}</p>
+            <a class="btn btn-primary" href="{% url 'admin products' %}">Отмена</a>
+            <button class="btn btn-danger" type="submit">Удалить</button>
+        </form>
+    </div>
+{% endblock %}

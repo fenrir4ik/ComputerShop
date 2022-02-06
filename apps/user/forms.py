@@ -39,6 +39,7 @@ class RegistrationForm(UserBaseForm, UserCreationForm):
     """
     Form is used for user registration
     """
+
     class Meta:
         model = User
         fields = ('email', 'phone_number', 'name', 'surname', 'patronymic', 'password1', 'password2')
@@ -69,9 +70,10 @@ class LoginForm(AuthenticationForm):
     """
     Form is used to authorize user
     """
+
     def __init__(self, *args, **kwargs):
         """Changes invalid_login error message"""
-        super(LoginForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['username'].widget.attrs.update({'autofocus': False, 'placeholder': 'Адресс электронной почты'})
         self.fields['password'].widget.attrs.update({'placeholder': 'Пароль'})
         self.error_messages['invalid_login'] = "Введенные данные не верны. Проверьте данные и попробуйте снова."
@@ -110,7 +112,7 @@ class ProfileChangeForm(UserBaseForm, forms.ModelForm):
         password2 = self.cleaned_data.get('password2')
         if password1 and password2:
             self.instance.set_password(password2)
-        return super(ProfileChangeForm, self).save()
+        return super().save()
 
     def clean(self):
         super().clean()

@@ -1,16 +1,19 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from django.core.files.images import get_image_dimensions
 from django.core.validators import MinValueValidator
-from django.forms import formset_factory
+from django.forms import formset_factory, inlineformset_factory, BaseInlineFormSet
 
-from apps.store.models import Product, ProductImage, ProductPrice
+from apps.store.models import Product, ProductImage
+from services.product_service import ProductCreateService
+from utils.form_validators import square_image_validator
 
 
 class ImageForm(forms.ModelForm):
     """
     Form is used in ImageFormSets to add multiple images to the product
     """
+    # image = forms.ImageField(required=False)
+
     class Meta:
         model = ProductImage
         fields = ['image']
@@ -18,27 +21,20 @@ class ImageForm(forms.ModelForm):
     # CSS REPLACE
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['image'].validators.append(square_image_validator)
         for visible_field in self.visible_fields():
             visible_field.field.widget.attrs['class'] = 'form-control'
-
-    def clean_image(self):
-        image = self.cleaned_data.get('image')
-        width, height = get_image_dimensions(image)
-        if width == height:
-            return image
-        else:
-            raise ValidationError("Изображение должно быть квадратным")
 
 
 # FormSet for product images with maximum amount of 3
 ImageFormSet = formset_factory(ImageForm, extra=1, max_num=3)
 
 
-class AddProductForm(forms.ModelForm):
+class ProductAddForm(forms.ModelForm):
     """
     Form is used for product creation
     """
-    price = forms.DecimalField(validators=[MinValueValidator(0.01)], decimal_places=2, max_digits=11)
+    price = forms.DecimalField(validators=[MinValueValidator(0.00)], decimal_places=2, max_digits=11, min_value=0.00)
 
     class Meta:
         model = Product
@@ -57,15 +53,36 @@ class AddProductForm(forms.ModelForm):
 
     def save(self, commit=True):
         product = super().save(commit=commit)
-        ProductPrice(product=product, price=self.cleaned_data.get('price')).save()
-        is_main_image = True
-        for image_form in self.image_formset:
-            if image_form.cleaned_data:
-                product_image = image_form.save(commit=False)
-                product_image.product = product
-                product_image.is_main = is_main_image
-                product_image.save()
-                is_main_image = False
-        if is_main_image:
-            ProductImage(product=product, is_main=is_main_image).save()
+        product_service = ProductCreateService()
+        product_service.save_product_price(product, self.cleaned_data.get('price'))
+        product_service.process_product_images(product, self.image_formset)
         return product
+
+
+class ProductImageUpdateInlineFormSet(BaseInlineFormSet):
+    def clean(self):
+        super().clean()
+        for form in self.forms:
+            if form.cleaned_data and form.cleaned_data.get('image'):
+                try:
+                    square_image_validator(form.cleaned_data.get('image'))
+                except ValidationError as ex:
+                    form.instance = form.cleaned_data.get('id')
+                    form.add_error('image', ex.message)
+
+
+# FormSet for updating product images
+ProductImageUpdateFormSet = inlineformset_factory(Product,
+                                                  ProductImage,
+                                                  formset=ProductImageUpdateInlineFormSet,
+                                                  fields=['image'],
+                                                  can_delete=False,
+                                                  max_num=3,
+                                                  min_num=1)
+
+
+class ProductUpdateForm(ProductAddForm):
+    def __init__(self, data=None, files=None, instance=None, **kwargs):
+        super().__init__(data=data, files=files, instance=instance, **kwargs)
+        self.image_formset = ProductImageUpdateFormSet(data=data, files=files, instance=instance, **kwargs)
+        self.fields['price'].initial = instance.price

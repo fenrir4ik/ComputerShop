@@ -32,6 +32,7 @@ class UserLogoutView(LoginRequiredMixin, View):
     """
     View is used to logout user
     """
+
     def get(self, request):
         logout(request)
         return redirect(reverse('index'))

@@ -78,26 +78,37 @@
     }
 }
 
+.add_to_cart_btn:hover,
+.details_btn:hover {
+    transition: 0.5s;
+    transform: scale(1.05);
+}
+
 .add_to_cart_btn:hover {
-    color: cadetblue;
+    color: white;
 }
 
 .details_btn:hover {
-    color: cadetblue;
+    color: #001540;
+}
+
+.details_btn,
+.add_to_cart_btn {
+    transition: 0.5s;
 }
 
 .details_btn {
     border: 1px solid #001540;
     background: white;
     color: #001540;
-    padding-top: 7px;
+    padding-top: 8px;
 }
 
 .add_to_cart_btn {
     border: 4px solid #001540;
     background: #001540;
     color: white;
-    padding-top: 3px;
+    padding-top: 5px;
 }
 
 .card_buttons {
