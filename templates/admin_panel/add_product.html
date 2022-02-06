@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block styles %}
+{% endblock %}
+
+{% block content %}
+    <div class="container py-4">
+        <form id="form-container" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            {{ form.image_formset.management_form }}
+            {% for form in form.image_formset %}
+                <div class="img-form">
+                    {{ form.as_p }}
+                </div>
+            {% endfor %}
+            <button id="add-img-button" class="btn btn-primary" type="button">Добавить еще одно изображение</button>
+            <button class="btn btn-success" type="submit">Добавить</button>
+        </form>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    <script src="{% static 'js/multiple_image.js' %}"></script>
+{% endblock %}

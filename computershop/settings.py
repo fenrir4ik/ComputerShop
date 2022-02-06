@@ -26,8 +26,6 @@ SECRET_KEY = 'django-insecure-m!7rugaj=($nvp+pmb5^*bk7o&emo3-w37d4sd(ygdv)6*c*+u
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.0.103']
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -37,9 +35,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    'silk.apps.SilkAppConfig',
     'apps.store',
     'apps.user',
+    'apps.admin_panel'
 ]
 
 MIDDLEWARE = [
@@ -50,6 +49,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'silk.middleware.SilkyMiddleware',
 ]
 
 ROOT_URLCONF = 'computershop.urls'
@@ -151,3 +151,7 @@ MEDIA_URL = '/media/'
 # Login url settings
 LOGIN_URL = '/user/login'
 LOGIN_REDIRECT_URL = '/'
+
+# Default product image path
+
+DEFAULT_PRODUCT_IMAGE = 'product/default_product.png'
