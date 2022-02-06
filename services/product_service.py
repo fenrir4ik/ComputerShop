@@ -31,19 +31,19 @@ class ProductCreateService():
         is_main_image = True
         for image_form in image_list:
             if image_form.cleaned_data:
+                print(image_form.cleaned_data)
                 product_image = image_form.save(commit=False)
-                print(product_image)
-                # if delete_image or not product_image:
-                #     image_form = None
-                #     ProductImage.objects.get(pk=product_image_id).delete()
-                # else:
-                #     product_image = image_form.save(commit=False)
-                #     product_image.product = product
-                #     product_image.is_main = is_main_image
-                #     product_image.save()
-                #     is_main_image = False
-        if False:
+                if product_image.image:
+                    product_image.product = product
+                    product_image.is_main = is_main_image
+                    product_image.save()
+                    is_main_image = False
+                else:
+                    image_pk = image_form.cleaned_data.get('id').pk
+                    ProductImage.objects.get(pk=image_pk).delete()
+        if is_main_image:
             ProductImage(product=product, is_main=True).save()
+
 
 
 
