@@ -21,7 +21,7 @@ class ProductRetrieveService():
         return products
 
 
-class ProductCreateService():
+class ProductCreateService:
     def save_product_price(self, product, price):
         ProductPrice(product=product, price=price).save()
 
@@ -31,9 +31,9 @@ class ProductCreateService():
         is_main_image = True
         for image_form in image_list:
             if image_form.cleaned_data:
-                print(image_form.cleaned_data)
+                delete_image = image_form.cleaned_data.get('DELETE')
                 product_image = image_form.save(commit=False)
-                if product_image.image:
+                if product_image.image and not delete_image:
                     product_image.product = product
                     product_image.is_main = is_main_image
                     product_image.save()
@@ -45,8 +45,6 @@ class ProductCreateService():
             ProductImage(product=product, is_main=True).save()
 
 
-
-
-class ProductDestroyService():
+class ProductDestroyService:
     def delete_product(self, product):
         product.delete()

@@ -12,7 +12,6 @@ class ImageForm(forms.ModelForm):
     """
     Form is used in ImageFormSets to add multiple images to the product
     """
-    # image = forms.ImageField(required=False)
 
     class Meta:
         model = ProductImage
@@ -76,7 +75,7 @@ ProductImageUpdateFormSet = inlineformset_factory(Product,
                                                   ProductImage,
                                                   formset=ProductImageUpdateInlineFormSet,
                                                   fields=['image'],
-                                                  can_delete=False,
+                                                  can_delete=True,
                                                   max_num=3,
                                                   min_num=1)
 
