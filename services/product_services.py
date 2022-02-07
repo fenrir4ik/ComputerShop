@@ -13,7 +13,7 @@ class BaseProductService:
         self.product = instance
 
 
-class ProductRetrieveService():
+class ProductRetrieveService:
     def get_products_list(self, include_price=True, include_image=True):
         products = Product.objects.select_related('vendor', 'category')
         if include_price:
@@ -25,15 +25,20 @@ class ProductRetrieveService():
         return products
 
 
-class ProductCreateService(BaseProductService):
+class ProductDestroyService(BaseProductService):
+    def delete_product(self):
+        self.product.delete()
+
+
+class PriceService(BaseProductService):
     def save_product_price(self, price):
         old_price_instance = ProductPrice.objects.filter(product=self.product).order_by('-date_actual').first()
-        print(old_price_instance)
         if old_price_instance and old_price_instance.price != price or not old_price_instance:
             ProductPrice(product=self.product, price=price).save()
 
 
-class AdditionalProductDataService(BaseProductService):
+# Переделать без форм
+class ImageService(BaseProductService):
     def _create_product_image(self, image_form, is_main=False):
         """Creates product image from given form"""
 
@@ -88,19 +93,14 @@ class AdditionalProductDataService(BaseProductService):
             ProductImage(product=self.product, is_main=True).save()
 
 
-class ProductDataManager(BaseProductService):
-    create_service = ProductCreateService
-    update_service = AdditionalProductDataService
+class ProductService(BaseProductService):
+    product_price_manager = PriceService
+    image_manager = ImageService
 
     def add_additional_data(self, price, image_list):
-        self.create_service(self.product).save_product_price(price)
-        self.update_service(self.product).add_product_images(image_list)
+        self.product_price_manager(self.product).save_product_price(price)
+        self.image_manager(self.product).add_product_images(image_list)
 
     def update_additional_data(self, price, image_list):
-        self.create_service(self.product).save_product_price(price)
-        self.update_service(self.product).update_product_images(image_list)
-
-
-class ProductDestroyService(BaseProductService):
-    def delete_product(self):
-        self.product.delete()
+        self.product_price_manager(self.product).save_product_price(price)
+        self.image_manager(self.product).update_product_images(image_list)

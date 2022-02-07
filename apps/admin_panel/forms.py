@@ -85,7 +85,7 @@ class ProductAddForm(forms.ModelForm):
         return product
 
     def process_additional_product_data(self, product):
-        service = product_services.ProductDataManager(product)
+        service = product_services.ProductService(product)
         service.add_additional_data(self.cleaned_data.get('price'), self.image_formset)
 
 
@@ -100,5 +100,5 @@ class ProductUpdateForm(ProductAddForm):
         return product
 
     def process_additional_product_data(self, product):
-        service = product_services.ProductDataManager(product)
+        service = product_services.ProductService(product)
         service.update_additional_data(self.cleaned_data.get('price'), self.image_formset)
