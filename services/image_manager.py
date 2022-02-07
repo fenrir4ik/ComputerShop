@@ -1,69 +1,41 @@
-from abc import ABC, abstractmethod
+from typing import List
 
-from apps.store.models import ProductImage, Product
-from computershop.settings import DEFAULT_PRODUCT_IMAGE
-
-
-class BaseImageManager(ABC):
-    @abstractmethod
-    def add_product_images(self, product: Product, image_list):
-        pass
-
-    @abstractmethod
-    def update_product_images(self, product: Product, image_list):
-        pass
+from apps.store.models import Product
+from services.dao.image_dao import ImageDao
 
 
-class ImageManager(BaseImageManager):
-    def _create_product_image(self, product: Product, image_form, is_main=False):
-        """Creates product image from given form"""
-
-        old_image_instance = image_form.cleaned_data.get('id')
-        product_image = image_form.save(commit=False)
-        if old_image_instance and old_image_instance.image != product_image.image and \
-                old_image_instance.image != DEFAULT_PRODUCT_IMAGE:
-            old_image_instance.image.delete()
-            old_image_instance.save()
-        if image_form.cleaned_data and product_image.image:
-            product_image.product = product
-            product_image.is_main = is_main
-            product_image.save()
-            return True
-        else:
-            return False
-
-    def add_product_images(self, product: Product, image_list):
-        """
-        Retrieves product instance and image_list which
-        is formset and performs create of product images
-        """
+class ImageManager:
+    @staticmethod
+    def add_product_images(product: Product, image_list: List[dict]):
         main_image_empty = True
-        for image_form in image_list:
-            if self._create_product_image(product, image_form, main_image_empty):
+        for image_dict in image_list:
+            if image_dict:
+                ImageDao.create_product_image(product, image_dict.get('image'), main_image_empty)
                 main_image_empty = False
-        # if during add process image wasn't created, create one default image instance
         if main_image_empty:
-            ProductImage(product=product, is_main=True).save()
+            ImageDao.create_default_product_image(product)
 
-    def update_product_images(self, product: Product, image_list):
-        """
-        Retrieves product instance and image_list which
-        is formset and performs update of product images
-        """
+    @staticmethod
+    def update_product_images(product: Product, image_list: List[dict]):
+        if all(map(lambda image: image.get('delete'), image_list)):
+            ImageDao.delete_all_product_images(product)
+            ImageDao.create_default_product_image(product)
+            return
+
         main_image_empty = True
-        num_delete_checkboxes = 0
+        for image_dict in image_list:
+            if image_dict:
+                old_image_id = image_dict.get('old_image_id')
+                delete = image_dict.get('delete')
+                image = image_dict.get('image')
 
-        for image_form in image_list:
-            # check if old image instance exists and should be deleted
-            if image_form.cleaned_data.get('DELETE'):
-                old_image_instance = image_form.cleaned_data.get('id')
-                if old_image_instance:
-                    old_image_instance.delete()
-                num_delete_checkboxes += 1
-            else:
-                if self._create_product_image(product, image_form, main_image_empty):
+                if delete and old_image_id:
+                    ImageDao.delete_image_by_id(old_image_id)
+                elif old_image_id:
+                    if ImageDao.replace_image_by_id(old_image_id, image, main_image_empty):
+                        main_image_empty = False
+                elif image and not old_image_id and not delete:
+                    ImageDao.create_product_image(product, image, main_image_empty)
                     main_image_empty = False
-        # if during update process image wasn't created, or all
-        # images have been deleted create default image instance
-        if main_image_empty or num_delete_checkboxes == len(image_list):
-            ProductImage(product=product, is_main=True).save()
+        if main_image_empty:
+            ImageDao.create_default_product_image(product)

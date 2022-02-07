@@ -1,6 +1,6 @@
 from django.views.generic import ListView
 
-from services.db.product_dao import ProductDAO
+from services.dao.product_dao import ProductDAO
 
 
 class IndexView(ListView):

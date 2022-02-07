@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.password_validation import validate_password
 
 from apps.user.models import User
-from services.db.user_dao import UserDAO
+from services.dao.user_dao import UserDAO
 from utils import form_validators
 
 

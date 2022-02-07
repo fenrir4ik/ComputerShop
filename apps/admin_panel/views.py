@@ -5,7 +5,7 @@ from django.views.generic import CreateView, ListView, DeleteView, UpdateView
 
 from apps.admin_panel.forms import ProductAddForm, ProductUpdateForm
 from apps.store.models import Product
-from services.db.product_dao import ProductDAO
+from services.dao.product_dao import ProductDAO
 
 
 class ProductAddView(CreateView):
