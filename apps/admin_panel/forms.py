@@ -1,10 +1,12 @@
+from abc import abstractmethod
+
 from django import forms
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.forms import formset_factory, inlineformset_factory, BaseInlineFormSet
 
 from apps.store.models import Product, ProductImage
-from services import product_services
+from services.product_service import ProductService
 from utils.form_validators import square_image_validator
 
 
@@ -47,7 +49,6 @@ class ProductImageUpdateInlineFormSet(BaseInlineFormSet):
 # FormSet for product images with maximum amount of 3
 ImageFormSet = formset_factory(ImageForm, extra=1, max_num=3)
 
-
 # FormSet for updating product images
 ProductImageUpdateFormSet = inlineformset_factory(Product,
                                                   ProductImage,
@@ -58,7 +59,13 @@ ProductImageUpdateFormSet = inlineformset_factory(Product,
                                                   min_num=1)
 
 
-class ProductAddForm(forms.ModelForm):
+class ImageFormsetMixin:
+    @abstractmethod
+    def save_additional_product_data(self, product):
+        raise NotImplementedError
+
+
+class ProductAddForm(ImageFormsetMixin, forms.ModelForm):
     """
     Form is used for product creation
     """
@@ -81,12 +88,14 @@ class ProductAddForm(forms.ModelForm):
 
     def save(self, commit=True):
         product = super().save(commit=commit)
-        self.process_additional_product_data(product)
+        self.save_additional_product_data(product)
         return product
 
-    def process_additional_product_data(self, product):
-        service = product_services.ProductDataManager(product)
-        service.add_additional_data(self.cleaned_data.get('price'), self.image_formset)
+    def save_additional_product_data(self, product):
+        if type(self) != ProductAddForm:
+            raise NotImplementedError("Implement save_additional_product_data(self, product) method")
+        service = ProductService(product)
+        service.add_additional_data(self.cleaned_data.get('price'), self.image_formset.cleaned_data)
 
 
 class ProductUpdateForm(ProductAddForm):
@@ -99,6 +108,15 @@ class ProductUpdateForm(ProductAddForm):
         product = super().save(commit=commit)
         return product
 
-    def process_additional_product_data(self, product):
-        service = product_services.ProductDataManager(product)
-        service.update_additional_data(self.cleaned_data.get('price'), self.image_formset)
+    def save_additional_product_data(self, product):
+        service = ProductService(product)
+        image_list = []
+        for form in self.image_formset.cleaned_data:
+            if form:
+                image_list.append({'image': form.get('image'),
+                                   'old_image_id': form.get('id').id if form.get('id') else None,
+                                   'delete': form.get('DELETE')
+                                   })
+            else:
+                image_list.append({})
+        service.update_additional_data(self.cleaned_data.get('price'), image_list)
