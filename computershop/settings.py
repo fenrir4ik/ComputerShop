@@ -109,7 +109,7 @@ AUTH_PASSWORD_VALIDATORS = [
 AUTH_USER_MODEL = 'user.User'
 
 AUTHENTICATION_BACKENDS = [
-    'apps.user.backends.PhoneEmailBasedBackend'
+    'apps.user.backends.EmailBasedBackend'
 ]
 
 # Internationalization

@@ -4,7 +4,7 @@ from django.core.validators import MinValueValidator
 from django.forms import formset_factory, inlineformset_factory, BaseInlineFormSet
 
 from apps.store.models import Product, ProductImage
-from services import product_services
+from services.product_service import ProductService
 from utils.form_validators import square_image_validator
 
 
@@ -85,7 +85,7 @@ class ProductAddForm(forms.ModelForm):
         return product
 
     def process_additional_product_data(self, product):
-        service = product_services.ProductService(product)
+        service = ProductService(product)
         service.add_additional_data(self.cleaned_data.get('price'), self.image_formset)
 
 
@@ -100,5 +100,5 @@ class ProductUpdateForm(ProductAddForm):
         return product
 
     def process_additional_product_data(self, product):
-        service = product_services.ProductService(product)
+        service = ProductService(product)
         service.update_additional_data(self.cleaned_data.get('price'), self.image_formset)

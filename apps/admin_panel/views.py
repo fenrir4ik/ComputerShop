@@ -5,7 +5,7 @@ from django.views.generic import CreateView, ListView, DeleteView, UpdateView
 
 from apps.admin_panel.forms import ProductAddForm, ProductUpdateForm
 from apps.store.models import Product
-from services import product_services
+from services.db.product_dao import ProductDAO
 
 
 class ProductAddView(CreateView):
@@ -38,7 +38,7 @@ class ProductsListAdminView(ListView):
     # Filters needed
 
     def get_queryset(self):
-        queryset = product_services.ProductRetrieveService().get_products_list()
+        queryset = ProductDAO.get_products_list()
         return queryset.values('id', 'image', 'name', 'price', 'amount', 'vendor__name', 'category__name',
                                'date_created').order_by('pk')
 
@@ -49,12 +49,12 @@ class ProductDeleteView(DeleteView):
     context_object_name = 'product'
 
     def get_object(self, queryset=None):
-        id = self.kwargs.get('pk')
-        return get_object_or_404(Product, id=id)
+        id_ = self.kwargs.get('pk')
+        return get_object_or_404(Product, id=id_)
 
     def form_valid(self, form):
         success_url = self.get_success_url()
-        product_services.ProductDestroyService(self.object).delete_product()
+        ProductDAO.delete_product(self.object)
         return HttpResponseRedirect(success_url)
 
 
@@ -63,7 +63,7 @@ class ProductUpdateView(UpdateView):
     form_class = ProductUpdateForm
 
     def get_queryset(self):
-        return product_services.ProductRetrieveService().get_products_list(include_price=True, include_image=False)
+        return ProductDAO.get_products_list(include_price=True, include_image=False)
 
     def get_success_url(self):
         return reverse('update product', kwargs={'pk': self.object.pk})
