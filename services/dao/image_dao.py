@@ -9,7 +9,9 @@ from computershop.settings import DEFAULT_PRODUCT_IMAGE
 
 class ImageDao:
     @staticmethod
-    def create_product_image(product: Product, image, is_main: bool = False):
+    def create_product_image(product: Product,
+                             image: Union[ImageFieldFile, InMemoryUploadedFile],
+                             is_main: bool = False):
         ProductImage(product=product, is_main=is_main, image=image).save()
 
     @staticmethod
@@ -36,3 +38,7 @@ class ImageDao:
             return True
         except ProductImage.DoesNotExist:
             return False
+
+    @staticmethod
+    def get_product_image_number(product):
+        return ProductImage.objects.filter(product=product).count()

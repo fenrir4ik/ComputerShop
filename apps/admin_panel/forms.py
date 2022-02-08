@@ -6,6 +6,7 @@ from django.core.validators import MinValueValidator
 from django.forms import formset_factory, inlineformset_factory, BaseInlineFormSet
 
 from apps.store.models import Product, ProductImage
+from computershop.settings import PRODUCT_IMAGE_MAX_NUMBER
 from services.product_service import ProductService
 from utils.form_validators import square_image_validator
 
@@ -30,7 +31,6 @@ class ImageForm(forms.ModelForm):
 class ProductImageUpdateInlineFormSet(BaseInlineFormSet):
     def clean(self):
         super().clean()
-        some_form_is_invalid = False
         for form in self.forms:
             # validate image if it has changed and delete checkbox is not True
             if 'image' in form.changed_data and 'delete' not in form.changed_data:
@@ -38,16 +38,16 @@ class ProductImageUpdateInlineFormSet(BaseInlineFormSet):
                     square_image_validator(form.cleaned_data.get('image'))
                 except ValidationError as ex:
                     form.add_error('image', ex.message)
-                    some_form_is_invalid = True
+
         # if some form has changed make form.instance as pk
         # (prevent form.image and other data disappearing)
-        if some_form_is_invalid:
+        if self.total_error_count():
             for form in self.forms:
                 form.instance = form.cleaned_data.get('id')
 
 
-# FormSet for product images with maximum amount of 3
-ImageFormSet = formset_factory(ImageForm, extra=1, max_num=3)
+# FormSet for product images with maximum amount of PRODUCT_IMAGE_MAX_NUMBER
+ImageFormSet = formset_factory(ImageForm, extra=1, max_num=PRODUCT_IMAGE_MAX_NUMBER)
 
 # FormSet for updating product images
 ProductImageUpdateFormSet = inlineformset_factory(Product,
@@ -55,7 +55,7 @@ ProductImageUpdateFormSet = inlineformset_factory(Product,
                                                   formset=ProductImageUpdateInlineFormSet,
                                                   fields=['image'],
                                                   can_delete=True,
-                                                  max_num=3,
+                                                  max_num=PRODUCT_IMAGE_MAX_NUMBER,
                                                   min_num=1)
 
 
@@ -110,13 +110,11 @@ class ProductUpdateForm(ProductAddForm):
 
     def save_additional_product_data(self, product):
         service = ProductService(product)
-        image_list = []
-        for form in self.image_formset.cleaned_data:
-            if form:
-                image_list.append({'image': form.get('image'),
-                                   'old_image_id': form.get('id').id if form.get('id') else None,
-                                   'delete': form.get('DELETE')
-                                   })
-            else:
-                image_list.append({})
+        image_list = list(map(lambda form:
+                              {'image': form.get('image'),
+                               'old_image_id': form.get('id').id if form.get('id') else None,
+                               'delete': form.get('DELETE')
+                               }
+                              if form else {},
+                              self.image_formset.cleaned_data))
         service.update_additional_data(self.cleaned_data.get('price'), image_list)
