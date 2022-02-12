@@ -31,7 +31,7 @@ class ProductDetailView(FormMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(ProductDetailView, self).get_context_data(**kwargs)
-        context['product_images'] = ImageDao.get_product_images(Product(id=self.object.get('id')))
+        context['product_images'] = ImageDao.get_product_images(self.object.get('id'))
         context['form'] = self.get_form()
         return context
 
@@ -53,5 +53,7 @@ class ProductDetailView(FormMixin, DetailView):
 
     def form_valid(self, form):
         product_amount = form.cleaned_data.get('amount')
+        product_id = self.object.get('id')
+        print(f'User {self.request.user.pk} adds {product_amount} items of product {product_id} to cart')
         # call process product_amount, product_id
         return super().form_valid(form)

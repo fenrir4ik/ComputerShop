@@ -1,29 +1,28 @@
 from typing import List
 
-from apps.store.models import Product
 from computershop.settings import PRODUCT_IMAGE_MAX_NUMBER
 from services.dao.image_dao import ImageDao
 
 
 class ImageManager:
     @staticmethod
-    def add_product_images(product: Product, image_list: List[dict]):
+    def add_product_images(product_id: int, image_list: List[dict]):
         main_image_empty = True
         for image_dict in image_list:
             if image_dict:
-                ImageDao.create_product_image(product, image_dict.get('image'), main_image_empty)
+                ImageDao.create_product_image(product_id, image_dict.get('image'), main_image_empty)
                 main_image_empty = False
         if main_image_empty:
-            ImageDao.create_default_product_image(product)
+            ImageDao.create_default_product_image(product_id)
 
     @staticmethod
-    def update_product_images(product: Product, image_list: List[dict]):
+    def update_product_images(product_id: int, image_list: List[dict]):
         if all(map(lambda image: image.get('delete'), image_list)):
-            ImageDao.delete_all_product_images(product)
-            ImageDao.create_default_product_image(product)
+            ImageDao.delete_all_product_images(product_id)
+            ImageDao.create_default_product_image(product_id)
             return
 
-        if ImageManager._images_update_available(product, image_list):
+        if ImageManager._images_update_available(product_id, image_list):
             main_image_empty = True
             for image_dict in image_list:
                 if image_dict:
@@ -37,15 +36,15 @@ class ImageManager:
                         if ImageDao.replace_image_by_id(old_image_id, image, main_image_empty):
                             main_image_empty = False
                     elif image and not old_image_id and not delete:
-                        ImageDao.create_product_image(product, image, main_image_empty)
+                        ImageDao.create_product_image(product_id, image, main_image_empty)
                         main_image_empty = False
             if main_image_empty:
-                ImageDao.create_default_product_image(product)
+                ImageDao.create_default_product_image(product_id)
 
     @staticmethod
-    def _images_update_available(product: Product, image_list: List[dict]) -> bool:
+    def _images_update_available(product_id: int, image_list: List[dict]) -> bool:
         """Check if can update images to prevent incompatible data during simultaneous product editing"""
-        current_image_n = ImageDao.get_product_image_number(product)
+        current_image_n = ImageDao.get_product_image_number(product_id)
         created_image_n = 0
         deleted_image_n = 0
         for image_dict in image_list:

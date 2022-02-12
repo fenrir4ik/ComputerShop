@@ -9,18 +9,18 @@ from computershop.settings import DEFAULT_PRODUCT_IMAGE
 
 class ImageDao:
     @staticmethod
-    def create_product_image(product: Product,
+    def create_product_image(product_id: int,
                              image: Union[ImageFieldFile, InMemoryUploadedFile],
                              is_main: bool = False):
-        ProductImage(product=product, is_main=is_main, image=image).save()
+        ProductImage(product_id=product_id, is_main=is_main, image=image).save()
 
     @staticmethod
-    def create_default_product_image(product: Product):
-        ProductImage(product=product, is_main=True).save()
+    def create_default_product_image(product_id: int):
+        ProductImage(product_id=product_id, is_main=True).save()
 
     @staticmethod
-    def delete_all_product_images(product: Product):
-        ProductImage.objects.filter(product=product).delete()
+    def delete_all_product_images(product_id: int):
+        ProductImage.objects.filter(product_id=product_id).delete()
 
     @staticmethod
     def delete_image_by_id(id: int):
@@ -40,9 +40,9 @@ class ImageDao:
             return False
 
     @staticmethod
-    def get_product_image_number(product):
-        return ImageDao.get_product_images(product).count()
+    def get_product_image_number(product_id: int):
+        return ImageDao.get_product_images(product_id).count()
 
     @staticmethod
-    def get_product_images(product):
-        return ProductImage.objects.filter(product=product)
+    def get_product_images(product_id: int):
+        return ProductImage.objects.filter(product_id=product_id)

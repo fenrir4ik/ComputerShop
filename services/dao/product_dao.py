@@ -18,4 +18,5 @@ class ProductDAO:
     @staticmethod
     def delete_product(product: Product):
         # check if product exists in carts
+        # replace product with product_id in future
         product.delete()

@@ -94,8 +94,8 @@ class ProductAddForm(ImageFormsetMixin, forms.ModelForm):
     def save_additional_product_data(self, product):
         if type(self) != ProductAddForm:
             raise NotImplementedError("Implement save_additional_product_data(self, product) method")
-        service = ProductService(product)
-        service.add_additional_data(self.cleaned_data.get('price'), self.image_formset.cleaned_data)
+        service = ProductService()
+        service.add_additional_data(product.pk, self.cleaned_data.get('price'), self.image_formset.cleaned_data)
 
 
 class ProductUpdateForm(ProductAddForm):
@@ -109,7 +109,7 @@ class ProductUpdateForm(ProductAddForm):
         return product
 
     def save_additional_product_data(self, product):
-        service = ProductService(product)
+        service = ProductService()
         image_list = list(map(lambda form:
                               {'image': form.get('image'),
                                'old_image_id': form.get('id').id if form.get('id') else None,
@@ -117,4 +117,4 @@ class ProductUpdateForm(ProductAddForm):
                                }
                               if form else {},
                               self.image_formset.cleaned_data))
-        service.update_additional_data(self.cleaned_data.get('price'), image_list)
+        service.update_additional_data(product.pk, self.cleaned_data.get('price'), image_list)
