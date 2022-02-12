@@ -37,6 +37,7 @@ class ProductsListAdminView(ListView):
     paginate_by = 20
 
     # Filters needed
+    # paginate_by = 20
 
     def get_queryset(self):
         queryset = ProductDAO.get_products_list()

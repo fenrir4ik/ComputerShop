@@ -50,3 +50,8 @@ class ProductDetailView(FormMixin, DetailView):
             return self.form_valid(form)
         else:
             return self.form_invalid(form)
+
+    def form_valid(self, form):
+        product_amount = form.cleaned_data.get('amount')
+        # call process product_amount, product_id
+        return super().form_valid(form)

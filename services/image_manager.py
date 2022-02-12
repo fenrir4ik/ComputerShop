@@ -1,6 +1,5 @@
 from typing import List
 
-
 from apps.store.models import Product
 from computershop.settings import PRODUCT_IMAGE_MAX_NUMBER
 from services.dao.image_dao import ImageDao
