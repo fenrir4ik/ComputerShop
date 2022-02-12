@@ -3,7 +3,6 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormMixin
 
 from apps.store.forms import AddProductToCartForm
-from apps.store.models import Product
 from services.dao.image_dao import ImageDao
 from services.dao.product_dao import ProductDAO
 
@@ -56,4 +55,5 @@ class ProductDetailView(FormMixin, DetailView):
         product_id = self.object.get('id')
         print(f'User {self.request.user.pk} adds {product_amount} items of product {product_id} to cart')
         # call process product_amount, product_id
+        # THINK TO CREATE SEPARATE FORM FOR UPDATE !! WARNING
         return super().form_valid(form)
