@@ -45,7 +45,7 @@
                 <div class="main_products">
                     {% for product in products %}
                         <div>
-                            <a href="#">
+                            <a href="{% url 'product detail' pk=product.id %}">
                                 <img class="card_img"
                                      src='{% get_media_prefix %}{{ product.image }}'
                                      alt=""/>

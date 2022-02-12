@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container py-4">
+        <p>Товар № {{ product.id }}</p>
+        <p>Название: {{ product.name }}</p>
+        <p>Цена: {{ product.price }}</p>
+        <p>Описание: {{ product.description }}</p>
+        <p>Кол-во: {{ product.amount }}</p>
+        {% for image in product_images %}
+            <img src="{{ image.image.url }}" alt="" width="400" height="400">
+        {% endfor %}
+        {% if user.is_authenticated and not user.is_staff %}
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button class="btn btn-success">Добавить в корзину</button>
+            </form>
+        {% endif %}
+    </div>
+{% endblock %}

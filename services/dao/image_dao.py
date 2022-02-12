@@ -41,4 +41,8 @@ class ImageDao:
 
     @staticmethod
     def get_product_image_number(product):
-        return ProductImage.objects.filter(product=product).count()
+        return ImageDao.get_product_images(product).count()
+
+    @staticmethod
+    def get_product_images(product):
+        return ProductImage.objects.filter(product=product)
