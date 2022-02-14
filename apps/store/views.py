@@ -35,17 +35,17 @@ class SingleProductView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        max_amount = self.object.get('amount') + \
-                     CartItemDAO.get_product_amount_in_cart(
-                         self.request.user.pk,
-                         self.object.get('id')
-                     )
-        context['form'] = AddProductToCartForm(max_amount=max_amount)
+        product_amount = self.object.get('amount')
+        product_id = self.object.get('id')
+        user_id = self.request.user.pk
+
+        context['product_amount_in_cart'] = CartItemDAO.get_product_amount_in_cart_by_user_id(user_id, product_id)
+        context['form'] = AddProductToCartForm(max_amount=product_amount + context['product_amount_in_cart'])
+        context['product_images'] = ImageDao.get_product_images(product_id)
         return context
 
 
 class SingleProductFormView(SingleObjectMixin, FormView):
-    template_name = 'store/product_detail.html'
     form_class = AddProductToCartForm
 
     def get_queryset(self):
@@ -54,18 +54,12 @@ class SingleProductFormView(SingleObjectMixin, FormView):
     def get_success_url(self):
         return self.request.path_info
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data()
-        context['product_images'] = ImageDao.get_product_images(self.object.get('id'))
-        return context
-
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['max_amount'] = self.object.get('amount') + \
-                               CartItemDAO.get_product_amount_in_cart(
-                                   self.request.user.pk,
-                                   self.object.get('id')
-                               )
+        kwargs['max_amount'] = CartItemDAO.get_product_amount_in_cart_by_user_id(
+            self.request.user.pk,
+            self.object.get('id')
+        ) + self.object.get('amount')
         return kwargs
 
     def post(self, request, *args, **kwargs):
@@ -80,30 +74,14 @@ class SingleProductFormView(SingleObjectMixin, FormView):
         return super().form_valid(form)
 
 
-class ProductDetailView(SingleObjectMixin, View):
-    # WARNING SILK A LOT OF REQUESTS 9 (ORDER AND CART_ITEM DUPLICATES) WHEN CALCULATING MAX AMOUNT + \ {}
+class ProductDetailView(View):
     def get(self, request, *args, **kwargs):
-        view = SingleProductView.as_view(extra_context=self.get_extra_context())
+        view = SingleProductView.as_view()
         return view(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        view = SingleProductFormView.as_view(extra_context=self.get_extra_context())
+        view = SingleProductFormView.as_view()
         return view(request, *args, **kwargs)
-
-    def get_queryset(self):
-        queryset = ProductDAO.get_products_list(include_image=False)
-        return queryset.values('id', 'name', 'price', 'description', 'amount')
-
-    def get_extra_context(self):
-        extra_context = {}
-
-        self.object = self.get_object()
-        product_id = self.object.get('id')
-        user_id = self.request.user.pk
-
-        extra_context['product_images'] = ImageDao.get_product_images(product_id)
-        extra_context['product_amount_in_cart'] = CartItemDAO.get_product_amount_in_cart(user_id, product_id)
-        return extra_context
 
 
 class ProductDeleteFromCartView(View):

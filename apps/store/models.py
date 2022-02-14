@@ -114,7 +114,7 @@ class CartItem(models.Model):
         models.CheckConstraint(check=models.Q(amount__gte=1), name='amount_positive'),
     ]
 
-    unique_together = ['product', 'order']
+    unique_together = (('product', 'order'), )
 
     product = models.ForeignKey(Product, on_delete=models.RESTRICT)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
