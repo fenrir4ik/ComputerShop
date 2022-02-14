@@ -1,6 +1,7 @@
 from typing import Union
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.db.models import QuerySet
 from django.db.models.fields.files import ImageFieldFile
 
 from apps.store.models import Product, ProductImage
@@ -40,9 +41,9 @@ class ImageDao:
             return False
 
     @staticmethod
-    def get_product_image_number(product_id: int):
+    def get_product_image_number(product_id: int) -> int:
         return ImageDao.get_product_images(product_id).count()
 
     @staticmethod
-    def get_product_images(product_id: int):
+    def get_product_images(product_id: int) -> QuerySet:
         return ProductImage.objects.filter(product_id=product_id)

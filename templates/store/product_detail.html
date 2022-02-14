@@ -11,11 +11,30 @@
             <img src="{{ image.image.url }}" alt="" width="400" height="400">
         {% endfor %}
         {% if user.is_authenticated and not user.is_staff %}
-            <form method="post">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button class="btn btn-success">Добавить в корзину</button>
-            </form>
+            {% if product.amount > 0 %}
+{#                edit logic when product in cart but 0 in shop#}
+                <form method="post">
+                    {% csrf_token %}
+                    <p>В корзине: {{ product_amount_in_cart }}</p>
+                    {{ form.as_p }}
+                    {% if product_amount_in_cart == 0 %}
+                        <button type="submit" class="btn btn-success">В корзину</button>
+                    {% else %}
+                        <button type="submit" class="btn btn-success">Изменить количество</button>
+                    {% endif %}
+                </form>
+                {% if product_amount_in_cart != 0 %}
+                    <form method="post"
+                          action="{% url 'delete cart-item' pk=product.id %}?next={{ request.get_full_path }}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Удалить из корзины</button>
+                    </form>
+                {% endif %}
+            {% else %}
+                {% if product_amount_in_cart != 0 %}
+                    <p>Товар закончился</p>
+                {% endif %}
+            {% endif %}
         {% endif %}
     </div>
 {% endblock %}
