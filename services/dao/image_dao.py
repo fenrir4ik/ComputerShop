@@ -4,7 +4,7 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db.models import QuerySet
 from django.db.models.fields.files import ImageFieldFile
 
-from apps.store.models import Product, ProductImage
+from apps.store.models import ProductImage
 from computershop.settings import DEFAULT_PRODUCT_IMAGE
 
 

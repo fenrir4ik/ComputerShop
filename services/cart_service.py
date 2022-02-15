@@ -1,5 +1,3 @@
-from django.db import transaction
-
 from services.dao.cart_item_dao import CartItemDAO
 from services.dao.order_dao import OrderDAO
 
@@ -15,7 +13,7 @@ class CartService:
 
     def delete_product_from_cart(self, user_id, product_id):
         cart_id = OrderDAO.get_user_cart_id(user_id)
-        CartItemDAO.delete_product_in_cart(cart_id, product_id)
+        CartItemDAO.delete_products_in_cart(cart_id, product_id)
 
     def _add_product_to_cart(self, cart_id: int, product_id: int, amount: int):
         CartItemDAO.add_product_to_cart(cart_id, product_id, amount)

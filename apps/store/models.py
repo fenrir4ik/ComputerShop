@@ -98,7 +98,7 @@ class Order(models.Model):
     customer_patronymic = models.CharField(max_length=45, null=True)
     customer_phone_number = models.CharField(max_length=12, null=True, db_index=True)
     customer_email = models.CharField(max_length=255, unique=True, db_index=True, null=True)
-    date_start = models.DateTimeField(null=True)
+    date_start = models.DateTimeField(blank=True, null=True)
     date_end = models.DateTimeField(blank=True, null=True)
     address = models.TextField(null=True)
 
@@ -109,12 +109,11 @@ class Order(models.Model):
 class CartItem(models.Model):
     class Meta:
         db_table = 'cart_item'
+        unique_together = ('product', 'order')
 
     constraints = [
         models.CheckConstraint(check=models.Q(amount__gte=1), name='amount_positive'),
     ]
-
-    unique_together = (('product', 'order'), )
 
     product = models.ForeignKey(Product, on_delete=models.RESTRICT)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)

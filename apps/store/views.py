@@ -1,9 +1,9 @@
 from django.shortcuts import redirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views import View
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, TemplateView
 from django.views.generic.detail import SingleObjectMixin
-from django.views.generic.edit import FormView
+from django.views.generic.edit import FormView, DeleteView
 
 from apps.store.forms import AddProductToCartForm
 from apps.store.models import Product
@@ -40,7 +40,8 @@ class SingleProductView(DetailView):
         user_id = self.request.user.pk
 
         context['product_amount_in_cart'] = CartItemDAO.get_product_amount_in_cart_by_user_id(user_id, product_id)
-        context['form'] = AddProductToCartForm(max_amount=product_amount + context['product_amount_in_cart'])
+        context['form'] = AddProductToCartForm(amount_in_cart=context['product_amount_in_cart'],
+                                               max_amount=product_amount + context['product_amount_in_cart'])
         context['product_images'] = ImageDao.get_product_images(product_id)
         return context
 
@@ -56,10 +57,11 @@ class SingleProductFormView(SingleObjectMixin, FormView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['max_amount'] = CartItemDAO.get_product_amount_in_cart_by_user_id(
+        kwargs['amount_in_cart'] = CartItemDAO.get_product_amount_in_cart_by_user_id(
             self.request.user.pk,
             self.object.get('id')
-        ) + self.object.get('amount')
+        )
+        kwargs['max_amount'] = kwargs['amount_in_cart'] + self.object.get('amount')
         return kwargs
 
     def post(self, request, *args, **kwargs):
@@ -90,3 +92,26 @@ class ProductDeleteFromCartView(View):
         service.delete_product_from_cart(request.user.pk, kwargs.get('pk'))
         next_page = request.GET.get('next')
         return redirect(next_page) if next_page else reverse('index')
+
+
+class UserCartView(ListView):
+    template_name = 'store/cart.html'
+    context_object_name = 'cart_items'
+
+    def get_queryset(self):
+        return CartItemDAO.get_user_cart(self.request.user.pk) \
+            .values('amount', 'product_id', 'product__name', 'image', 'price', 'product__amount')\
+            .order_by('-product_id')
+
+    def post(self, request, *args, **kwargs):
+        kwargs['pk'] = request.POST.get('pk')
+        view = SingleProductFormView.as_view()
+        return view(request, *args, **kwargs)
+
+
+class UserCartClearView(TemplateView):
+    template_name = 'store/cart_clear.html'
+
+    def post(self, request, *args, **kwargs):
+        CartItemDAO.clear_user_cart(request.user.pk)
+        return redirect('user cart')
