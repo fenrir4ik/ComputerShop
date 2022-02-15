@@ -1,24 +1,27 @@
 from typing import Union
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.db.models import QuerySet
 from django.db.models.fields.files import ImageFieldFile
 
-from apps.store.models import Product, ProductImage
+from apps.store.models import ProductImage
 from computershop.settings import DEFAULT_PRODUCT_IMAGE
 
 
 class ImageDao:
     @staticmethod
-    def create_product_image(product: Product, image, is_main: bool = False):
-        ProductImage(product=product, is_main=is_main, image=image).save()
+    def create_product_image(product_id: int,
+                             image: Union[ImageFieldFile, InMemoryUploadedFile],
+                             is_main: bool = False):
+        ProductImage(product_id=product_id, is_main=is_main, image=image).save()
 
     @staticmethod
-    def create_default_product_image(product: Product):
-        ProductImage(product=product, is_main=True).save()
+    def create_default_product_image(product_id: int):
+        ProductImage(product_id=product_id, is_main=True).save()
 
     @staticmethod
-    def delete_all_product_images(product: Product):
-        ProductImage.objects.filter(product=product).delete()
+    def delete_all_product_images(product_id: int):
+        ProductImage.objects.filter(product_id=product_id).delete()
 
     @staticmethod
     def delete_image_by_id(id: int):
@@ -36,3 +39,11 @@ class ImageDao:
             return True
         except ProductImage.DoesNotExist:
             return False
+
+    @staticmethod
+    def get_product_image_number(product_id: int) -> int:
+        return ImageDao.get_product_images(product_id).count()
+
+    @staticmethod
+    def get_product_images(product_id: int) -> QuerySet:
+        return ProductImage.objects.filter(product_id=product_id)

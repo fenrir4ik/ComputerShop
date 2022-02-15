@@ -5,6 +5,7 @@ from django.views.generic import CreateView, ListView, DeleteView, UpdateView
 
 from apps.admin_panel.forms import ProductAddForm, ProductUpdateForm
 from apps.store.models import Product
+from computershop.settings import DEFAULT_PRODUCT_IMAGE
 from services.dao.product_dao import ProductDAO
 
 
@@ -36,6 +37,7 @@ class ProductsListAdminView(ListView):
     paginate_by = 20
 
     # Filters needed
+    # paginate_by = 20
 
     def get_queryset(self):
         queryset = ProductDAO.get_products_list()
@@ -67,3 +69,8 @@ class ProductUpdateView(UpdateView):
 
     def get_success_url(self):
         return reverse('update product', kwargs={'pk': self.object.pk})
+
+    def get_context_data(self, **kwargs):
+        context = super(ProductUpdateView, self).get_context_data(**kwargs)
+        context['default_product_image'] = DEFAULT_PRODUCT_IMAGE
+        return context

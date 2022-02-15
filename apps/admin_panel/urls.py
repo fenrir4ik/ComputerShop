@@ -9,4 +9,6 @@ urlpatterns = [
     path('products/<int:pk>/', ProductUpdateView.as_view(), name='update product'),
     # path('orders/'),
     # path('orders/<int:pk>/'),
+    # list order (admin)
+    # change order (admin)
 ]

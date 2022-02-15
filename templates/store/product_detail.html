@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container py-4">
+        <p>Товар № {{ product.id }}</p>
+        <p>Название: {{ product.name }}</p>
+        <p>Цена: {{ product.price }}</p>
+        <p>Описание: {{ product.description }}</p>
+        <p>Кол-во: {{ product.amount }}</p>
+        {% for image in product_images %}
+            <img src="{{ image.image.url }}" alt="" width="400" height="400">
+        {% endfor %}
+        <p>В корзине: {{ product_amount_in_cart }}</p>
+        {% if product.amount|add:product_amount_in_cart > 0 %}
+            {% if user.is_authenticated and not user.is_staff %}
+                {% if product.amount > 0 %}
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        {% if product_amount_in_cart == 0 %}
+                            <button type="submit" class="btn btn-success">В корзину</button>
+                        {% else %}
+                            <button type="submit" class="btn btn-success">Изменить количество</button>
+                        {% endif %}
+                    </form>
+                {% else %}
+                    <p>Товар закончился</p>
+                {% endif %}
+                {% if product_amount_in_cart > 0 %}
+                    <form method="post"
+                          action="{% url 'delete cart-item' pk=product.id %}?next={{ request.get_full_path }}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Удалить из корзины</button>
+                    </form>
+                {% endif %}
+            {% endif %}
+        {% else %}
+            <p>Товар закончился</p>
+        {% endif %}
+    </div>
+{% endblock %}
