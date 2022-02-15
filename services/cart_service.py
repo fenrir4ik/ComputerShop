@@ -20,3 +20,7 @@ class CartService:
 
     def _change_product_in_cart(self, cart_id: int, product_id: int, amount: int):
         CartItemDAO.change_product_in_cart(cart_id, product_id, amount)
+
+    def clear_user_cart(self, user_id):
+        cart_id = OrderDAO.get_user_cart_id(user_id)
+        CartItemDAO.clear_cart(cart_id)

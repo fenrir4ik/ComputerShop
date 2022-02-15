@@ -74,3 +74,11 @@ class ProductUpdateView(UpdateView):
         context = super(ProductUpdateView, self).get_context_data(**kwargs)
         context['default_product_image'] = DEFAULT_PRODUCT_IMAGE
         return context
+
+
+class OrdersListView(ListView):
+    pass
+
+
+class UpdateOrderView(UpdateView):
+    pass

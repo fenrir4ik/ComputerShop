@@ -3,9 +3,9 @@ from django.urls import reverse, reverse_lazy
 from django.views import View
 from django.views.generic import ListView, DetailView, TemplateView
 from django.views.generic.detail import SingleObjectMixin
-from django.views.generic.edit import FormView, DeleteView
+from django.views.generic.edit import FormView, CreateView
 
-from apps.store.forms import AddProductToCartForm
+from apps.store.forms import AddProductToCartForm, CreateOrderForm
 from apps.store.models import Product
 from services.cart_service import CartService
 from services.dao.cart_item_dao import CartItemDAO
@@ -100,7 +100,7 @@ class UserCartView(ListView):
 
     def get_queryset(self):
         return CartItemDAO.get_user_cart(self.request.user.pk) \
-            .values('amount', 'product_id', 'product__name', 'image', 'price', 'product__amount')\
+            .values('amount', 'product_id', 'product__name', 'image', 'price', 'product__amount') \
             .order_by('-product_id')
 
     def post(self, request, *args, **kwargs):
@@ -113,5 +113,32 @@ class UserCartClearView(TemplateView):
     template_name = 'store/cart_clear.html'
 
     def post(self, request, *args, **kwargs):
-        CartItemDAO.clear_user_cart(request.user.pk)
+        service = CartService()
+        service.clear_user_cart(request.user.pk)
         return redirect('user cart')
+
+
+class OrderCreateView(CreateView):
+    template_name = 'store/create_order.html'
+    form_class = CreateOrderForm
+    success_url = reverse_lazy('user cart')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context['cart_items'] = CartItemDAO.get_user_cart(self.request.user.pk) \
+            .values('amount', 'product_id', 'product__name', 'image', 'price', 'product__amount') \
+            .order_by('-product_id')
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+
+class UserOrdersListView(ListView):
+    pass
+
+
+class UserOrderDetailView(DetailView):
+    pass

@@ -33,12 +33,12 @@ class Product(models.Model):
     class Meta:
         db_table = 'product'
 
-    name = models.CharField(max_length=255, db_index=True)
-    amount = models.PositiveIntegerField(default=0)
-    category = models.ForeignKey(Category, on_delete=models.RESTRICT)
-    vendor = models.ForeignKey(Vendor, on_delete=models.RESTRICT)
-    date_created = models.DateTimeField(auto_now_add=True)
-    description = models.TextField()
+    name = models.CharField(max_length=255, verbose_name="Название товара", db_index=True)
+    amount = models.PositiveIntegerField(verbose_name="Кол-во на складе", default=0)
+    category = models.ForeignKey(Category, verbose_name="Категория", on_delete=models.RESTRICT)
+    vendor = models.ForeignKey(Vendor, verbose_name="Производитель", on_delete=models.RESTRICT)
+    date_created = models.DateTimeField(verbose_name="Дата создания", auto_now_add=True)
+    description = models.TextField(verbose_name="Описание")
 
     def __str__(self):
         return f'Product[{self.pk}], {self.name=}, {self.amount=}'
@@ -90,17 +90,17 @@ class Order(models.Model):
         db_table = 'order'
 
     user = models.ForeignKey(User, on_delete=models.RESTRICT)
-    status = models.ForeignKey(OrderStatus, on_delete=models.RESTRICT, blank=True, null=True)
-    payment = models.ForeignKey(PaymentType, on_delete=models.RESTRICT, null=True)
+    status = models.ForeignKey(OrderStatus, on_delete=models.RESTRICT, verbose_name="Статус", blank=True, null=True)
+    payment = models.ForeignKey(PaymentType, on_delete=models.RESTRICT, verbose_name="Способ оплаты", null=True)
     product = models.ManyToManyField(Product, related_name='Orders', through='CartItem')
-    customer_name = models.CharField(max_length=45, null=True)
-    customer_surname = models.CharField(max_length=45, null=True)
-    customer_patronymic = models.CharField(max_length=45, null=True)
-    customer_phone_number = models.CharField(max_length=12, null=True, db_index=True)
-    customer_email = models.CharField(max_length=255, unique=True, db_index=True, null=True)
-    date_start = models.DateTimeField(blank=True, null=True)
-    date_end = models.DateTimeField(blank=True, null=True)
-    address = models.TextField(null=True)
+    name = models.CharField(max_length=45, verbose_name="Имя", null=True)
+    surname = models.CharField(max_length=45, verbose_name="Фамилия", null=True)
+    patronymic = models.CharField(max_length=45, verbose_name="Отчество", null=True)
+    phone_number = models.CharField(max_length=12, verbose_name="Номер телефона", null=True, db_index=True)
+    email = models.CharField(max_length=255, verbose_name="Электронная почта", unique=True, db_index=True, null=True)
+    date_start = models.DateTimeField(blank=True, verbose_name="Дата создания заказа", null=True)
+    date_end = models.DateTimeField(blank=True, verbose_name="Дата завершения заказа", null=True)
+    address = models.TextField(verbose_name="Адрес доставки", null=True)
 
     def __str__(self):
         return f'Order[{self.pk}], {self.user_id=}, {self.status=}, {self.date_start=}, {self.date_end=}'

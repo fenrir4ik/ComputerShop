@@ -1,4 +1,9 @@
 from django import forms
+from django.utils import timezone
+
+from apps.store.models import Order
+from apps.user.forms import UserBaseForm
+from services.dao.order_dao import OrderDAO
 
 
 class AddProductToCartForm(forms.Form):
@@ -9,3 +14,28 @@ class AddProductToCartForm(forms.Form):
                                                    min_value=1,
                                                    max_value=max_amount,
                                                    initial=amount_in_cart)
+
+
+class CreateOrderForm(UserBaseForm, forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = ['name', 'surname', 'patronymic', 'phone_number', 'email', 'address', 'payment']
+
+    def __init__(self, user, data=None, files=None, instance=None, **kwargs):
+        super().__init__(data=data, files=files, instance=instance, **kwargs)
+        self.fields['phone_number'].widget.attrs.update({'required': True})
+        self.fields['payment'].widget.attrs.update({'required': True})
+        self.user = user
+        # CSS REPLACE
+        for visible_field in self.visible_fields():
+            visible_field.field.widget.attrs['class'] = 'form-control'
+
+    def save(self, commit=True):
+        cart_id = OrderDAO.get_user_cart_id(self.user.pk)
+        order = super().save(commit=False)
+        order.pk = cart_id
+        order.user = self.user
+        order.status_id = 1
+        order.date_start = timezone.now()
+        order.save()
+        return order

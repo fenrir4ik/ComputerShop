@@ -7,8 +7,6 @@ urlpatterns = [
     path('products/new/', ProductAddView.as_view(), name='add product'),
     path('products/<int:pk>/delete/', ProductDeleteView.as_view(), name='delete product'),
     path('products/<int:pk>/', ProductUpdateView.as_view(), name='update product'),
-    # path('orders/'),
-    # path('orders/<int:pk>/'),
     # list order (admin)
     # change order (admin)
 ]

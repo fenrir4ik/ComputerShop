@@ -9,24 +9,29 @@ from utils import form_validators
 
 class UserBaseForm(forms.Form):
     name = forms.CharField(
+        label="Имя",
         widget=forms.TextInput(attrs={'placeholder': 'Имя'}),
         validators=[form_validators.name_validator],
         max_length=45
     )
     surname = forms.CharField(
+        label="Фамилия",
         widget=forms.TextInput(attrs={'placeholder': 'Фамилия'}),
         validators=[form_validators.surname_validator],
         max_length=45
     )
     patronymic = forms.CharField(
+        label="Отчество",
         widget=forms.TextInput(attrs={'placeholder': 'Отчество'}),
         validators=[form_validators.patronymic_validator],
         max_length=45
     )
     email = forms.EmailField(
+        label="Электронная почта",
         widget=forms.TextInput(attrs={'placeholder': 'Почта'})
     )
     phone_number = forms.CharField(
+        label="Номер телефона",
         widget=forms.TextInput(attrs={'placeholder': 'Номер телефона'}),
         required=False,
         empty_value=None,
