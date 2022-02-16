@@ -21,10 +21,18 @@ class CreateOrderForm(UserBaseForm, forms.ModelForm):
         model = Order
         fields = ['name', 'surname', 'patronymic', 'phone_number', 'email', 'address', 'payment']
 
+    address = forms.CharField(
+        label="Адрес доставки",
+        widget=forms.Textarea(attrs={'placeholder': 'Адрес доставки'}),
+        required=False,
+        empty_value=None,
+    )
+
     def __init__(self, user, data=None, files=None, instance=None, **kwargs):
         super().__init__(data=data, files=files, instance=instance, **kwargs)
         self.fields['phone_number'].widget.attrs.update({'required': True})
         self.fields['payment'].widget.attrs.update({'required': True})
+
         self.user = user
         # CSS REPLACE
         for visible_field in self.visible_fields():

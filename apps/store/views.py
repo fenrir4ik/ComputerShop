@@ -10,6 +10,7 @@ from apps.store.models import Product
 from services.cart_service import CartService
 from services.dao.cart_item_dao import CartItemDAO
 from services.dao.image_dao import ImageDao
+from services.dao.order_dao import OrderDAO
 from services.dao.product_dao import ProductDAO
 
 
@@ -121,7 +122,7 @@ class UserCartClearView(TemplateView):
 class OrderCreateView(CreateView):
     template_name = 'store/create_order.html'
     form_class = CreateOrderForm
-    success_url = reverse_lazy('user cart')
+    success_url = reverse_lazy('user orders')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
@@ -137,8 +138,13 @@ class OrderCreateView(CreateView):
 
 
 class UserOrdersListView(ListView):
-    pass
+    template_name = 'store/own_orders.html'
+    context_object_name = 'orders_list'
+
+    def get_queryset(self):
+        qs = OrderDAO.get_user_orders(self.request.user.pk)
+        return qs
 
 
 class UserOrderDetailView(DetailView):
-    pass
+    template_name = 'store/own_order_detail.html'
