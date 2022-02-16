@@ -14,13 +14,15 @@ class ProductDAO:
         return products
 
     @staticmethod
-    def annotate_queryset_with_price(queryset, ref='pk') -> QuerySet:
-        actual_price = ProductPrice.objects.filter(product=OuterRef(ref)).order_by('-date_actual')
-        queryset = queryset.annotate(price=Subquery(actual_price.values('price')[:1]))
+    def annotate_queryset_with_price(queryset, ref: str = 'pk', actual: bool = True) -> QuerySet:
+        price = ProductPrice.objects.filter(product=OuterRef(ref)).order_by('-date_actual')
+        if not actual:
+            price = price.filter(date_actual__lte=OuterRef('order__date_start'))
+        queryset = queryset.annotate(price=Subquery(price.values('price')[:1]))
         return queryset
 
     @staticmethod
-    def annotate_queryset_with_image(queryset, ref='pk') -> QuerySet:
+    def annotate_queryset_with_image(queryset, ref: str = 'pk') -> QuerySet:
         product_image = ProductImage.objects.filter(Q(product=OuterRef(ref)) & Q(is_main=True))
         queryset = queryset.annotate(image=Subquery(product_image.values('image')[:1]))
         return queryset

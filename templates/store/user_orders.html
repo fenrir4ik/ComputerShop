@@ -35,6 +35,7 @@
                     <p>Номер телефона: {{ order.phone_number }}</p>
                     <p>Почта: {{ order.email }}</p>
                     <p>Адрес доставки: {{ order.address }}</p>
+                    <p>Общая стоимость товаров: {{ order.order_total }}</p>
                     <a class="btn btn-primary" href="{% url 'order-detail' pk=order.id %}">Детали</a>
                     <br><br>
                 </div>

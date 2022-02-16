@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block styles %}
+    <style>
+        .orders_outer {
+            display: flex;
+            flex-direction: row;
+            justify-content: left;
+        }
+
+        .orders_order {
+            margin-right: 200px;
+        }
+
+        .orders_products > div > div {
+            width: 700px;
+            margin-right: 70px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container py-4">
+        <div class="orders_outer">
+            <div class="orders_order">
+                <h2>Заказ №{{ order.id }}</h2>
+                <p>Дата создания заказа: {{ order.date_start }}</p>
+                <p>ФИО: {{ order.surname }} {{ order.name }} {{ order.patronymic }}</p>
+                <p>Статус: {{ order.status.name }}</p>
+                <p>Тип оплаты: {{ order.payment.type }}</p>
+                <p>Номер телефона: {{ order.phone_number }}</p>
+                <p>Почта: {{ order.email }}</p>
+                <p>Адрес доставки: {{ order.address }}</p>
+                <p>Общая стоимость товаров: {{ order.order_total }}</p>
+                <a class="btn btn-primary" href="{% url 'order-detail' pk=order.id %}">Детали</a>
+                <br><br>
+            </div>
+            <div class="orders_products">
+                <h5>Товары</h5>
+                <div>
+                    {% for item in order.products.all %}
+                        <div>
+                            <p>№{{ item.id }}</p>
+                            <img src="{% get_media_prefix %}{{ item.image }}" alt="" width="150" height="150">
+                            <p>Цена: {{ item.price }}</p>
+                            <p>Название: {{ item.product.name }}</p>
+                            <p>Кол-во: {{ item.amount }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

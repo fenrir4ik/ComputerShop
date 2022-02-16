@@ -138,13 +138,16 @@ class OrderCreateView(CreateView):
 
 
 class UserOrdersListView(ListView):
-    template_name = 'store/own_orders.html'
+    template_name = 'store/user_orders.html'
     context_object_name = 'orders_list'
 
     def get_queryset(self):
-        qs = OrderDAO.get_user_orders(self.request.user.pk)
-        return qs
+        return OrderDAO.get_all_orders(self.request.user.pk)
 
 
 class UserOrderDetailView(DetailView):
-    template_name = 'store/own_order_detail.html'
+    template_name = 'store/order_detail.html'
+    context_object_name = 'order'
+
+    def get_queryset(self):
+        return OrderDAO.get_all_orders(self.request.user.pk)

@@ -6,6 +6,7 @@ from django.views.generic import CreateView, ListView, DeleteView, UpdateView
 from apps.admin_panel.forms import ProductAddForm, ProductUpdateForm
 from apps.store.models import Product
 from computershop.settings import DEFAULT_PRODUCT_IMAGE
+from services.dao.order_dao import OrderDAO
 from services.dao.product_dao import ProductDAO
 
 
@@ -77,8 +78,12 @@ class ProductUpdateView(UpdateView):
 
 
 class OrdersListView(ListView):
-    pass
+    template_name = 'store/user_orders.html'
+    context_object_name = 'orders_list'
+
+    def get_queryset(self):
+        return OrderDAO.get_all_orders()
 
 
-class UpdateOrderView(UpdateView):
+class OrderUpdateView(UpdateView):
     pass
