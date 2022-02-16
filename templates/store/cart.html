@@ -62,8 +62,8 @@
                 {% endfor %}
                 </tbody>
             </table>
-            <a href="{% url 'cart clear' %}">Очистить корзину</a>
-            <a href="{% url 'create order' %}">Оформить заказ</a>
+            <a href="{% url 'clear-cart' %}">Очистить корзину</a>
+            <a href="{% url 'order-create' %}">Оформить заказ</a>
         {% else %}
             <p>Корзина пуста</p>
         {% endif %}

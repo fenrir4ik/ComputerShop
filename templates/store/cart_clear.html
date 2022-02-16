@@ -5,7 +5,7 @@
         <form method="post">
             {% csrf_token %}
             <p>Вы уверены что хотите очистить корзину?</p>
-            <a class="btn btn-primary" href="{% url 'user cart' %}">Отмена</a>
+            <a class="btn btn-primary" href="{% url 'user-cart' %}">Отмена</a>
             <button class="btn btn-danger" type="submit">Очистить</button>
         </form>
     </div>

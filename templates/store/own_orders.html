@@ -35,7 +35,7 @@
                     <p>Номер телефона: {{ order.phone_number }}</p>
                     <p>Почта: {{ order.email }}</p>
                     <p>Адрес доставки: {{ order.address }}</p>
-                    <a class="btn btn-primary" href="{% url 'order detail' pk=order.id %}">Детали</a>
+                    <a class="btn btn-primary" href="{% url 'order-detail' pk=order.id %}">Детали</a>
                     <br><br>
                 </div>
                 <div class="orders_products">

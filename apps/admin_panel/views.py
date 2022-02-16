@@ -25,7 +25,7 @@ class ProductAddView(CreateView):
             return self.form_invalid(form)
 
     def get_success_url(self):
-        return reverse('update product', kwargs={'pk': self.object.pk})
+        return reverse('product-update', kwargs={'pk': self.object.pk})
 
 
 class ProductsListAdminView(ListView):
@@ -47,7 +47,7 @@ class ProductsListAdminView(ListView):
 
 class ProductDeleteView(DeleteView):
     template_name = 'admin_panel/delete_product.html'
-    success_url = reverse_lazy('admin products')
+    success_url = reverse_lazy('admin-products')
     context_object_name = 'product'
 
     def get_object(self, queryset=None):
@@ -68,7 +68,7 @@ class ProductUpdateView(UpdateView):
         return ProductDAO.get_products_list(include_price=True, include_image=False)
 
     def get_success_url(self):
-        return reverse('update product', kwargs={'pk': self.object.pk})
+        return reverse('product-update', kwargs={'pk': self.object.pk})
 
     def get_context_data(self, **kwargs):
         context = super(ProductUpdateView, self).get_context_data(**kwargs)

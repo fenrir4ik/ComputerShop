@@ -116,13 +116,13 @@ class UserCartClearView(TemplateView):
     def post(self, request, *args, **kwargs):
         service = CartService()
         service.clear_user_cart(request.user.pk)
-        return redirect('user cart')
+        return redirect('user-cart')
 
 
 class OrderCreateView(CreateView):
     template_name = 'store/create_order.html'
     form_class = CreateOrderForm
-    success_url = reverse_lazy('user orders')
+    success_url = reverse_lazy('user-orders')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
