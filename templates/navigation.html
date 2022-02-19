@@ -26,9 +26,16 @@
                 </li>
                 {% if user.is_authenticated %}
                     {% if user.is_admin %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'admin products' %}">Админ-панель</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Админ-панель</a>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                                <li><a class="dropdown-item" href="{% url 'admin-products' %}">Управление товарами</a></li>
+                                <li><a class="dropdown-item" href="{% url 'admin-orders' %}">Управление заказами</a></li>
+                            </ul>
+                        </li>
                     {% else %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'user cart' %}">Корзина</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'user-cart' %}">Корзина</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'user-orders' %}">Мои заказы</a></li>
                     {% endif %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'profile' %}">Профиль</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Выход</a></li>

@@ -1,14 +1,12 @@
 from django.urls import path
 
-from apps.admin_panel.views import ProductAddView, ProductsListAdminView, ProductDeleteView, ProductUpdateView
+from apps.admin_panel.views import *
 
 urlpatterns = [
-    path('products/', ProductsListAdminView.as_view(), name='admin products'),
-    path('products/new/', ProductAddView.as_view(), name='add product'),
-    path('products/<int:pk>/delete/', ProductDeleteView.as_view(), name='delete product'),
-    path('products/<int:pk>/', ProductUpdateView.as_view(), name='update product'),
-    # path('orders/'),
-    # path('orders/<int:pk>/'),
-    # list order (admin)
-    # change order (admin)
+    path('products/', ProductsListAdminView.as_view(), name='admin-products'),
+    path('products/new/', ProductAddView.as_view(), name='product-add'),
+    path('products/<int:pk>/delete/', ProductDeleteView.as_view(), name='product-delete'),
+    path('products/<int:pk>/', ProductUpdateView.as_view(), name='product-update'),
+    path('orders/', OrdersListView.as_view(), name='admin-orders'),
+    path('orders/<int:pk>/', OrderUpdateView.as_view(), name='order-update'),
 ]

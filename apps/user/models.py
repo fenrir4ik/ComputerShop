@@ -35,9 +35,6 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser):
-    class Meta:
-        db_table = 'user'
-
     email = models.EmailField(max_length=255, unique=True, db_index=True)
     phone_number = models.CharField(max_length=12, null=True, db_index=True)
     name = models.CharField(max_length=45)
@@ -52,6 +49,9 @@ class User(AbstractBaseUser):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name', 'surname', 'patronymic']
+
+    class Meta:
+        db_table = 'user'
 
     def __str__(self):
         return f'User[{self.pk}, {self.email=}, {self.is_staff=}'

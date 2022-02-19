@@ -151,8 +151,3 @@ MEDIA_URL = '/media/'
 # Login url settings
 LOGIN_URL = '/user/login'
 LOGIN_REDIRECT_URL = '/'
-
-# Product images settings
-
-DEFAULT_PRODUCT_IMAGE = 'product/default_product.png'
-PRODUCT_IMAGE_MAX_NUMBER = 3

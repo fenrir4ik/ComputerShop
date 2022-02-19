@@ -28,7 +28,7 @@
                 {% endif %}
                 {% if product_amount_in_cart > 0 %}
                     <form method="post"
-                          action="{% url 'delete cart-item' pk=product.id %}?next={{ request.get_full_path }}">
+                          action="{% url 'delete-cart-item' pk=product.id %}?next={{ request.get_full_path }}">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-danger">Удалить из корзины</button>
                     </form>

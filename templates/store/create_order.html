@@ -17,18 +17,10 @@
 
 {% block content %}
     <div class="container py-4">
-        {% if cart_items %}
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
             <table class="table">
-                <thead>
-                <tr>
-                    <th scope="col">Id</th>
-                    <th scope="col">Image</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Price</th>
-                    <th scope="col">Amount</th>
-                    <th></th>
-                </tr>
-                </thead>
                 <tbody>
                 {% for item in cart_items %}
                     <tr>
@@ -62,11 +54,7 @@
                 {% endfor %}
                 </tbody>
             </table>
-            <a href="{% url 'clear-cart' %}">Очистить корзину</a>
-            <a href="{% url 'order-create' %}">Оформить заказ</a>
-        {% else %}
-            <p>Корзина пуста</p>
-        {% endif %}
-        <a href="{% url 'index' %}">На главную</a>
+            <button type="submit" class="btn btn-primary">Отправить в обработку</button>
+        </form>
     </div>
 {% endblock %}
