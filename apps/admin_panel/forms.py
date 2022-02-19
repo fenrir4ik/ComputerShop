@@ -1,12 +1,12 @@
-from abc import abstractmethod
-
 from django import forms
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.forms import formset_factory, inlineformset_factory, BaseInlineFormSet
 
-from apps.store.models import Product, ProductImage
-from computershop.settings import PRODUCT_IMAGE_MAX_NUMBER
+from apps.store.models import Product, ProductImage, Order
+from services.constants import PRODUCT_IMAGE_MAX_AMOUNT
+
+from services.order_service import OrderService
 from services.product_service import ProductService
 from utils.form_validators import square_image_validator
 
@@ -29,6 +29,10 @@ class ImageForm(forms.ModelForm):
 
 
 class ProductImageUpdateInlineFormSet(BaseInlineFormSet):
+    """
+    Formset is used for product image updating
+    """
+
     def clean(self):
         super().clean()
         for form in self.forms:
@@ -47,7 +51,7 @@ class ProductImageUpdateInlineFormSet(BaseInlineFormSet):
 
 
 # FormSet for product images with maximum amount of PRODUCT_IMAGE_MAX_NUMBER
-ImageFormSet = formset_factory(ImageForm, extra=1, max_num=PRODUCT_IMAGE_MAX_NUMBER)
+ImageFormSet = formset_factory(ImageForm, extra=1, max_num=PRODUCT_IMAGE_MAX_AMOUNT)
 
 # FormSet for updating product images
 ProductImageUpdateFormSet = inlineformset_factory(Product,
@@ -55,21 +59,15 @@ ProductImageUpdateFormSet = inlineformset_factory(Product,
                                                   formset=ProductImageUpdateInlineFormSet,
                                                   fields=['image'],
                                                   can_delete=True,
-                                                  max_num=PRODUCT_IMAGE_MAX_NUMBER,
+                                                  max_num=PRODUCT_IMAGE_MAX_AMOUNT,
                                                   min_num=1)
 
 
-class ImageFormsetMixin:
-    @abstractmethod
-    def save_additional_product_data(self, product):
-        raise NotImplementedError
-
-
-class ProductAddForm(ImageFormsetMixin, forms.ModelForm):
+class ProductAddForm(forms.ModelForm):
     """
-    Form is used for product creation
+    Form is used to add new products in admin-panel
     """
-    price = forms.DecimalField(validators=[MinValueValidator(0.00)], decimal_places=2, max_digits=11, min_value=0.00)
+    price = forms.DecimalField(label="Цена", validators=[MinValueValidator(0.00)], decimal_places=2, max_digits=11, min_value=0.00)
 
     class Meta:
         model = Product
@@ -99,6 +97,10 @@ class ProductAddForm(ImageFormsetMixin, forms.ModelForm):
 
 
 class ProductUpdateForm(ProductAddForm):
+    """
+    Form is used to update products in admin-panel
+    """
+
     def __init__(self, data=None, files=None, instance=None, **kwargs):
         super().__init__(data=data, files=files, instance=instance, **kwargs)
         self.image_formset = ProductImageUpdateFormSet(data=data, files=files, instance=instance, **kwargs)
@@ -110,11 +112,31 @@ class ProductUpdateForm(ProductAddForm):
 
     def save_additional_product_data(self, product):
         service = ProductService()
-        image_list = list(map(lambda form:
-                              {'image': form.get('image'),
-                               'old_image_id': form.get('id').id if form.get('id') else None,
-                               'delete': form.get('DELETE')
-                               }
-                              if form else {},
-                              self.image_formset.cleaned_data))
-        service.update_additional_data(product.pk, self.cleaned_data.get('price'), image_list)
+        service.update_additional_data(product.pk, self.cleaned_data.get('price'), self.image_formset.cleaned_data)
+
+
+class OrderChangeForm(forms.ModelForm):
+    """
+    Form is used to update user order information and status
+    """
+
+    class Meta:
+        model = Order
+        fields = ['name', 'surname', 'patronymic', 'email', 'phone_number', 'address', 'date_start', 'date_end',
+                  'payment', 'status']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for visible_field in self.visible_fields():
+            visible_field.field.widget.attrs['class'] = 'form-control'
+
+        self.fields['address'].empty_value = None
+
+        service = OrderService(status_id=self.instance.status_id, delivery_available=bool(self.instance.address))
+        self.fields['status'].queryset = service.get_future_statuses()
+
+        readonly_fields = ['date_start', 'date_end']
+        if not self.instance.is_new:
+            readonly_fields.extend(['name', 'surname', 'patronymic', 'email', 'phone_number', 'address', 'payment'])
+        for field in readonly_fields:
+            self.fields[field].disabled = True

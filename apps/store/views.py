@@ -15,6 +15,9 @@ from services.dao.product_dao import ProductDAO
 
 
 class IndexView(ListView):
+    """
+    View is used for main page
+    """
     template_name = 'store/index.html'
     context_object_name = 'products'
 
@@ -27,6 +30,9 @@ class IndexView(ListView):
 
 
 class SingleProductView(DetailView):
+    """
+    View is used for displaying product detail page with form
+    """
     template_name = 'store/product_detail.html'
     context_object_name = 'product'
 
@@ -48,6 +54,9 @@ class SingleProductView(DetailView):
 
 
 class SingleProductFormView(SingleObjectMixin, FormView):
+    """
+    View is used for processing submitted data on product detail page
+    """
     form_class = AddProductToCartForm
 
     def get_queryset(self):
@@ -78,6 +87,10 @@ class SingleProductFormView(SingleObjectMixin, FormView):
 
 
 class ProductDetailView(View):
+    """
+    View is used for working with product detail page (both POST and GET)
+    """
+
     def get(self, request, *args, **kwargs):
         view = SingleProductView.as_view()
         return view(request, *args, **kwargs)
@@ -88,6 +101,9 @@ class ProductDetailView(View):
 
 
 class ProductDeleteFromCartView(View):
+    """
+    View is used for deletion product from cart
+    """
     def post(self, request, *args, **kwargs):
         service = CartService()
         service.delete_product_from_cart(request.user.pk, kwargs.get('pk'))
@@ -96,6 +112,9 @@ class ProductDeleteFromCartView(View):
 
 
 class UserCartView(ListView):
+    """
+    View is used for displaying user cart
+    """
     template_name = 'store/cart.html'
     context_object_name = 'cart_items'
 
@@ -111,6 +130,9 @@ class UserCartView(ListView):
 
 
 class UserCartClearView(TemplateView):
+    """
+    View is used for shopping cart clearing
+    """
     template_name = 'store/cart_clear.html'
 
     def post(self, request, *args, **kwargs):
@@ -120,6 +142,9 @@ class UserCartClearView(TemplateView):
 
 
 class OrderCreateView(CreateView):
+    """
+    View is used for checkout
+    """
     template_name = 'store/create_order.html'
     form_class = CreateOrderForm
     success_url = reverse_lazy('user-orders')
@@ -138,6 +163,9 @@ class OrderCreateView(CreateView):
 
 
 class UserOrdersListView(ListView):
+    """
+    View is used for displaying own user orders
+    """
     template_name = 'store/user_orders.html'
     context_object_name = 'orders_list'
 
@@ -146,6 +174,9 @@ class UserOrdersListView(ListView):
 
 
 class UserOrderDetailView(DetailView):
+    """
+    View is used for displaying single order from user orders list
+    """
     template_name = 'store/order_detail.html'
     context_object_name = 'order'
 

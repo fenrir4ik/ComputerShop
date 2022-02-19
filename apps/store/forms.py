@@ -1,12 +1,15 @@
 from django import forms
 from django.utils import timezone
 
-from apps.store.models import Order
+from apps.store.models import Order, OrderStatus
 from apps.user.forms import UserBaseForm
 from services.dao.order_dao import OrderDAO
 
 
 class AddProductToCartForm(forms.Form):
+    """
+    Form is used for adding products to shopping cart
+    """
     def __init__(self, amount_in_cart, max_amount, *args, **kwargs):
         super().__init__(*args, **kwargs)
         amount_in_cart = None if amount_in_cart < 1 else amount_in_cart
@@ -17,6 +20,9 @@ class AddProductToCartForm(forms.Form):
 
 
 class CreateOrderForm(UserBaseForm, forms.ModelForm):
+    """
+    Form is used for order creation
+    """
     class Meta:
         model = Order
         fields = ['name', 'surname', 'patronymic', 'phone_number', 'email', 'address', 'payment']
@@ -43,7 +49,7 @@ class CreateOrderForm(UserBaseForm, forms.ModelForm):
         order = super().save(commit=False)
         order.pk = cart_id
         order.user = self.user
-        order.status_id = 1
+        order.status_id = OrderStatus.retrieve_id('new')
         order.date_start = timezone.now()
         order.save()
         return order

@@ -8,6 +8,9 @@ from utils import form_validators
 
 
 class UserBaseForm(forms.Form):
+    """
+    Base form with user data and validators for every field
+    """
     name = forms.CharField(
         label="Имя",
         widget=forms.TextInput(attrs={'placeholder': 'Имя'}),

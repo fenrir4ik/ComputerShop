@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="container py-4">
+        <h2>Заказ №{{ order.id }}</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <h5>Корзина заказа</h5>
+            {% for item in order.products.all %}
+                <div>
+                    <p>№{{ item.id }}</p>
+                    <img src="{% get_media_prefix %}{{ item.image }}" alt="" width="150" height="150">
+                    <p>Цена: {{ item.price }}</p>
+                    <p>Название: {{ item.product.name }}</p>
+                    <p>Кол-во: {{ item.amount }}</p>
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+        </form>
+    </div>
+{% endblock %}

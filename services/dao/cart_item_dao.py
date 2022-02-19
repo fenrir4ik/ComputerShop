@@ -1,9 +1,9 @@
 from typing import Union
 
 from django.db import transaction
-from django.db.models import F, Q, OuterRef, Subquery, QuerySet
+from django.db.models import F, OuterRef, Subquery, QuerySet
 
-from apps.store.models import CartItem, Product, ProductImage
+from apps.store.models import CartItem, Product
 from services.dao.order_dao import OrderDAO
 from services.dao.product_dao import ProductDAO
 
@@ -43,7 +43,7 @@ class CartItemDAO:
             products_id = list(products_id)
         with transaction.atomic():
             cart_item = CartItem.objects.filter(order_id=cart_id, product_id__in=products_id).select_for_update()
-            Product.objects.filter(pk__in=products_id)\
+            Product.objects.filter(pk__in=products_id) \
                 .update(amount=F('amount') + Subquery(cart_item.filter(product_id=OuterRef('pk')).values('amount')))
             cart_item.delete()
 
