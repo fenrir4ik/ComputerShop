@@ -2,7 +2,7 @@ from services.dao.cart_item_dao import CartItemDAO
 from services.dao.order_dao import OrderDAO
 
 
-class CartService:
+class CartManager:
     def process_cart_item(self, user_id: int, product_id: int, amount: int):
         cart_id = OrderDAO.get_user_cart_id(user_id)
         product_amount_in_cart = CartItemDAO.get_product_amount_in_cart(cart_id, product_id)

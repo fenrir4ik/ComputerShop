@@ -12,9 +12,7 @@ from services.dao.product_dao import ProductDAO
 
 
 class ProductAddView(CreateView):
-    """
-    View is used for products creation via admin panel
-    """
+    """View is used for products creation via admin panel"""
     template_name = 'admin_panel/add_product.html'
     form_class = ProductAddForm
 
@@ -31,9 +29,7 @@ class ProductAddView(CreateView):
 
 
 class ProductsListAdminView(ListView):
-    """
-    View is used for displaying products list in admin-panel
-    """
+    """View is used for displaying products list in admin-panel"""
     template_name = 'admin_panel/products_list.html'
     context_object_name = 'products'
     paginate_by = 20
@@ -48,14 +44,12 @@ class ProductsListAdminView(ListView):
 
 
 class ProductDeleteView(DeleteView):
-    """
-    View is used for deletion products in admin-panel
-    """
+    """View is used for deletion products in admin-panel"""
     template_name = 'admin_panel/delete_product.html'
     success_url = reverse_lazy('admin-products')
     context_object_name = 'product'
     error_message = "Товар №{} находится в корзинах пользователя и не может быть удален"
-    success_message = "Товар №{} был успешно удален" #WARNING, PROCESS SEUCCES MEESSAGE IN GREEN, NOW IT'S ALSO RED
+    success_message = "Товар №{} был успешно удален"
 
     def get_object(self, queryset=None):
         id_ = self.kwargs.get('pk')
@@ -72,9 +66,7 @@ class ProductDeleteView(DeleteView):
 
 
 class ProductUpdateView(UpdateView):
-    """
-    View is used for updating products in admin-panel
-    """
+    """View is used for updating products in admin-panel"""
     template_name = 'admin_panel/update_product.html'
     form_class = ProductUpdateForm
 
@@ -91,9 +83,7 @@ class ProductUpdateView(UpdateView):
 
 
 class OrdersListView(ListView):
-    """
-    View is used for displaying orders list in admin-panel
-    """
+    """View is used for displaying orders list in admin-panel"""
     template_name = 'store/user_orders.html'
     context_object_name = 'orders_list'
 
@@ -102,9 +92,7 @@ class OrdersListView(ListView):
 
 
 class OrderUpdateView(UpdateView):
-    """
-    View is used for updating orders in admin-panel
-    """
+    """View is used for updating orders in admin-panel"""
     template_name = 'admin_panel/update_order.html'
     form_class = OrderChangeForm
     context_object_name = 'order'

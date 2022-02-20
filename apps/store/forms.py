@@ -7,9 +7,8 @@ from services.dao.order_dao import OrderDAO
 
 
 class AddProductToCartForm(forms.Form):
-    """
-    Form is used for adding products to shopping cart
-    """
+    """Form is used for adding products to shopping cart"""
+
     def __init__(self, amount_in_cart, max_amount, *args, **kwargs):
         super().__init__(*args, **kwargs)
         amount_in_cart = None if amount_in_cart < 1 else amount_in_cart
@@ -20,9 +19,8 @@ class AddProductToCartForm(forms.Form):
 
 
 class CreateOrderForm(UserBaseForm, forms.ModelForm):
-    """
-    Form is used for order creation
-    """
+    """Form is used for order creation"""
+
     class Meta:
         model = Order
         fields = ['name', 'surname', 'patronymic', 'phone_number', 'email', 'address', 'payment']

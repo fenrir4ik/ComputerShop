@@ -8,9 +8,7 @@ from utils import form_validators
 
 
 class UserBaseForm(forms.Form):
-    """
-    Base form with user data and validators for every field
-    """
+    """Base form with user data and validators for every field"""
     name = forms.CharField(
         label="Имя",
         widget=forms.TextInput(attrs={'placeholder': 'Имя'}),
@@ -44,9 +42,7 @@ class UserBaseForm(forms.Form):
 
 
 class RegistrationForm(UserBaseForm, UserCreationForm):
-    """
-    Form is used for user registration
-    """
+    """Form is used for user registration"""
 
     class Meta:
         model = User
@@ -75,9 +71,7 @@ class RegistrationForm(UserBaseForm, UserCreationForm):
 
 
 class LoginForm(AuthenticationForm):
-    """
-    Form is used to authorize user
-    """
+    """Form is used to authorize user"""
 
     def __init__(self, *args, **kwargs):
         """Changes invalid_login error message"""
@@ -88,9 +82,7 @@ class LoginForm(AuthenticationForm):
 
 
 class ProfileChangeForm(UserBaseForm, forms.ModelForm):
-    """
-    Form is used to change user profile information
-    """
+    """Form is used to change user profile information"""
     password1 = forms.CharField(validators=[validate_password], widget=forms.PasswordInput(), required=False)
     password2 = forms.CharField(widget=forms.PasswordInput(), required=False)
 

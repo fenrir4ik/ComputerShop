@@ -5,16 +5,13 @@ from django.forms import formset_factory, inlineformset_factory, BaseInlineFormS
 
 from apps.store.models import Product, ProductImage, Order
 from services.constants import PRODUCT_IMAGE_MAX_AMOUNT
-
 from services.order_service import OrderService
-from services.product_service import ProductService
+from services.product_service import AdditionalProductDataService
 from utils.form_validators import square_image_validator
 
 
 class ImageForm(forms.ModelForm):
-    """
-    Form is used in ImageFormSets to add multiple images to the product
-    """
+    """Form is used in ImageFormSets to add multiple images to the product"""
     image = forms.ImageField(required=False, validators=[square_image_validator])
 
     class Meta:
@@ -29,9 +26,7 @@ class ImageForm(forms.ModelForm):
 
 
 class ProductImageUpdateInlineFormSet(BaseInlineFormSet):
-    """
-    Formset is used for product image updating
-    """
+    """Formset is used for product image updating"""
 
     def clean(self):
         super().clean()
@@ -64,10 +59,9 @@ ProductImageUpdateFormSet = inlineformset_factory(Product,
 
 
 class ProductAddForm(forms.ModelForm):
-    """
-    Form is used to add new products in admin-panel
-    """
-    price = forms.DecimalField(label="Цена", validators=[MinValueValidator(0.00)], decimal_places=2, max_digits=11, min_value=0.00)
+    """Form is used to add new products in admin-panel"""
+    price = forms.DecimalField(label="Цена", validators=[MinValueValidator(0.00)], decimal_places=2, max_digits=11,
+                               min_value=0.00)
 
     class Meta:
         model = Product
@@ -92,14 +86,12 @@ class ProductAddForm(forms.ModelForm):
     def save_additional_product_data(self, product):
         if type(self) != ProductAddForm:
             raise NotImplementedError("Implement save_additional_product_data(self, product) method")
-        service = ProductService()
+        service = AdditionalProductDataService()
         service.add_additional_data(product.pk, self.cleaned_data.get('price'), self.image_formset.cleaned_data)
 
 
 class ProductUpdateForm(ProductAddForm):
-    """
-    Form is used to update products in admin-panel
-    """
+    """Form is used to update products in admin-panel"""
 
     def __init__(self, data=None, files=None, instance=None, **kwargs):
         super().__init__(data=data, files=files, instance=instance, **kwargs)
@@ -111,14 +103,12 @@ class ProductUpdateForm(ProductAddForm):
         return product
 
     def save_additional_product_data(self, product):
-        service = ProductService()
+        service = AdditionalProductDataService()
         service.update_additional_data(product.pk, self.cleaned_data.get('price'), self.image_formset.cleaned_data)
 
 
 class OrderChangeForm(forms.ModelForm):
-    """
-    Form is used to update user order information and status
-    """
+    """Form is used to update user order information and status"""
 
     class Meta:
         model = Order

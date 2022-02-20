@@ -12,26 +12,20 @@ from apps.user.forms import RegistrationForm, LoginForm, ProfileChangeForm
 
 
 class UserRegisterView(CreateView):
-    """
-    View is used to register a user
-    """
+    """View is used to register a user"""
     template_name = 'user/register.html'
     form_class = RegistrationForm
     success_url = reverse_lazy('login')
 
 
 class UserLoginView(LoginView):
-    """
-    View is used to authorize user
-    """
+    """View is used to authorize user"""
     template_name = 'user/login.html'
     form_class = LoginForm
 
 
 class UserLogoutView(LoginRequiredMixin, View):
-    """
-    View is used to logout user
-    """
+    """View is used to logout user"""
 
     def get(self, request):
         logout(request)
@@ -39,9 +33,7 @@ class UserLogoutView(LoginRequiredMixin, View):
 
 
 class ProfileChangeView(LoginRequiredMixin, UpdateView):
-    """
-    View is used to change user profile information in 'profile' section
-    """
+    """View is used to change user profile information in 'profile' section"""
     form_class = ProfileChangeForm
     template_name = 'user/profile.html'
     success_url = reverse_lazy('profile')

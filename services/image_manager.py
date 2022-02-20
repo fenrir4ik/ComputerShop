@@ -17,7 +17,7 @@ class ImageManager:
 
     @staticmethod
     def update_product_images(product_id: int, image_list: List[dict]):
-        image_list = ImageManager.__parse_image_formset_to_list(image_list)
+        image_list = _parse_image_formset_to_list(image_list)
 
         if all(map(lambda image: image.get('delete'), image_list)):
             ImageDao.delete_all_product_images(product_id)
@@ -62,20 +62,19 @@ class ImageManager:
         return image_number_after_update <= PRODUCT_IMAGE_MAX_AMOUNT
 
 
-    @staticmethod
-    def __parse_image_formset_to_list(cleaned_data: list):
-        """
-        Retrieves cleaned data and parse it into the list of dicts for future product images updating
-        Returns list of dicts with keys image, old_image_id, delete
-        """
-        image_list = []
-        for form in cleaned_data:
-            if form:
-                image_list.append({
-                    'image': form.get('image'),
-                    'old_image_id': form.get('id').id if form.get('id') else None,
-                    'delete': form.get('DELETE')
-                })
-            else:
-                image_list.append({})
-        return image_list
+def _parse_image_formset_to_list(cleaned_data: list) -> List[dict]:
+    """
+    Retrieves cleaned data and parse it into the list of dicts for future product images updating
+    Returns list of dicts with keys image, old_image_id, delete
+    """
+    image_list = []
+    for form in cleaned_data:
+        if form:
+            image_list.append({
+                'image': form.get('image'),
+                'old_image_id': form.get('id').id if form.get('id') else None,
+                'delete': form.get('DELETE')
+            })
+        else:
+            image_list.append({})
+    return image_list
