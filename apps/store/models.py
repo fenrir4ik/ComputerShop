@@ -5,7 +5,7 @@ from django.dispatch import receiver
 from django.utils import timezone
 
 from apps.user.models import User
-from services.constants import DEFAULT_PRODUCT_IMAGE
+from core.services.constants import DEFAULT_PRODUCT_IMAGE
 
 
 class Vendor(models.Model):

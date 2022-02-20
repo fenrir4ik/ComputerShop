@@ -7,11 +7,11 @@ from django.views.generic.edit import FormView, CreateView
 
 from apps.store.forms import AddProductToCartForm, CreateOrderForm
 from apps.store.models import Product
-from services.cart_manager import CartManager
-from services.dao.cart_item_dao import CartItemDAO
-from services.dao.image_dao import ImageDao
-from services.dao.order_dao import OrderDAO
-from services.dao.product_dao import ProductDAO
+from core.db.cart_item_dao import CartItemDAO
+from core.db.image_dao import ImageDao
+from core.db.order_dao import OrderDAO
+from core.db.product_dao import ProductDAO
+from core.services.cart_service import CartService
 
 
 class IndexView(ListView):
@@ -75,8 +75,7 @@ class SingleProductFormView(SingleObjectMixin, FormView):
     def form_valid(self, form):
         product_amount = form.cleaned_data.get('amount')
         product_id = self.object.get('id')
-        service = CartManager()
-        service.process_cart_item(self.request.user.pk, product_id, product_amount)
+        CartService.process_cart_item(self.request.user.pk, product_id, product_amount)
         return super().form_valid(form)
 
 
@@ -96,8 +95,7 @@ class ProductDeleteFromCartView(View):
     """View is used for deletion product from cart"""
 
     def post(self, request, *args, **kwargs):
-        service = CartManager()
-        service.delete_product_from_cart(request.user.pk, kwargs.get('pk'))
+        CartService.delete_product_from_cart(request.user.pk, kwargs.get('pk'))
         next_page = request.GET.get('next')
         return redirect(next_page) if next_page else reverse('index')
 
@@ -123,8 +121,7 @@ class UserCartClearView(TemplateView):
     template_name = 'store/cart_clear.html'
 
     def post(self, request, *args, **kwargs):
-        service = CartManager()
-        service.clear_user_cart(request.user.pk)
+        CartService.clear_user_cart(request.user.pk)
         return redirect('user-cart')
 
 

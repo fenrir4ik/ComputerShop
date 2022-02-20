@@ -4,8 +4,8 @@ from django.db import transaction
 from django.db.models import F, OuterRef, Subquery, QuerySet
 
 from apps.store.models import CartItem, Product
-from services.dao.order_dao import OrderDAO
-from services.dao.product_dao import ProductDAO
+from core.db.order_dao import OrderDAO
+from core.db.product_dao import ProductDAO
 
 
 class CartItemDAO:

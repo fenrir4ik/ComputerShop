@@ -1,10 +1,28 @@
 from typing import List
 
-from services.constants import PRODUCT_IMAGE_MAX_AMOUNT
-from services.dao.image_dao import ImageDao
+from core.db.image_dao import ImageDao
+from core.services.constants import PRODUCT_IMAGE_MAX_AMOUNT
 
 
-class ImageManager:
+def _parse_image_formset_to_list(cleaned_data: list) -> List[dict]:
+    """
+    Retrieves cleaned data and parse it into the list of dicts for future product images updating
+    Returns list of dicts with keys image, old_image_id, delete
+    """
+    image_list = []
+    for form in cleaned_data:
+        if form:
+            image_list.append({
+                'image': form.get('image'),
+                'old_image_id': form.get('id').id if form.get('id') else None,
+                'delete': form.get('DELETE')
+            })
+        else:
+            image_list.append({})
+    return image_list
+
+
+class ImageService:
     @staticmethod
     def add_product_images(product_id: int, image_list: List[dict]):
         main_image_empty = True
@@ -24,7 +42,7 @@ class ImageManager:
             ImageDao.create_default_product_image(product_id)
             return
 
-        if ImageManager.__images_update_available(product_id, image_list):
+        if ImageService.__images_update_available(product_id, image_list):
             main_image_empty = True
             for image_dict in image_list:
                 if image_dict:
@@ -60,21 +78,3 @@ class ImageManager:
                 created_image_n += 1
         image_number_after_update = current_image_n - deleted_image_n + created_image_n
         return image_number_after_update <= PRODUCT_IMAGE_MAX_AMOUNT
-
-
-def _parse_image_formset_to_list(cleaned_data: list) -> List[dict]:
-    """
-    Retrieves cleaned data and parse it into the list of dicts for future product images updating
-    Returns list of dicts with keys image, old_image_id, delete
-    """
-    image_list = []
-    for form in cleaned_data:
-        if form:
-            image_list.append({
-                'image': form.get('image'),
-                'old_image_id': form.get('id').id if form.get('id') else None,
-                'delete': form.get('DELETE')
-            })
-        else:
-            image_list.append({})
-    return image_list

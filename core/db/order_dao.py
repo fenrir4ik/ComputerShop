@@ -1,7 +1,7 @@
 from django.db.models import QuerySet, Prefetch, Sum, Subquery, F, OuterRef
 
 from apps.store.models import Order, CartItem
-from services.dao.product_dao import ProductDAO
+from core.db.product_dao import ProductDAO
 
 
 class OrderDAO:

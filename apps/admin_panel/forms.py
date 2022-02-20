@@ -4,9 +4,9 @@ from django.core.validators import MinValueValidator
 from django.forms import formset_factory, inlineformset_factory, BaseInlineFormSet
 
 from apps.store.models import Product, ProductImage, Order
-from services.constants import PRODUCT_IMAGE_MAX_AMOUNT
-from services.order_service import OrderService
-from services.product_service import AdditionalProductDataService
+from core.services.constants import PRODUCT_IMAGE_MAX_AMOUNT
+from core.services.order_status_service import OrderStatusService
+from core.services.product_service import ProductService
 from utils.form_validators import square_image_validator
 
 
@@ -58,8 +58,7 @@ ProductImageUpdateFormSet = inlineformset_factory(Product,
                                                   min_num=1)
 
 
-class ProductAddForm(forms.ModelForm):
-    """Form is used to add new products in admin-panel"""
+class BaseProductModelForm(forms.ModelForm):
     price = forms.DecimalField(label="Цена", validators=[MinValueValidator(0.00)], decimal_places=2, max_digits=11,
                                min_value=0.00)
 
@@ -67,11 +66,10 @@ class ProductAddForm(forms.ModelForm):
         model = Product
         fields = ['name', 'price', 'amount', 'category', 'vendor', 'description']
 
-    def __init__(self, data=None, files=None, instance=None, **kwargs):
-        super().__init__(data=data, files=files, instance=instance, **kwargs)
-        self.image_formset = ImageFormSet(data=data, files=files)
+    def __init__(self, image_formset=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.image_formset = image_formset
 
-        # CSS REPLACE
         for visible_field in self.visible_fields():
             visible_field.field.widget.attrs['class'] = 'form-control'
 
@@ -80,31 +78,35 @@ class ProductAddForm(forms.ModelForm):
 
     def save(self, commit=True):
         product = super().save(commit=commit)
-        self.save_additional_product_data(product)
+        self.process_additional_product_data(product)
         return product
 
-    def save_additional_product_data(self, product):
-        if type(self) != ProductAddForm:
-            raise NotImplementedError("Implement save_additional_product_data(self, product) method")
-        service = AdditionalProductDataService()
-        service.add_additional_data(product.pk, self.cleaned_data.get('price'), self.image_formset.cleaned_data)
+    def process_additional_product_data(self, product):
+        raise NotImplemented
 
 
-class ProductUpdateForm(ProductAddForm):
+class ProductAddForm(BaseProductModelForm):
+    """Form is used to add new products in admin-panel"""
+
+    def __init__(self, data=None, files=None, **kwargs):
+        image_formset = ImageFormSet(data=data, files=files)
+        super().__init__(data=data, files=files, image_formset=image_formset, **kwargs)
+
+    def process_additional_product_data(self, product):
+        ProductService.add_additional_data(product.pk, self.cleaned_data.get('price'), self.image_formset.cleaned_data)
+
+
+class ProductUpdateForm(BaseProductModelForm):
     """Form is used to update products in admin-panel"""
 
-    def __init__(self, data=None, files=None, instance=None, **kwargs):
-        super().__init__(data=data, files=files, instance=instance, **kwargs)
-        self.image_formset = ProductImageUpdateFormSet(data=data, files=files, instance=instance, **kwargs)
-        self.fields['price'].initial = instance.price
+    def __init__(self, *args, **kwargs):
+        image_formset = ProductImageUpdateFormSet(*args, **kwargs)
+        super().__init__(image_formset=image_formset, *args, **kwargs)
+        self.fields['price'].initial = kwargs.get('instance').price
 
-    def save(self, commit=True):
-        product = super().save(commit=commit)
-        return product
-
-    def save_additional_product_data(self, product):
-        service = AdditionalProductDataService()
-        service.update_additional_data(product.pk, self.cleaned_data.get('price'), self.image_formset.cleaned_data)
+    def process_additional_product_data(self, product):
+        ProductService.update_additional_data(product.pk, self.cleaned_data.get('price'),
+                                              self.image_formset.cleaned_data)
 
 
 class OrderChangeForm(forms.ModelForm):
@@ -122,8 +124,9 @@ class OrderChangeForm(forms.ModelForm):
 
         self.fields['address'].empty_value = None
 
-        service = OrderService(status_id=self.instance.status_id, delivery_available=bool(self.instance.address))
-        self.fields['status'].queryset = service.get_future_statuses()
+        order_status_service = OrderStatusService(status_id=self.instance.status_id,
+                                                  delivery_available=bool(self.instance.address))
+        self.fields['status'].queryset = order_status_service.get_future_statuses()
 
         readonly_fields = ['date_start', 'date_end']
         if not self.instance.is_new:

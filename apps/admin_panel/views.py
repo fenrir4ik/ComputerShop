@@ -6,9 +6,9 @@ from django.views.generic import CreateView, ListView, DeleteView, UpdateView
 
 from apps.admin_panel.forms import ProductAddForm, ProductUpdateForm, OrderChangeForm
 from apps.store.models import Product
-from services.constants import DEFAULT_PRODUCT_IMAGE
-from services.dao.order_dao import OrderDAO
-from services.dao.product_dao import ProductDAO
+from core.db.order_dao import OrderDAO
+from core.db.product_dao import ProductDAO
+from core.services.constants import DEFAULT_PRODUCT_IMAGE
 
 
 class ProductAddView(CreateView):

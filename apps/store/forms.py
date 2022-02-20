@@ -3,7 +3,7 @@ from django.utils import timezone
 
 from apps.store.models import Order, OrderStatus
 from apps.user.forms import UserBaseForm
-from services.dao.order_dao import OrderDAO
+from core.db.order_dao import OrderDAO
 
 
 class AddProductToCartForm(forms.Form):

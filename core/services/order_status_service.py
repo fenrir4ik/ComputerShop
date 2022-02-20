@@ -3,10 +3,10 @@ from typing import Set
 from django.db.models import QuerySet
 
 from apps.store.models import OrderStatus
-from services.dao.order_status_dao import OrderStatusDAO
+from core.db.order_status_dao import OrderStatusDAO
 
 
-class OrderService:
+class OrderStatusService:
     """
     "new": 1,  # Ожидает подтверждения
     "confirmed": 2,  # "Подтвержден"
