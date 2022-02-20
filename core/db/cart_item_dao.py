@@ -4,15 +4,15 @@ from django.db import transaction
 from django.db.models import F, OuterRef, Subquery, QuerySet
 
 from apps.store.models import CartItem, Product
-from core.db.order_dao import OrderDAO
-from core.db.product_dao import ProductDAO
+from core.db.order_dao import OrderDao
+from core.db.product_dao import ProductDao
 
 
-class CartItemDAO:
+class CartItemDao:
     @staticmethod
     def get_product_amount_in_cart_by_user_id(user_id: int, product_id) -> int:
-        cart_id = OrderDAO.get_user_cart_id(user_id)
-        return CartItemDAO.get_product_amount_in_cart(cart_id, product_id)
+        cart_id = OrderDao.get_user_cart_id(user_id)
+        return CartItemDao.get_product_amount_in_cart(cart_id, product_id)
 
     @staticmethod
     def get_product_amount_in_cart(cart_id: int, product_id: int) -> int:
@@ -49,13 +49,13 @@ class CartItemDAO:
 
     @staticmethod
     def get_user_cart(user_id: int):
-        cart_id = OrderDAO.get_user_cart_id(user_id)
+        cart_id = OrderDao.get_user_cart_id(user_id)
         user_cart = CartItem.objects.filter(order_id=cart_id).select_related('product')
-        user_cart = ProductDAO.annotate_queryset_with_image(user_cart, ref='product_id')
-        user_cart = ProductDAO.annotate_queryset_with_price(user_cart, ref='product_id')
+        user_cart = ProductDao.annotate_queryset_with_image(user_cart, ref='product_id')
+        user_cart = ProductDao.annotate_queryset_with_price(user_cart, ref='product_id')
         return user_cart
 
     @staticmethod
     def clear_cart(cart_id: int):
         products_in_cart = CartItem.objects.filter(order_id=cart_id).values_list('product_id', flat=True)
-        CartItemDAO.delete_products_in_cart(cart_id, products_in_cart)
+        CartItemDao.delete_products_in_cart(cart_id, products_in_cart)

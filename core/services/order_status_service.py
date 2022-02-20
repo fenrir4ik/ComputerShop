@@ -3,7 +3,7 @@ from typing import Set
 from django.db.models import QuerySet
 
 from apps.store.models import OrderStatus
-from core.db.order_status_dao import OrderStatusDAO
+from core.db.order_status_dao import OrderStatusDao
 
 
 class OrderStatusService:
@@ -55,4 +55,4 @@ class OrderStatusService:
 
     def get_future_statuses(self) -> QuerySet:
         id_list = self.__get_future_statuses_id_list()
-        return OrderStatusDAO.get_statuses_by_id_list(id_list)
+        return OrderStatusDao.get_statuses_by_id_list(id_list)

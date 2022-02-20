@@ -1,7 +1,7 @@
 from apps.user.models import User
 
 
-class UserDAO:
+class UserDao:
     @staticmethod
     def get_user_by_email(email: str) -> User:
         """Get single user instance by given email"""

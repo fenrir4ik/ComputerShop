@@ -1,7 +1,7 @@
 from django.contrib.auth.backends import ModelBackend
 
 from apps.user.models import User
-from core.db.user_dao import UserDAO
+from core.db.user_dao import UserDao
 
 
 class EmailBasedBackend(ModelBackend):
@@ -9,7 +9,7 @@ class EmailBasedBackend(ModelBackend):
 
     def authenticate(self, request, username=None, password=None, **kwargs):
         try:
-            user = UserDAO.get_user_by_email(username)
+            user = UserDao.get_user_by_email(username)
         except User.DoesNotExist:
             return None
         return user if user.check_password(password) else None

@@ -3,14 +3,14 @@ from django.db.models import OuterRef, Subquery, Q, QuerySet
 from apps.store.models import Product, ProductPrice, ProductImage, CartItem
 
 
-class ProductDAO:
+class ProductDao:
     @staticmethod
     def get_products_list(include_price: bool = True, include_image: bool = True) -> QuerySet:
         products = Product.objects.select_related('vendor', 'category')
         if include_price:
-            products = ProductDAO.annotate_queryset_with_price(products)
+            products = ProductDao.annotate_queryset_with_price(products)
         if include_image:
-            products = ProductDAO.annotate_queryset_with_image(products)
+            products = ProductDao.annotate_queryset_with_image(products)
         return products
 
     @staticmethod

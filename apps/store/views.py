@@ -7,10 +7,10 @@ from django.views.generic.edit import FormView, CreateView
 
 from apps.store.forms import AddProductToCartForm, CreateOrderForm
 from apps.store.models import Product
-from core.db.cart_item_dao import CartItemDAO
+from core.db.cart_item_dao import CartItemDao
 from core.db.image_dao import ImageDao
-from core.db.order_dao import OrderDAO
-from core.db.product_dao import ProductDAO
+from core.db.order_dao import OrderDao
+from core.db.product_dao import ProductDao
 from core.services.cart_service import CartService
 
 
@@ -23,7 +23,7 @@ class IndexView(ListView):
 
     def get_queryset(self):
         # amount and date_created not used
-        queryset = ProductDAO.get_products_list()
+        queryset = ProductDao.get_products_list()
         return queryset.values('id', 'image', 'name', 'price', 'amount', 'date_created')
 
 
@@ -33,7 +33,7 @@ class SingleProductView(DetailView):
     context_object_name = 'product'
 
     def get_queryset(self):
-        queryset = ProductDAO.get_products_list(include_image=False)
+        queryset = ProductDao.get_products_list(include_image=False)
         return queryset.values('id', 'name', 'price', 'description', 'amount')
 
     def get_context_data(self, **kwargs):
@@ -42,7 +42,7 @@ class SingleProductView(DetailView):
         product_id = self.object.get('id')
         user_id = self.request.user.pk
 
-        context['product_amount_in_cart'] = CartItemDAO.get_product_amount_in_cart_by_user_id(user_id, product_id)
+        context['product_amount_in_cart'] = CartItemDao.get_product_amount_in_cart_by_user_id(user_id, product_id)
         context['form'] = AddProductToCartForm(amount_in_cart=context['product_amount_in_cart'],
                                                max_amount=product_amount + context['product_amount_in_cart'])
         context['product_images'] = ImageDao.get_product_images(product_id)
@@ -61,7 +61,7 @@ class SingleProductFormView(SingleObjectMixin, FormView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['amount_in_cart'] = CartItemDAO.get_product_amount_in_cart_by_user_id(
+        kwargs['amount_in_cart'] = CartItemDao.get_product_amount_in_cart_by_user_id(
             self.request.user.pk,
             self.object.get('id')
         )
@@ -106,7 +106,7 @@ class UserCartView(ListView):
     context_object_name = 'cart_items'
 
     def get_queryset(self):
-        return CartItemDAO.get_user_cart(self.request.user.pk) \
+        return CartItemDao.get_user_cart(self.request.user.pk) \
             .values('amount', 'product_id', 'product__name', 'image', 'price', 'product__amount') \
             .order_by('-product_id')
 
@@ -133,7 +133,7 @@ class OrderCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
-        context['cart_items'] = CartItemDAO.get_user_cart(self.request.user.pk) \
+        context['cart_items'] = CartItemDao.get_user_cart(self.request.user.pk) \
             .values('amount', 'product_id', 'product__name', 'image', 'price', 'product__amount') \
             .order_by('-product_id')
         return context
@@ -150,7 +150,7 @@ class UserOrdersListView(ListView):
     context_object_name = 'orders_list'
 
     def get_queryset(self):
-        return OrderDAO.get_all_orders(self.request.user.pk)
+        return OrderDao.get_all_orders(self.request.user.pk)
 
 
 class UserOrderDetailView(DetailView):
@@ -159,4 +159,4 @@ class UserOrderDetailView(DetailView):
     context_object_name = 'order'
 
     def get_queryset(self):
-        return OrderDAO.get_all_orders(self.request.user.pk)
+        return OrderDao.get_all_orders(self.request.user.pk)
