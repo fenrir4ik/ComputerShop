@@ -1,20 +1,27 @@
 from django.db.models import QuerySet, Prefetch, Sum, Subquery, F, OuterRef
 
 from apps.store.models import Order, CartItem
-from core.db.product_dao import ProductDao
+from core.db.product_dao import ProductDAO
 
 
-class OrderDao:
+class OrderDAO:
+    """DAO is used to interact with Order model instances"""
+
     @staticmethod
     def get_user_cart_id(user_id: int) -> int:
+        """Returns id of user cart"""
         cart, _ = Order.objects.get_or_create(user_id=user_id, status=None)
         return cart.pk
 
     @staticmethod
     def get_all_orders(user_id: int = None) -> QuerySet:
+        """
+        Returns all user orders in system
+        If user_id is specified, then it returns orders for particular user
+        """
         cart_items = CartItem.objects.select_related('product')
-        cart_items = ProductDao.annotate_queryset_with_price(cart_items, ref='product_id', actual=False)
-        cart_items = ProductDao.annotate_queryset_with_image(cart_items, ref='product_id')
+        cart_items = ProductDAO.annotate_queryset_with_price(cart_items, ref='product_id', actual=False)
+        cart_items = ProductDAO.annotate_queryset_with_image(cart_items, ref='product_id')
 
         total_price = cart_items.values('order_id') \
             .annotate(total_price=Sum(F('price') * F('amount'))) \

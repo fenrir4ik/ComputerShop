@@ -6,8 +6,8 @@ from django.views.generic import CreateView, ListView, DeleteView, UpdateView
 
 from apps.admin_panel.forms import ProductAddForm, ProductUpdateForm, OrderChangeForm
 from apps.store.models import Product
-from core.db.order_dao import OrderDao
-from core.db.product_dao import ProductDao
+from core.db.order_dao import OrderDAO
+from core.db.product_dao import ProductDAO
 from core.services.constants import DEFAULT_PRODUCT_IMAGE
 
 
@@ -38,7 +38,7 @@ class ProductsListAdminView(ListView):
     # paginate_by = 20
 
     def get_queryset(self):
-        queryset = ProductDao.get_products_list()
+        queryset = ProductDAO.get_products_list()
         return queryset.values('id', 'image', 'name', 'price', 'amount', 'vendor__name', 'category__name',
                                'date_created').order_by('pk')
 
@@ -57,7 +57,7 @@ class ProductDeleteView(DeleteView):
 
     def form_valid(self, form):
         success_url = self.get_success_url()
-        deleted = ProductDao.delete_product(self.object.pk)
+        deleted = ProductDAO.delete_product(self.object.pk)
         if deleted:
             messages.success(self.request, self.success_message.format(self.object.pk))
         else:
@@ -71,7 +71,7 @@ class ProductUpdateView(UpdateView):
     form_class = ProductUpdateForm
 
     def get_queryset(self):
-        return ProductDao.get_products_list(include_price=True, include_image=False)
+        return ProductDAO.get_products_list(include_price=True, include_image=False)
 
     def get_success_url(self):
         return reverse('product-update', kwargs={'pk': self.object.pk})
@@ -88,7 +88,7 @@ class OrdersListView(ListView):
     context_object_name = 'orders_list'
 
     def get_queryset(self):
-        return OrderDao.get_all_orders().order_by('id')
+        return OrderDAO.get_all_orders().order_by('id')
 
 
 class OrderUpdateView(UpdateView):
@@ -98,7 +98,7 @@ class OrderUpdateView(UpdateView):
     context_object_name = 'order'
 
     def get_queryset(self):
-        return OrderDao.get_all_orders()
+        return OrderDAO.get_all_orders()
 
     def get_success_url(self):
         return self.request.path_info

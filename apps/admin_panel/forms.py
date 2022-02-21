@@ -6,7 +6,7 @@ from django.forms import formset_factory, inlineformset_factory, BaseInlineFormS
 from apps.store.models import Product, ProductImage, Order
 from core.services.constants import PRODUCT_IMAGE_MAX_AMOUNT
 from core.services.order_status_service import OrderStatusService
-from core.services.product_service import ProductService
+from core.services.product_service import AdditionalProductDataService
 from utils.form_validators import square_image_validator
 
 
@@ -93,7 +93,7 @@ class ProductAddForm(BaseProductModelForm):
         super().__init__(data=data, files=files, image_formset=image_formset, **kwargs)
 
     def process_additional_product_data(self, product):
-        ProductService.add_additional_data(product.pk, self.cleaned_data.get('price'), self.image_formset.cleaned_data)
+        AdditionalProductDataService.add_additional_data(product.pk, self.cleaned_data.get('price'), self.image_formset.cleaned_data)
 
 
 class ProductUpdateForm(BaseProductModelForm):
@@ -105,8 +105,8 @@ class ProductUpdateForm(BaseProductModelForm):
         self.fields['price'].initial = kwargs.get('instance').price
 
     def process_additional_product_data(self, product):
-        ProductService.update_additional_data(product.pk, self.cleaned_data.get('price'),
-                                              self.image_formset.cleaned_data)
+        AdditionalProductDataService.update_additional_data(product.pk, self.cleaned_data.get('price'),
+                                                            self.image_formset.cleaned_data)
 
 
 class OrderChangeForm(forms.ModelForm):

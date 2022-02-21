@@ -3,7 +3,7 @@ from django.utils import timezone
 
 from apps.store.models import Order, OrderStatus
 from apps.user.forms import UserBaseForm
-from core.db.order_dao import OrderDao
+from core.db.order_dao import OrderDAO
 
 
 class AddProductToCartForm(forms.Form):
@@ -43,7 +43,7 @@ class CreateOrderForm(UserBaseForm, forms.ModelForm):
             visible_field.field.widget.attrs['class'] = 'form-control'
 
     def save(self, commit=True):
-        cart_id = OrderDao.get_user_cart_id(self.user.pk)
+        cart_id = OrderDAO.get_user_cart_id(self.user.pk)
         order = super().save(commit=False)
         order.pk = cart_id
         order.user = self.user

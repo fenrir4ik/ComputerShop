@@ -1,8 +1,15 @@
+from typing import Union
+
 from apps.user.models import User
 
 
-class UserDao:
+class UserDAO:
+    """DAO is used to interact with User model instances"""
+
     @staticmethod
-    def get_user_by_email(email: str) -> User:
+    def get_user_by_username(username: str) -> Union[User, None]:
         """Get single user instance by given email"""
-        return User.objects.get(email__iexact=email)
+        try:
+            return User.objects.get(email__iexact=username)
+        except:
+            return None
