@@ -25,12 +25,18 @@
                     </ul>
                 </li>
                 {% if user.is_authenticated %}
-                    {% if user.is_admin %}
+                    {% if user.is_staff %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Админ-панель</a>
                             <ul class="dropdown-menu dropdown-menu-right">
-                                <li><a class="dropdown-item" href="{% url 'admin-products' %}">Управление товарами</a></li>
-                                <li><a class="dropdown-item" href="{% url 'admin-orders' %}">Управление заказами</a></li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'admin-products' %}">Управление товарами</a>
+                                </li>
+                                {% if user.is_manager %}
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'admin-orders' %}">Управление заказами</a>
+                                    </li>
+                                {% endif %}
                             </ul>
                         </li>
                     {% else %}

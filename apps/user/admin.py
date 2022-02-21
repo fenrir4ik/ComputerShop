@@ -1,11 +1,12 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
+from django.contrib.admin import ModelAdmin
 
 from apps.user.models import User
 
 
 @admin.register(User)
-class CustomUserAdmin(UserAdmin):
+class CustomUserAdmin(ModelAdmin):
+    exclude = ('username',)
     list_display = ('id', 'email', 'phone_number', 'date_joined')
     search_fields = ('email', 'phone_number')
     readonly_fields = ('date_joined', 'last_login')

@@ -1,5 +1,6 @@
 from django.contrib.auth.base_user import BaseUserManager
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, Group
+from django.core.exceptions import ValidationError
 from django.db import models
 
 
@@ -35,8 +36,16 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser):
+    MANAGER = 1
+    WAREHOUSE_WORKER = 2
+
+    ROLE_CHOICES = (
+        (MANAGER, 'Manager'),
+        (WAREHOUSE_WORKER, 'Warehouse worker'),
+    )
+
     email = models.EmailField(max_length=255, unique=True, db_index=True)
-    phone_number = models.CharField(max_length=12, null=True, db_index=True)
+    phone_number = models.CharField(max_length=12, blank=True, null=True, db_index=True)
     name = models.CharField(max_length=45)
     surname = models.CharField(max_length=45)
     patronymic = models.CharField(max_length=45)
@@ -44,6 +53,7 @@ class User(AbstractBaseUser):
     is_admin = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now=True)
+    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, blank=True, null=True)
 
     objects = UserManager()
 
@@ -54,10 +64,28 @@ class User(AbstractBaseUser):
         db_table = 'user'
 
     def __str__(self):
-        return f'User[{self.pk}, {self.email=}, {self.is_staff=}'
+        return f'{self.name} {self.surname} {self.patronymic}'
 
     def has_perm(self, perm, obj=None):
         return self.is_admin
 
     def has_module_perms(self, app_label):
         return self.is_admin
+
+    def save(self, *args, **kwargs):
+        if self.role:
+            self.is_staff = True
+        super().save(*args, **kwargs)
+
+    def clean(self):
+        super().clean()
+        if self.is_staff and not self.role:
+            raise ValidationError("Укажите роль для пользователя")
+
+    @property
+    def is_warehouse_worker(self):
+        return self.role == self.WAREHOUSE_WORKER
+
+    @property
+    def is_manager(self):
+        return self.role == self.MANAGER
