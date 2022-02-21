@@ -1,0 +1,37 @@
+from core.db.cart_item_dao import CartItemDAO
+from core.db.order_dao import OrderDAO
+
+
+class CartService:
+    """Service is used for shopping cart managing"""
+
+    def __init__(self, user_id):
+        self.cart_id = OrderDAO.get_user_cart_id(user_id)
+
+    def process_cart_item(self, product_id: int, amount: int):
+        """
+        Method takes in user id, product id and amount
+        It finds current product amount in user cart and choose what to do having given amount
+        Possible actions: add product to cart, change product amount in cart
+        """
+        product_amount_in_cart = CartItemDAO.get_product_amount_in_cart(self.cart_id, product_id)
+        if product_amount_in_cart == 0:
+            self.__add_product_to_cart(product_id, amount)
+        elif amount != product_amount_in_cart:
+            self.__change_product_in_cart(product_id, amount - product_amount_in_cart)
+
+    def delete_product_from_cart(self, product_id):
+        """Deletes product with given id from user cart"""
+        CartItemDAO.delete_products_in_cart(self.cart_id, product_id)
+
+    def __add_product_to_cart(self, product_id: int, amount: int):
+        """Adds given amount of product with given id to user cart"""
+        CartItemDAO.add_product_to_cart(self.cart_id, product_id, amount)
+
+    def __change_product_in_cart(self, product_id: int, amount: int):
+        """Changes amount of product with given id in user cart"""
+        CartItemDAO.change_product_in_cart(self.cart_id, product_id, amount)
+
+    def clear_user_cart(self):
+        """Clear user cart"""
+        CartItemDAO.clear_cart(self.cart_id)

@@ -6,15 +6,14 @@ from django.views.generic import CreateView, ListView, DeleteView, UpdateView
 
 from apps.admin_panel.forms import ProductAddForm, ProductUpdateForm, OrderChangeForm
 from apps.store.models import Product
-from services.constants import DEFAULT_PRODUCT_IMAGE
-from services.dao.order_dao import OrderDAO
-from services.dao.product_dao import ProductDAO
+from apps.user.permissions import WarehousePermissionMixin, ManagerPermissionMixin
+from core.db.order_dao import OrderDAO
+from core.db.product_dao import ProductDAO
+from core.services.constants import DEFAULT_PRODUCT_IMAGE
 
 
-class ProductAddView(CreateView):
-    """
-    View is used for products creation via admin panel
-    """
+class ProductAddView(WarehousePermissionMixin, CreateView):
+    """View is used for products creation via admin panel"""
     template_name = 'admin_panel/add_product.html'
     form_class = ProductAddForm
 
@@ -30,10 +29,8 @@ class ProductAddView(CreateView):
         return reverse('product-update', kwargs={'pk': self.object.pk})
 
 
-class ProductsListAdminView(ListView):
-    """
-    View is used for displaying products list in admin-panel
-    """
+class ProductsListAdminView(WarehousePermissionMixin, ListView):
+    """View is used for displaying products list in admin-panel"""
     template_name = 'admin_panel/products_list.html'
     context_object_name = 'products'
     paginate_by = 20
@@ -47,15 +44,13 @@ class ProductsListAdminView(ListView):
                                'date_created').order_by('pk')
 
 
-class ProductDeleteView(DeleteView):
-    """
-    View is used for deletion products in admin-panel
-    """
+class ProductDeleteView(WarehousePermissionMixin, DeleteView):
+    """View is used for deletion products in admin-panel"""
     template_name = 'admin_panel/delete_product.html'
     success_url = reverse_lazy('admin-products')
     context_object_name = 'product'
     error_message = "Товар №{} находится в корзинах пользователя и не может быть удален"
-    success_message = "Товар №{} был успешно удален" #WARNING, PROCESS SEUCCES MEESSAGE IN GREEN, NOW IT'S ALSO RED
+    success_message = "Товар №{} был успешно удален"
 
     def get_object(self, queryset=None):
         id_ = self.kwargs.get('pk')
@@ -71,10 +66,8 @@ class ProductDeleteView(DeleteView):
         return HttpResponseRedirect(success_url)
 
 
-class ProductUpdateView(UpdateView):
-    """
-    View is used for updating products in admin-panel
-    """
+class ProductUpdateView(WarehousePermissionMixin, UpdateView):
+    """View is used for updating products in admin-panel"""
     template_name = 'admin_panel/update_product.html'
     form_class = ProductUpdateForm
 
@@ -90,10 +83,8 @@ class ProductUpdateView(UpdateView):
         return context
 
 
-class OrdersListView(ListView):
-    """
-    View is used for displaying orders list in admin-panel
-    """
+class OrdersListView(ManagerPermissionMixin, ListView):
+    """View is used for displaying orders list in admin-panel"""
     template_name = 'store/user_orders.html'
     context_object_name = 'orders_list'
 
@@ -101,10 +92,8 @@ class OrdersListView(ListView):
         return OrderDAO.get_all_orders().order_by('id')
 
 
-class OrderUpdateView(UpdateView):
-    """
-    View is used for updating orders in admin-panel
-    """
+class OrderUpdateView(ManagerPermissionMixin, UpdateView):
+    """View is used for updating orders in admin-panel"""
     template_name = 'admin_panel/update_order.html'
     form_class = OrderChangeForm
     context_object_name = 'order'

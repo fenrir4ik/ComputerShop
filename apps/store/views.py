@@ -7,17 +7,15 @@ from django.views.generic.edit import FormView, CreateView
 
 from apps.store.forms import AddProductToCartForm, CreateOrderForm
 from apps.store.models import Product
-from services.cart_service import CartService
-from services.dao.cart_item_dao import CartItemDAO
-from services.dao.image_dao import ImageDao
-from services.dao.order_dao import OrderDAO
-from services.dao.product_dao import ProductDAO
+from core.db.cart_item_dao import CartItemDAO
+from core.db.image_dao import ImageDAO
+from core.db.order_dao import OrderDAO
+from core.db.product_dao import ProductDAO
+from core.services.cart_service import CartService
 
 
 class IndexView(ListView):
-    """
-    View is used for main page
-    """
+    """View is used for main page"""
     template_name = 'store/index.html'
     context_object_name = 'products'
 
@@ -30,9 +28,7 @@ class IndexView(ListView):
 
 
 class SingleProductView(DetailView):
-    """
-    View is used for displaying product detail page with form
-    """
+    """View is used for displaying product detail page with form"""
     template_name = 'store/product_detail.html'
     context_object_name = 'product'
 
@@ -49,14 +45,12 @@ class SingleProductView(DetailView):
         context['product_amount_in_cart'] = CartItemDAO.get_product_amount_in_cart_by_user_id(user_id, product_id)
         context['form'] = AddProductToCartForm(amount_in_cart=context['product_amount_in_cart'],
                                                max_amount=product_amount + context['product_amount_in_cart'])
-        context['product_images'] = ImageDao.get_product_images(product_id)
+        context['product_images'] = ImageDAO.get_product_images(product_id)
         return context
 
 
 class SingleProductFormView(SingleObjectMixin, FormView):
-    """
-    View is used for processing submitted data on product detail page
-    """
+    """View is used for processing submitted data on product detail page"""
     form_class = AddProductToCartForm
 
     def get_queryset(self):
@@ -81,15 +75,13 @@ class SingleProductFormView(SingleObjectMixin, FormView):
     def form_valid(self, form):
         product_amount = form.cleaned_data.get('amount')
         product_id = self.object.get('id')
-        service = CartService()
-        service.process_cart_item(self.request.user.pk, product_id, product_amount)
+        cart_service = CartService(self.request.user.pk)
+        cart_service.process_cart_item(product_id, product_amount)
         return super().form_valid(form)
 
 
 class ProductDetailView(View):
-    """
-    View is used for working with product detail page (both POST and GET)
-    """
+    """View is used for working with product detail page (both POST and GET)"""
 
     def get(self, request, *args, **kwargs):
         view = SingleProductView.as_view()
@@ -101,20 +93,17 @@ class ProductDetailView(View):
 
 
 class ProductDeleteFromCartView(View):
-    """
-    View is used for deletion product from cart
-    """
+    """View is used for deletion product from cart"""
+
     def post(self, request, *args, **kwargs):
-        service = CartService()
-        service.delete_product_from_cart(request.user.pk, kwargs.get('pk'))
+        cart_service = CartService(request.user.pk)
+        cart_service.delete_product_from_cart(kwargs.get('pk'))
         next_page = request.GET.get('next')
         return redirect(next_page) if next_page else reverse('index')
 
 
 class UserCartView(ListView):
-    """
-    View is used for displaying user cart
-    """
+    """View is used for displaying user cart"""
     template_name = 'store/cart.html'
     context_object_name = 'cart_items'
 
@@ -130,21 +119,17 @@ class UserCartView(ListView):
 
 
 class UserCartClearView(TemplateView):
-    """
-    View is used for shopping cart clearing
-    """
+    """View is used for shopping cart clearing"""
     template_name = 'store/cart_clear.html'
 
     def post(self, request, *args, **kwargs):
-        service = CartService()
-        service.clear_user_cart(request.user.pk)
+        cart_service = CartService(request.user.pk)
+        cart_service.clear_user_cart()
         return redirect('user-cart')
 
 
 class OrderCreateView(CreateView):
-    """
-    View is used for checkout
-    """
+    """View is used for checkout"""
     template_name = 'store/create_order.html'
     form_class = CreateOrderForm
     success_url = reverse_lazy('user-orders')
@@ -163,9 +148,7 @@ class OrderCreateView(CreateView):
 
 
 class UserOrdersListView(ListView):
-    """
-    View is used for displaying own user orders
-    """
+    """View is used for displaying own user orders"""
     template_name = 'store/user_orders.html'
     context_object_name = 'orders_list'
 
@@ -174,9 +157,7 @@ class UserOrdersListView(ListView):
 
 
 class UserOrderDetailView(DetailView):
-    """
-    View is used for displaying single order from user orders list
-    """
+    """View is used for displaying single order from user orders list"""
     template_name = 'store/order_detail.html'
     context_object_name = 'order'
 

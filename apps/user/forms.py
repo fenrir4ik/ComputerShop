@@ -3,14 +3,12 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.password_validation import validate_password
 
 from apps.user.models import User
-from services.dao.user_dao import UserDAO
+from core.db.user_dao import UserDAO
 from utils import form_validators
 
 
 class UserBaseForm(forms.Form):
-    """
-    Base form with user data and validators for every field
-    """
+    """Base form with user data and validators for every field"""
     name = forms.CharField(
         label="Имя",
         widget=forms.TextInput(attrs={'placeholder': 'Имя'}),
@@ -44,9 +42,7 @@ class UserBaseForm(forms.Form):
 
 
 class RegistrationForm(UserBaseForm, UserCreationForm):
-    """
-    Form is used for user registration
-    """
+    """Form is used for user registration"""
 
     class Meta:
         model = User
@@ -67,17 +63,15 @@ class RegistrationForm(UserBaseForm, UserCreationForm):
     def clean_email(self):
         """Replace validation error message when user with given email address already exists"""
         user_email = self.cleaned_data.get('email')
-        try:
-            UserDAO.get_user_by_email(user_email)
+        user = UserDAO.get_user_by_username(user_email)
+        if user:
             raise forms.ValidationError('Адресс электронной почты используется другим пользователем.')
-        except User.DoesNotExist:
+        else:
             return user_email
 
 
 class LoginForm(AuthenticationForm):
-    """
-    Form is used to authorize user
-    """
+    """Form is used to authorize user"""
 
     def __init__(self, *args, **kwargs):
         """Changes invalid_login error message"""
@@ -88,9 +82,7 @@ class LoginForm(AuthenticationForm):
 
 
 class ProfileChangeForm(UserBaseForm, forms.ModelForm):
-    """
-    Form is used to change user profile information
-    """
+    """Form is used to change user profile information"""
     password1 = forms.CharField(validators=[validate_password], widget=forms.PasswordInput(), required=False)
     password2 = forms.CharField(widget=forms.PasswordInput(), required=False)
 
@@ -106,13 +98,13 @@ class ProfileChangeForm(UserBaseForm, forms.ModelForm):
     def clean_email(self):
         """Replace validation error message when user with given email address already exists"""
         user_email = self.cleaned_data.get('email')
-        try:
-            user = UserDAO.get_user_by_email(user_email)
+        user = UserDAO.get_user_by_username(user_email)
+        if user:
             if self.instance.email != user_email:
                 raise forms.ValidationError('Адресс электронной почты используется другим пользователем.')
             else:
                 return user_email
-        except User.DoesNotExist:
+        else:
             return user_email
 
     def save(self, commit=True):
