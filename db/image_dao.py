@@ -5,7 +5,7 @@ from django.db.models import QuerySet
 from django.db.models.fields.files import ImageFieldFile
 
 from apps.store.models import ProductImage
-from core.services.constants import DEFAULT_PRODUCT_IMAGE
+from services.constants import DEFAULT_PRODUCT_IMAGE
 
 
 class ImageDAO:

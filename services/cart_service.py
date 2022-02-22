@@ -1,5 +1,5 @@
-from core.db.cart_item_dao import CartItemDAO
-from core.db.order_dao import OrderDAO
+from db.cart_item_dao import CartItemDAO
+from db.order_dao import OrderDAO
 
 
 class CartService:

@@ -3,7 +3,7 @@ from typing import Set
 from django.db.models import QuerySet
 
 from apps.store.models import OrderStatus
-from core.db.order_status_dao import OrderStatusDAO
+from db.order_status_dao import OrderStatusDAO
 
 
 class OrderStatusService:

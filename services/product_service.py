@@ -1,8 +1,8 @@
 from decimal import Decimal
 from typing import List
 
-from core.db.price_dao import PriceDAO
-from core.services.image_service import ImageService
+from db.price_dao import PriceDAO
+from services.image_service import ImageService
 
 
 class AdditionalProductDataService:

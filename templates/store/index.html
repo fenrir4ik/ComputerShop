@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load url_param_replace %}
 
 {% block styles %}
     <link rel="stylesheet" href="{% static 'css/product_list.css' %}"/>
@@ -10,7 +11,7 @@
         <div class='search_div'>
             <form id='search' action="">
                 <label for='searchline' hidden></label>
-                <input id='searchline' placeholder="Поиск товара...">
+                {{ filter.form.name }}
                 <button class="main-search"></button>
             </form>
         </div>
@@ -18,30 +19,59 @@
     <div class="container">
         <div class="body_outer">
             <div class="left_panel">
-                <h2>Категории</h2>
-                <div><a href="#"><img src="{% static 'img/videocard.png' %}" alt="menu_item"> Видеокарты</a></div>
-                <div><a href="#"><img src="{% static 'img/processor.png' %}" alt="menu_item"> Процессоры</a></div>
-                <div><a href="#"><img src="{% static 'img/motherboard.png' %}" alt="menu_item"> Материнские платы</a>
-                </div>
-                <div><a href="#"><img src="{% static 'img/ram.png' %}" alt="menu_item"> Оперативная память</a></div>
-                <div><a href="#"><img src="{% static 'img/disk.png' %}" alt="menu_item"> Жесткие диски</a></div>
-                <div><a href="#"><img src="{% static 'img/power.png' %}" alt="menu_item"> Блоки питания</a></div>
+                <form method="get">
+{#                    {{ filter.form.price.label_tag }}#}
+{#                    {{ filter.form.price }}#}
+                    {{ filter.form.category.label_tag }}
+                    {{ filter.form.category }}
+                    <br>
+                    {% if filter.form.vendor.field.choices %}
+                        {{ filter.form.vendor.label_tag }}
+                        {{ filter.form.vendor }}
+                    {% endif %}
+                    <input type="submit" class="btn btn-primary"/>
+                </form>
             </div>
             <div class="right_panel">
-                {#            <ul class="sort_list">#}
-                {#                <li>#}
-                {#                    <p class="sort_title">Отобразить:</p>#}
-                {#                </li>#}
-                {#                <li class="dropdown">#}
-                {#                    <a class="sort_link dropdown-toggle" href="#" data-bs-toggle="dropdown">от дешевых к дорогим</a>#}
-                {#                    <ul class="dropdown-menu dropdown-menu-right">#}
-                {#                        <li><a class="dropdown-item" href="#">от дешевых к дорогим</a></li>#}
-                {#                        <li><a class="dropdown-item" href="#">от дорогих к дешевым</a></li>#}
-                {#                        <li><a class="dropdown-item" href="#">по алфавиту</a></li>#}
-                {#                        <li><a class="dropdown-item" href="#">новинки</a></li>#}
-                {#                    </ul>#}
-                {#                </li>#}
-                {#            </ul>#}
+                <ul class="sort_list">
+                    <li>
+                        <p class="sort_title">Отсортировать: </p>
+                    </li>
+                    <li class="dropdown">
+                        {% if filter.form.sort.value %}
+                            {% for value, label in filter.form.sort.field.choices %}
+                                {% if value in filter.form.sort.value %}
+                                    <a class="sort_link dropdown-toggle" href="#"
+                                       data-bs-toggle="dropdown">{{ label }}</a>
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                        <a class="sort_link dropdown-toggle" href="#"
+                           data-bs-toggle="dropdown">все</a>
+                        {% endif %}
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a class="dropdown-item" href="?{% url_param_replace sort='price' %}">от дешевых к дорогим</a></li>
+                            <li><a class="dropdown-item" href="?{% url_param_replace sort='-price' %}">от дорогих к дешевым</a></li>
+                            <li><a class="dropdown-item" href="?{% url_param_replace sort='name' %}">по алфавиту</a></li>
+                            <li><a class="dropdown-item" href="?{% url_param_replace sort='date_created' %}">новинки</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <div class="pagination">
+                    <span class="step-links">
+                        {% if page_obj.has_previous %}
+                            <a href="?{% url_param_replace page=1 %}">&laquo; first</a>
+                            <a href="?{% url_param_replace page=page_obj.previous_page_number %}">previous</a>
+                        {% endif %}
+                        <span class="current">
+                            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                        </span>
+                        {% if page_obj.has_next %}
+                            <a href="?{% url_param_replace page=page_obj.next_page_number %}">next</a>
+                            <a href="?{% url_param_replace page=page_obj.paginator.num_pages %}">last &raquo;</a>
+                        {% endif %}
+                    </span>
+                </div>
                 <div class="main_products">
                     {% for product in products %}
                         <div>

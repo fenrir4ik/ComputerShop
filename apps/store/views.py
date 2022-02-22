@@ -5,26 +5,35 @@ from django.views.generic import ListView, DetailView, TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import FormView, CreateView
 
+from apps.store.filters import ProductFilter
 from apps.store.forms import AddProductToCartForm, CreateOrderForm
 from apps.store.models import Product
-from core.db.cart_item_dao import CartItemDAO
-from core.db.image_dao import ImageDAO
-from core.db.order_dao import OrderDAO
-from core.db.product_dao import ProductDAO
-from core.services.cart_service import CartService
+from db.cart_item_dao import CartItemDAO
+from db.image_dao import ImageDAO
+from db.order_dao import OrderDAO
+from db.product_dao import ProductDAO
+from services.cart_service import CartService
 
 
 class IndexView(ListView):
     """View is used for main page"""
     template_name = 'store/index.html'
     context_object_name = 'products'
+    paginate_by = 3
 
-    # paginate_by = 20
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        filter = ProductFilter(self.request.GET)
+        context['filter'] = filter
+        return context
 
     def get_queryset(self):
         # amount and date_created not used
         queryset = ProductDAO.get_products_list()
-        return queryset.values('id', 'image', 'name', 'price', 'amount', 'date_created')
+        queryset = queryset.values('id', 'image', 'name', 'price', 'amount', 'date_created')
+        queryset = queryset.order_by('-id')
+        filter = ProductFilter(self.request.GET, queryset=queryset)
+        return filter.qs
 
 
 class SingleProductView(DetailView):

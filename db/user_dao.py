@@ -11,5 +11,5 @@ class UserDAO:
         """Get single user instance by given email"""
         try:
             return User.objects.get(email__iexact=username)
-        except:
+        except User.DoesNotExist:
             return None

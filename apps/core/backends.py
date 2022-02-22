@@ -1,7 +1,7 @@
 from django.contrib.auth.backends import ModelBackend
 
 from apps.user.models import User
-from core.db.user_dao import UserDAO
+from db.user_dao import UserDAO
 
 
 class EmailBasedBackend(ModelBackend):

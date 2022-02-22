@@ -4,12 +4,13 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView, ListView, DeleteView, UpdateView
 
+from apps.admin_panel.filters import AdminProductFilter
 from apps.admin_panel.forms import ProductAddForm, ProductUpdateForm, OrderChangeForm
+from apps.core.permissions import WarehousePermissionMixin, ManagerPermissionMixin
 from apps.store.models import Product
-from apps.user.permissions import WarehousePermissionMixin, ManagerPermissionMixin
-from core.db.order_dao import OrderDAO
-from core.db.product_dao import ProductDAO
-from core.services.constants import DEFAULT_PRODUCT_IMAGE
+from db.order_dao import OrderDAO
+from db.product_dao import ProductDAO
+from services.constants import DEFAULT_PRODUCT_IMAGE
 
 
 class ProductAddView(WarehousePermissionMixin, CreateView):
@@ -33,15 +34,22 @@ class ProductsListAdminView(WarehousePermissionMixin, ListView):
     """View is used for displaying products list in admin-panel"""
     template_name = 'admin_panel/products_list.html'
     context_object_name = 'products'
-    paginate_by = 20
+    paginate_by = 3
 
-    # Filters needed
-    # paginate_by = 20
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data()
+        context['filter'] = AdminProductFilter(self.request.GET)
+        return context
 
     def get_queryset(self):
+        # amount and date_created not used
         queryset = ProductDAO.get_products_list()
-        return queryset.values('id', 'image', 'name', 'price', 'amount', 'vendor__name', 'category__name',
-                               'date_created').order_by('pk')
+        queryset = queryset.values('id', 'image', 'name', 'price', 'amount', 'vendor__name', 'category__name',
+                                   'date_created')
+        queryset = queryset.order_by('-id')
+        filter = AdminProductFilter(self.request.GET, queryset=queryset)
+        return filter.qs
+
 
 
 class ProductDeleteView(WarehousePermissionMixin, DeleteView):

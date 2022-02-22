@@ -2,6 +2,7 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, Group
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import CheckConstraint, Q
 
 
 class UserManager(BaseUserManager):
@@ -31,19 +32,17 @@ class UserManager(BaseUserManager):
         user.is_admin = True
         user.is_staff = True
         user.is_superuser = True
+        user.role = Role.MANAGER
         user.save(using=self._db)
         return user
 
 
+class Role(models.IntegerChoices):
+    MANAGER = 1, 'Manager'
+    WAREHOUSE_WORKER = 2, 'Warehouse worker'
+
+
 class User(AbstractBaseUser):
-    MANAGER = 1
-    WAREHOUSE_WORKER = 2
-
-    ROLE_CHOICES = (
-        (MANAGER, 'Manager'),
-        (WAREHOUSE_WORKER, 'Warehouse worker'),
-    )
-
     email = models.EmailField(max_length=255, unique=True, db_index=True)
     phone_number = models.CharField(max_length=12, blank=True, null=True, db_index=True)
     name = models.CharField(max_length=45)
@@ -53,7 +52,7 @@ class User(AbstractBaseUser):
     is_admin = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now=True)
-    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, blank=True, null=True)
+    role = models.PositiveSmallIntegerField(choices=Role.choices, blank=True, null=True)
 
     objects = UserManager()
 
@@ -62,6 +61,9 @@ class User(AbstractBaseUser):
 
     class Meta:
         db_table = 'user'
+        constraints = [
+            CheckConstraint(check=Q(role__in=Role.values), name="valid_role")
+        ]
 
     def __str__(self):
         return f'{self.name} {self.surname} {self.patronymic}'
@@ -84,8 +86,8 @@ class User(AbstractBaseUser):
 
     @property
     def is_warehouse_worker(self):
-        return self.role == self.WAREHOUSE_WORKER
+        return self.role == Role.WAREHOUSE_WORKER
 
     @property
     def is_manager(self):
-        return self.role == self.MANAGER
+        return self.role == Role.MANAGER

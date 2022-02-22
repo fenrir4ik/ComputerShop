@@ -1,7 +1,7 @@
 from typing import List
 
-from core.db.image_dao import ImageDAO
-from core.services.constants import PRODUCT_IMAGE_MAX_AMOUNT
+from db.image_dao import ImageDAO
+from services.constants import PRODUCT_IMAGE_MAX_AMOUNT
 
 
 def _parse_image_formset_to_list(cleaned_data: list) -> List[dict]:
