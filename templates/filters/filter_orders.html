@@ -1,0 +1,31 @@
+{% extends 'filters/filter_base.html' %}
+
+{% block filter_fields %}
+    {% if user.is_staff %}
+        <div class="filter_inner">
+            {{ filter.form.id.label_tag }}
+            {{ filter.form.id }}
+        </div>
+        <div class="filter_inner">
+            {{ filter.form.phone_number.label_tag }}
+            {{ filter.form.phone_number }}
+        </div>
+        <div class="filter_inner">
+            {{ filter.form.email.label_tag }}
+            {{ filter.form.email }}
+        </div>
+        <div class="filter_inner">
+            {{ filter.form.date_end.label_tag }}
+            {{ filter.form.date_end }}
+        </div>
+        <div class="filter_inner">
+            {{ filter.form.status.label_tag }}
+            {{ filter.form.status }}
+        </div>
+    {% else %}
+        <div class="filter_inner">
+            {{ filter.form.keyword.label_tag }}<br>
+            {{ filter.form.keyword }}
+        </div>
+    {% endif %}
+{% endblock %}

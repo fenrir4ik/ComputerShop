@@ -1,6 +1,6 @@
 from typing import Union
 
-from apps.user.models import User
+from apps.core.models import User
 
 
 class UserDAO:

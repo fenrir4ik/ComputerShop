@@ -28,10 +28,6 @@ nav {
 
 .navbar-dark .navbar-nav .nav-link {
     color: white;
-}
-
-
-.navbar-dark .navbar-nav .nav-link {
     -webkit-transition: .1s;
     -webkit-background-clip: text;
 }
@@ -60,17 +56,12 @@ nav {
     background: #3E6190;
 }
 
-.dropdown-menu * {
+.dropdown-item {
     color: white;
 }
 
-.dropdown-item:hover {
+.dropdown-item:hover,
+.dropdown-item:active {
     background-color: #001540;
     color: white;
 }
-
-.dropdown-menu *:active {
-    color: white;
-    background: #001540;
-}
-

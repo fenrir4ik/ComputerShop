@@ -4,7 +4,7 @@ from django.db.models.signals import post_delete
 from django.dispatch import receiver
 from django.utils import timezone
 
-from apps.user.models import User
+from apps.core.models import User
 from services.constants import DEFAULT_PRODUCT_IMAGE
 
 

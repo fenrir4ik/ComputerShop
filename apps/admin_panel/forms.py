@@ -128,6 +128,7 @@ class OrderChangeForm(forms.ModelForm):
         order_status_service = OrderStatusService(status_id=self.instance.status_id,
                                                   delivery_available=bool(self.instance.address))
         self.fields['status'].queryset = order_status_service.get_future_statuses()
+        self.fields['status'].required = True
 
         readonly_fields = ['date_start', 'date_end']
         if not self.instance.is_new:

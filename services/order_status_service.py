@@ -20,7 +20,7 @@ class OrderStatusService:
 
     Default status model dict:
 
-    "new": 1            # Ожидает подтверждения
+    "new": 1            # "Ожидает подтверждения"
     "confirmed": 2      # "Подтвержден"
     "packed_up": 3      # "Комплектуется"
     "on_way": 4         # "Следует в город получателя"

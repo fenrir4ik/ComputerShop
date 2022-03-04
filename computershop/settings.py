@@ -106,7 +106,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Custom authentication and user model
 
-AUTH_USER_MODEL = 'user.User'
+AUTH_USER_MODEL = 'core.User'
 
 AUTHENTICATION_BACKENDS = [
     'apps.core.backends.EmailBasedBackend'

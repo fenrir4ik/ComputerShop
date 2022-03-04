@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView, ListView, DeleteView, UpdateView
 
-from apps.admin_panel.filters import AdminProductFilter
+from apps.admin_panel.filters import AdminProductFilter, AdminOrderFilter
 from apps.admin_panel.forms import ProductAddForm, ProductUpdateForm, OrderChangeForm
 from apps.core.permissions import WarehousePermissionMixin, ManagerPermissionMixin
 from apps.store.models import Product
@@ -51,7 +51,6 @@ class ProductsListAdminView(WarehousePermissionMixin, ListView):
         return filter.qs
 
 
-
 class ProductDeleteView(WarehousePermissionMixin, DeleteView):
     """View is used for deletion products in admin-panel"""
     template_name = 'admin_panel/delete_product.html'
@@ -95,9 +94,18 @@ class OrdersListView(ManagerPermissionMixin, ListView):
     """View is used for displaying orders list in admin-panel"""
     template_name = 'store/user_orders.html'
     context_object_name = 'orders_list'
+    paginate_by = 3
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['filter'] = AdminOrderFilter(self.request.GET)
+        return context
 
     def get_queryset(self):
-        return OrderDAO.get_all_orders().order_by('id')
+        queryset = OrderDAO.get_all_orders()
+        queryset = queryset.order_by('-id')
+        filter = AdminOrderFilter(self.request.GET, queryset=queryset)
+        return filter.qs
 
 
 class OrderUpdateView(ManagerPermissionMixin, UpdateView):

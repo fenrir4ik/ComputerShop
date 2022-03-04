@@ -1,6 +1,6 @@
 from django.contrib.auth.backends import ModelBackend
 
-from apps.user.models import User
+from apps.core.models import User
 from db.user_dao import UserDAO
 
 
