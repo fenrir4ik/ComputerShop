@@ -5,26 +5,36 @@ from django.views.generic import ListView, DetailView, TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import FormView, CreateView
 
+from apps.core.permissions import CustomerPermission
+from apps.store.filters import ProductFilter, OrderFilter
 from apps.store.forms import AddProductToCartForm, CreateOrderForm
 from apps.store.models import Product
-from core.db.cart_item_dao import CartItemDAO
-from core.db.image_dao import ImageDAO
-from core.db.order_dao import OrderDAO
-from core.db.product_dao import ProductDAO
-from core.services.cart_service import CartService
+from db.cart_item_dao import CartItemDAO
+from db.image_dao import ImageDAO
+from db.order_dao import OrderDAO
+from db.product_dao import ProductDAO
+from services.cart_service import CartService
+from services.product_service import ProductPriceHistoryService
 
 
 class IndexView(ListView):
     """View is used for main page"""
     template_name = 'store/index.html'
     context_object_name = 'products'
+    paginate_by = 10
 
-    # paginate_by = 20
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['filter'] = ProductFilter(self.request.GET)
+        return context
 
     def get_queryset(self):
         # amount and date_created not used
         queryset = ProductDAO.get_products_list()
-        return queryset.values('id', 'image', 'name', 'price', 'amount', 'date_created')
+        queryset = queryset.values('id', 'image', 'name', 'price', 'amount', 'date_created')
+        queryset = queryset.order_by('-id')
+        filter = ProductFilter(self.request.GET, queryset=queryset)
+        return filter.qs
 
 
 class SingleProductView(DetailView):
@@ -38,18 +48,21 @@ class SingleProductView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        product_amount = self.object.get('amount')
         product_id = self.object.get('id')
-        user_id = self.request.user.pk
 
-        context['product_amount_in_cart'] = CartItemDAO.get_product_amount_in_cart_by_user_id(user_id, product_id)
-        context['form'] = AddProductToCartForm(amount_in_cart=context['product_amount_in_cart'],
-                                               max_amount=product_amount + context['product_amount_in_cart'])
         context['product_images'] = ImageDAO.get_product_images(product_id)
+        context['product_price_history'] = ProductPriceHistoryService.get_product_price_history(product_id)
+
+        if self.request.user.is_authenticated:
+            product_amount = self.object.get('amount')
+            user_id = self.request.user.pk
+            context['product_amount_in_cart'] = CartItemDAO.get_product_amount_in_cart_by_user_id(user_id, product_id)
+            context['form'] = AddProductToCartForm(amount_in_cart=context['product_amount_in_cart'],
+                                                   max_amount=product_amount + context['product_amount_in_cart'])
         return context
 
 
-class SingleProductFormView(SingleObjectMixin, FormView):
+class SingleProductFormView(CustomerPermission, SingleObjectMixin, FormView):
     """View is used for processing submitted data on product detail page"""
     form_class = AddProductToCartForm
 
@@ -92,7 +105,7 @@ class ProductDetailView(View):
         return view(request, *args, **kwargs)
 
 
-class ProductDeleteFromCartView(View):
+class ProductDeleteFromCartView(CustomerPermission, View):
     """View is used for deletion product from cart"""
 
     def post(self, request, *args, **kwargs):
@@ -102,7 +115,7 @@ class ProductDeleteFromCartView(View):
         return redirect(next_page) if next_page else reverse('index')
 
 
-class UserCartView(ListView):
+class UserCartView(CustomerPermission, ListView):
     """View is used for displaying user cart"""
     template_name = 'store/cart.html'
     context_object_name = 'cart_items'
@@ -118,7 +131,7 @@ class UserCartView(ListView):
         return view(request, *args, **kwargs)
 
 
-class UserCartClearView(TemplateView):
+class UserCartClearView(CustomerPermission, TemplateView):
     """View is used for shopping cart clearing"""
     template_name = 'store/cart_clear.html'
 
@@ -128,7 +141,7 @@ class UserCartClearView(TemplateView):
         return redirect('user-cart')
 
 
-class OrderCreateView(CreateView):
+class OrderCreateView(CustomerPermission, CreateView):
     """View is used for checkout"""
     template_name = 'store/create_order.html'
     form_class = CreateOrderForm
@@ -147,16 +160,25 @@ class OrderCreateView(CreateView):
         return kwargs
 
 
-class UserOrdersListView(ListView):
+class UserOrdersListView(CustomerPermission, ListView):
     """View is used for displaying own user orders"""
     template_name = 'store/user_orders.html'
     context_object_name = 'orders_list'
+    paginate_by = 3
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['filter'] = OrderFilter(self.request.GET)
+        return context
 
     def get_queryset(self):
-        return OrderDAO.get_all_orders(self.request.user.pk)
+        queryset = OrderDAO.get_all_orders(self.request.user.pk)
+        queryset = queryset.order_by('-id')
+        filter = OrderFilter(self.request.GET, queryset=queryset)
+        return filter.qs
 
 
-class UserOrderDetailView(DetailView):
+class UserOrderDetailView(CustomerPermission, DetailView):
     """View is used for displaying single order from user orders list"""
     template_name = 'store/order_detail.html'
     context_object_name = 'order'

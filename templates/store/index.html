@@ -3,6 +3,7 @@
 
 {% block styles %}
     <link rel="stylesheet" href="{% static 'css/product_list.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/filter_form.css' %}"/>
 {% endblock %}
 
 {% block content %}
@@ -10,7 +11,7 @@
         <div class='search_div'>
             <form id='search' action="">
                 <label for='searchline' hidden></label>
-                <input id='searchline' placeholder="Поиск товара...">
+                {{ filter.form.keyword }}
                 <button class="main-search"></button>
             </form>
         </div>
@@ -18,52 +19,37 @@
     <div class="container">
         <div class="body_outer">
             <div class="left_panel">
-                <h2>Категории</h2>
-                <div><a href="#"><img src="{% static 'img/videocard.png' %}" alt="menu_item"> Видеокарты</a></div>
-                <div><a href="#"><img src="{% static 'img/processor.png' %}" alt="menu_item"> Процессоры</a></div>
-                <div><a href="#"><img src="{% static 'img/motherboard.png' %}" alt="menu_item"> Материнские платы</a>
-                </div>
-                <div><a href="#"><img src="{% static 'img/ram.png' %}" alt="menu_item"> Оперативная память</a></div>
-                <div><a href="#"><img src="{% static 'img/disk.png' %}" alt="menu_item"> Жесткие диски</a></div>
-                <div><a href="#"><img src="{% static 'img/power.png' %}" alt="menu_item"> Блоки питания</a></div>
+                {% include 'filters/filter_products.html' %}
             </div>
             <div class="right_panel">
-                {#            <ul class="sort_list">#}
-                {#                <li>#}
-                {#                    <p class="sort_title">Отобразить:</p>#}
-                {#                </li>#}
-                {#                <li class="dropdown">#}
-                {#                    <a class="sort_link dropdown-toggle" href="#" data-bs-toggle="dropdown">от дешевых к дорогим</a>#}
-                {#                    <ul class="dropdown-menu dropdown-menu-right">#}
-                {#                        <li><a class="dropdown-item" href="#">от дешевых к дорогим</a></li>#}
-                {#                        <li><a class="dropdown-item" href="#">от дорогих к дешевым</a></li>#}
-                {#                        <li><a class="dropdown-item" href="#">по алфавиту</a></li>#}
-                {#                        <li><a class="dropdown-item" href="#">новинки</a></li>#}
-                {#                    </ul>#}
-                {#                </li>#}
-                {#            </ul>#}
-                <div class="main_products">
-                    {% for product in products %}
-                        <div>
-                            <a href="{% url 'product-detail' pk=product.id %}">
-                                <img class="card_img"
-                                     src='{% get_media_prefix %}{{ product.image }}'
-                                     alt=""/>
-                                <p>{{ product.name }}</p>
-                            </a>
-                            <div class="inner_card">
-                                <div class="price_comb">
-                                    <h6>цена</h6>
-                                    <h5>{{ product.price }} ₴</h5>
-                                </div>
-                                <div class="card_buttons">
-                                    <a class='details_btn' href="{% url 'product-detail' pk=product.id %}">Детали</a>
-                                    <a class='add_to_cart_btn' href="#">В корзину</a>
+                {% include 'filters/pagination.html' %}
+                {% include 'filters/sort_products.html' %}
+                {% if products %}
+                    <div class="main_products">
+                        {% for product in products %}
+                            <div>
+                                <a href="{% url 'product-detail' pk=product.id %}">
+                                    <img class="card_img"
+                                         src='{% get_media_prefix %}{{ product.image }}'
+                                         alt=""/>
+                                    <p>{{ product.name }}</p>
+                                </a>
+                                <div class="inner_card">
+                                    <div class="price_comb">
+                                        <h6>цена</h6>
+                                        <h5>{{ product.price }} ₴</h5>
+                                    </div>
+                                    <div class="card_buttons">
+                                        <a class='details_btn'
+                                           href="{% url 'product-detail' pk=product.id %}">Детали</a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    {% endfor %}
-                </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p>К сожалению, список товаров пуст</p>
+                {% endif %}
             </div>
         </div>
     </div>

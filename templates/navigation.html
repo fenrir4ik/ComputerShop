@@ -13,17 +13,6 @@
         <div class="collapse navbar-collapse" id="main_nav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Главная</a></li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Товары</a>
-                    <ul class="dropdown-menu dropdown-menu-right">
-                        <li><a class="dropdown-item" href="#">Видеокарты</a></li>
-                        <li><a class="dropdown-item" href="#">Процессоры</a></li>
-                        <li><a class="dropdown-item" href="#">Материнские платы</a></li>
-                        <li><a class="dropdown-item" href="#">Оперативная память</a></li>
-                        <li><a class="dropdown-item" href="#">Жесткие диски</a></li>
-                        <li><a class="dropdown-item" href="#">Блок питания</a></li>
-                    </ul>
-                </li>
                 {% if user.is_authenticated %}
                     {% if user.is_staff %}
                         <li class="nav-item dropdown">

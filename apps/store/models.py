@@ -4,8 +4,8 @@ from django.db.models.signals import post_delete
 from django.dispatch import receiver
 from django.utils import timezone
 
-from apps.user.models import User
-from core.services.constants import DEFAULT_PRODUCT_IMAGE
+from apps.core.models import User
+from services.constants import DEFAULT_PRODUCT_IMAGE
 
 
 class Vendor(models.Model):
@@ -33,7 +33,7 @@ class Product(models.Model):
     name = models.CharField(max_length=255, verbose_name="Название товара", db_index=True)
     amount = models.PositiveIntegerField(verbose_name="Кол-во на складе", default=0)
     category = models.ForeignKey(Category, verbose_name="Категория", on_delete=models.RESTRICT)
-    vendor = models.ForeignKey(Vendor, verbose_name="Производитель", on_delete=models.RESTRICT)
+    vendor = models.ForeignKey(Vendor, related_name='products', verbose_name="Производитель", on_delete=models.RESTRICT)
     date_created = models.DateTimeField(verbose_name="Дата создания", auto_now_add=True)
     description = models.TextField(verbose_name="Описание")
 
@@ -63,6 +63,9 @@ class ProductPrice(models.Model):
 
     class Meta:
         db_table = 'product_price'
+
+    def __str__(self):
+        return f'ProductPrice {self.date_actual}, {self.price}'
 
 
 class PaymentType(models.Model):

@@ -4,9 +4,9 @@ from django.core.validators import MinValueValidator
 from django.forms import formset_factory, inlineformset_factory, BaseInlineFormSet
 
 from apps.store.models import Product, ProductImage, Order
-from core.services.constants import PRODUCT_IMAGE_MAX_AMOUNT
-from core.services.order_status_service import OrderStatusService
-from core.services.product_service import AdditionalProductDataService
+from services.constants import PRODUCT_IMAGE_MAX_AMOUNT
+from services.order_status_service import OrderStatusService
+from services.product_service import AdditionalProductDataService
 from utils.form_validators import square_image_validator
 
 
@@ -93,7 +93,8 @@ class ProductAddForm(BaseProductModelForm):
         super().__init__(data=data, files=files, image_formset=image_formset, **kwargs)
 
     def process_additional_product_data(self, product):
-        AdditionalProductDataService.add_additional_data(product.pk, self.cleaned_data.get('price'), self.image_formset.cleaned_data)
+        AdditionalProductDataService.add_additional_data(product.pk, self.cleaned_data.get('price'),
+                                                         self.image_formset.cleaned_data)
 
 
 class ProductUpdateForm(BaseProductModelForm):
@@ -111,6 +112,8 @@ class ProductUpdateForm(BaseProductModelForm):
 
 class OrderChangeForm(forms.ModelForm):
     """Form is used to update user order information and status"""
+
+    status = forms.ModelChoiceField(queryset=None, empty_label=None, required=True)
 
     class Meta:
         model = Order
