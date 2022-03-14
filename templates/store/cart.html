@@ -56,7 +56,11 @@
                             </form>
                         </td>
                         <td>
-                            <button class="btn btn-danger">Удалить</button>
+                            <form method="post"
+                                  action="{% url 'delete-cart-item' pk=item.product_id %}?next={{ request.get_full_path }}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">Удалить</button>
+                            </form>
                         </td>
                     </tr>
                 {% endfor %}

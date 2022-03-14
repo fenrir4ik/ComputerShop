@@ -10,7 +10,7 @@ from apps.core.permissions import WarehousePermissionMixin, ManagerPermissionMix
 from apps.store.models import Product
 from db.order_dao import OrderDAO
 from db.product_dao import ProductDAO
-from services.constants import DEFAULT_PRODUCT_IMAGE
+from services.constants import DEFAULT_PRODUCT_IMAGE, PRODUCT_IMAGE_MAX_AMOUNT
 
 
 class ProductAddView(WarehousePermissionMixin, CreateView):
@@ -28,6 +28,11 @@ class ProductAddView(WarehousePermissionMixin, CreateView):
 
     def get_success_url(self):
         return reverse('product-update', kwargs={'pk': self.object.pk})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context['max_img_num'] = PRODUCT_IMAGE_MAX_AMOUNT
+        return context
 
 
 class ProductsListAdminView(WarehousePermissionMixin, ListView):

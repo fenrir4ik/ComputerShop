@@ -64,6 +64,9 @@ class ProductPrice(models.Model):
     class Meta:
         db_table = 'product_price'
 
+    def __str__(self):
+        return f'ProductPrice {self.date_actual}, {self.price}'
+
 
 class PaymentType(models.Model):
     type = models.CharField(max_length=50, db_index=True, unique=True)

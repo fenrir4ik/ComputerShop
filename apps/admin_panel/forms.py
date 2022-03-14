@@ -113,6 +113,8 @@ class ProductUpdateForm(BaseProductModelForm):
 class OrderChangeForm(forms.ModelForm):
     """Form is used to update user order information and status"""
 
+    status = forms.ModelChoiceField(queryset=None, empty_label=None, required=True)
+
     class Meta:
         model = Order
         fields = ['name', 'surname', 'patronymic', 'email', 'phone_number', 'address', 'date_start', 'date_end',
@@ -128,7 +130,6 @@ class OrderChangeForm(forms.ModelForm):
         order_status_service = OrderStatusService(status_id=self.instance.status_id,
                                                   delivery_available=bool(self.instance.address))
         self.fields['status'].queryset = order_status_service.get_future_statuses()
-        self.fields['status'].required = True
 
         readonly_fields = ['date_start', 'date_end']
         if not self.instance.is_new:

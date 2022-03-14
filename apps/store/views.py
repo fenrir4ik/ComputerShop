@@ -14,13 +14,14 @@ from db.image_dao import ImageDAO
 from db.order_dao import OrderDAO
 from db.product_dao import ProductDAO
 from services.cart_service import CartService
+from services.product_service import ProductPriceHistoryService
 
 
 class IndexView(ListView):
     """View is used for main page"""
     template_name = 'store/index.html'
     context_object_name = 'products'
-    paginate_by = 3
+    paginate_by = 10
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -47,14 +48,17 @@ class SingleProductView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        product_amount = self.object.get('amount')
         product_id = self.object.get('id')
-        user_id = self.request.user.pk
 
-        context['product_amount_in_cart'] = CartItemDAO.get_product_amount_in_cart_by_user_id(user_id, product_id)
-        context['form'] = AddProductToCartForm(amount_in_cart=context['product_amount_in_cart'],
-                                               max_amount=product_amount + context['product_amount_in_cart'])
         context['product_images'] = ImageDAO.get_product_images(product_id)
+        context['product_price_history'] = ProductPriceHistoryService.get_product_price_history(product_id)
+
+        if self.request.user.is_authenticated:
+            product_amount = self.object.get('amount')
+            user_id = self.request.user.pk
+            context['product_amount_in_cart'] = CartItemDAO.get_product_amount_in_cart_by_user_id(user_id, product_id)
+            context['form'] = AddProductToCartForm(amount_in_cart=context['product_amount_in_cart'],
+                                                   max_amount=product_amount + context['product_amount_in_cart'])
         return context
 
 

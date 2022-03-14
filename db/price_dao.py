@@ -1,6 +1,10 @@
 from decimal import Decimal
 
+from django.db.models import Avg
+from django.db.models.functions import TruncMonth
+
 from apps.store.models import ProductPrice
+from utils.date import get_date_year_ago
 
 
 class PriceDAO:
@@ -24,3 +28,11 @@ class PriceDAO:
         It's used during initial product creation
         """
         ProductPrice(product_id=product_id, price=price).save()
+
+    @staticmethod
+    def get_product_price_history(product_id):
+        year_ago = get_date_year_ago()
+        return ProductPrice.objects.annotate(month=TruncMonth('date_actual')) \
+            .values('month') \
+            .annotate(avg_price=Avg('price')) \
+            .filter(product_id=product_id, date_actual__gte=year_ago)
