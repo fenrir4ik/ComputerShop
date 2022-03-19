@@ -7,8 +7,7 @@ footer {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: orange;
-    border-top: 1px solid black;
+    background: #2b6777;
 }
 
 #footer_div {
@@ -28,14 +27,14 @@ footer {
 }
 
 .footer_title {
-    color: black;
+    color: white;
     font-size: 19px;
     min-width: 70px;
-    -webkit-text-stroke: 0.5px black;
+    -webkit-text-stroke: 0.5px white;
 }
 
 .footer_item {
-    color: black;
+    color: white;
     font-size: 15px;
     text-decoration: none;
 }
@@ -45,14 +44,14 @@ footer {
 }
 
 .footer_item:hover {
-    color: black;
     cursor: pointer;
-    -webkit-text-stroke: 0.5px black;
+    -webkit-text-stroke: 1px white;
+    transform: scale(1.01);
 }
 
 #copyright {
     margin-top: 20px;
-    color: black;
+    color: white;
     font-size: 14px;
 }
 

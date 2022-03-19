@@ -2,8 +2,10 @@
 {% load static %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{% static 'css/product_list.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/index.css' %}"/>
     <link rel="stylesheet" href="{% static 'css/filter_form.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/pagination.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/sort.css' %}"/>
 {% endblock %}
 
 {% block content %}
@@ -22,7 +24,6 @@
                 {% include 'filters/filter_products.html' %}
             </div>
             <div class="right_panel">
-                {% include 'filters/pagination.html' %}
                 {% include 'filters/sort_products.html' %}
                 {% if products %}
                     <div class="main_products">
@@ -47,6 +48,7 @@
                             </div>
                         {% endfor %}
                     </div>
+                    {% include 'filters/pagination.html' %}
                 {% else %}
                     <p>К сожалению, список товаров пуст</p>
                 {% endif %}

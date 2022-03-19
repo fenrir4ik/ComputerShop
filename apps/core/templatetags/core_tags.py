@@ -11,3 +11,13 @@ def url_param_replace(context, **kwargs):
     for k in [k for k, v in d.items() if not v]:
         del d[k]
     return d.urlencode()
+
+
+@register.filter
+def get_range(value):
+    return range(value)
+
+
+@register.filter
+def page_median(from_, to_):
+    return (from_ + to_)//2

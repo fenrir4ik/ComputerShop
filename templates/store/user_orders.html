@@ -16,6 +16,7 @@
         }
     </style>
     <link rel="stylesheet" href="{% static 'css/filter_form.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/pagination.css' %}"/>
 {% endblock %}
 
 {% block content %}
@@ -25,7 +26,6 @@
                 {% include 'filters/filter_orders.html' %}
             </div>
             <div class="right_panel">
-                {% include 'filters/pagination.html' %}
                 {% if orders_list %}
                     {% for order in orders_list %}
                         <div class="orders_outer">
@@ -68,6 +68,7 @@
                         </div>
                         <br>
                     {% endfor %}
+                    {% include 'filters/pagination.html' %}
                 {% else %}
                     <p>Ни одного заказа не обнаружено</p>
                     <a class="btn btn-primary" href=".">Показать все заказы</a>

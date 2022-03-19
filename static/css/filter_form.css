@@ -1,3 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Jost&display=swap');
+
+.filter_form {
+    margin-bottom: 100px;
+    background-color: #f2f2f2;
+    padding: 20px;
+}
+
+.filter_inner > label {
+    font-weight: bolder;
+    font-size: 15px;
+    font-family: 'Jost', sans-serif;
+    color: #2b6777;
+}
+
+.filter_inner > input,
+.filter_inner > select {
+    width: 90%;
+}
+
+.filter_inner input,
+.filter_inner select {
+    font-size: 16px;
+}
+
+#price_range {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 90%;
+}
+
+#id_price_0,
+#id_price_1 {
+    width: 44%;
+}
+
 .filter_inner {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
+}
+
+.filter_inner > * {
+    margin-left: 10px;
+}
+
+.filter_buttons {
+    display: flex;
+    flex-direction: row;
+    float: right;
+    width: 100%;
+}
+
+.filter_btn {
+    background-color: #52ab98;
+    color: white;
+    width: 45%;
+    margin: 5px;
+    border-radius: 7px;
+}
+
+.filter_btn:hover {
+    color: #f2f2f2;
 }

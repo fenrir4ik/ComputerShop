@@ -1,0 +1,74 @@
+.pagination_active,
+.pagination_disabled {
+    width: 35px;
+    height: 25px;
+    box-shadow: 0 0 2px 0 rgb(0 0 0 / 50%), 0 2px 6px 0 rgb(0 0 0 / 50%);
+    text-align: center;
+    text-decoration: none !important;
+    color: black;
+    margin: 5px;
+}
+
+.pagination_active:hover {
+    color: black;
+    background-color: lightgrey;
+}
+
+.current_page {
+    margin-top: 8px;
+}
+
+.page_item,
+.page_item_disabled {
+    font-size: 25px;
+    margin-top: -8px;
+}
+
+.pagination_left,
+.pagination_right {
+    display: flex;
+    flex-direction: row;
+}
+
+.pagination {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 100px;
+    margin-top: 10px;
+}
+
+@media screen and (max-width: 360px) {
+    .current_page {
+        font-size: 12px;
+        margin-top: 12px;
+    }
+}
+
+.pagination_mid_small {
+    display: none;
+}
+
+.pagination_mid_range {
+    display: flex;
+    justify-content: space-around;
+}
+
+.page_number {
+    font-size: 17px;
+}
+
+@media screen and (max-width: 770px) {
+    .pagination_mid_small {
+        display: block;
+    }
+
+    .pagination_mid_range {
+        display: none;
+    }
+}
+
+.pagination_disabled {
+    color: gray;
+    background-color: lightgray;
+}

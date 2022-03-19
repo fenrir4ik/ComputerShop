@@ -1,12 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap');
-/*@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200&display=swap');*/
 
 * {
     padding: 0;
     margin: 0;
     box-sizing: border-box;
-    font-family: 'Source Sans Pro', sans-serif;
-    /*font-family: 'Oswald', sans-serif;*/
 }
 
 body {
@@ -14,29 +11,29 @@ body {
     flex-direction: column;
     margin: 0;
     overflow-x: hidden;
-    font-family: "Poppins", sans-serif;
+    font-family: 'Source Sans Pro', sans-serif;
     position: relative;
     min-height: 100vh;
-    background: white;
-    color: #001540;
 }
 
 .body_outer {
     display: flex;
     flex-direction: row;
     justify-content: space-around;
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
 .left_panel {
-    flex-basis: 15%;
+    flex-basis: 25%;
     min-width: 250px;
     display: flex;
     flex-direction: column;
 }
 
 .right_panel {
-    flex-basis: 77%;
+    flex-basis: 70%;
+    background-color: #f2f2f2;
+    padding: 20px;
 }
 
 @media screen and (max-width: 992px) {

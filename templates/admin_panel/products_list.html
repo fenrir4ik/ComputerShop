@@ -2,8 +2,9 @@
 {% load static %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{% static 'css/product_list.css' %}"/>
     <link rel="stylesheet" href="{% static 'css/filter_form.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/pagination.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/sort.css' %}"/>
 {% endblock %}
 
 
@@ -21,7 +22,6 @@
                 {% include 'filters/filter_products.html' %}
             </div>
             <div class="right_panel">
-                {% include 'filters/pagination.html' %}
                 {% include 'filters/sort_products.html' %}
                 <a class="btn btn-primary" href="{% url 'product-add' %}">Добавить новый товар</a>
                 {% if products %}
@@ -65,6 +65,7 @@
                         {% endfor %}
                         </tbody>
                     </table>
+                    {% include 'filters/pagination.html' %}
                 {% else %}
                     <p>К сожалению, список товаров пуст</p>
                 {% endif %}
