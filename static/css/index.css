@@ -1,7 +1,7 @@
 .main_products {
-    width: 95%;
+    width: 100%;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
 }
 
 @media screen and (max-width: 992px) {
@@ -11,12 +11,11 @@
 }
 
 .main_products > div {
-    margin: 30px;
     height: auto;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    box-shadow: 0 0 2px 0 rgb(0 0 0 / 50%), 0 2px 6px 0 rgb(0 0 0 / 50%);
+    box-shadow: 0 0 1px 0 rgb(0 0 0 / 50%), 0 0 1px 0 rgb(0 0 0 / 50%);
     padding: 10px;
     background: white;
 }
@@ -84,10 +83,9 @@
 }
 
 .details_btn {
-    border: 4px solid #001540;
-    background: #001540;
+    background: #52ab98;
     color: white;
-    padding-top: 5px;
+    padding-top: 9px;
     transition: 0.5s;
 }
 
