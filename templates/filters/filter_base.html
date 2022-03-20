@@ -16,10 +16,8 @@
 <script>
     function filter_toggle() {
         var filter = document.getElementById("filter_outer");
-        if (filter.style.display === "none") {
+        if (filter.style.display !== "block") {
             filter.style.display = "block";
-        } else {
-            filter.style.display = "none";
         }
     }
 </script>

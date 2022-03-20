@@ -23,11 +23,18 @@
     color: #2b6777;
 }
 
-
-@media (max-width: 320px) {
+@media (max-width: 410px) {
     .sort_list {
         float: none;
-        justify-content: space-around;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+}
+
+
+@media (max-width: 350px) {
+    .sort_list {
         font-size: 14px;
     }
 }

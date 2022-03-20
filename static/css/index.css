@@ -1,3 +1,4 @@
+
 .main_products {
     width: 100%;
     display: grid;
@@ -26,10 +27,72 @@
     align-self: center;
 }
 
-.main_products p {
+.inner_card {
     width: 100%;
-    height: 46px;
+    align-self: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.card_button {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.product_name,
+.details_btn {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.details_btn {
+    border-radius: 5px;
+    width: 90px;
+    text-align: center;
+    height: 35px;
+    font-weight: 600;
+    font-size: 13px;
+    background: #52ab98;
+    color: white;
+}
+
+@media screen and (max-width: 340px) {
+    .details_btn {
+        width: 90px;
+    }
+}
+
+.details_btn:hover {
+    color: white;
+    background-color: #52aba2;
+}
+
+.price_comb {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.product_price {
+    margin-top: 10px;
+    color: #2b6777;
+    font-weight: bolder;
     font-size: 16px;
+    font-family: 'Ubuntu Condensed', sans-serif;
+    transform: scaleY(1.4);
+}
+
+.card_id {
+    color: gray;
+    text-decoration: underline dotted;
+}
+
+.card_name {
+    width: 100%;
+    height: 40px;
+    font-size: 14px;
     align-self: center;
     margin-top: 10px;
     color: black;
@@ -37,74 +100,16 @@
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
+    font-family: 'Roboto', sans-serif;
+    font-weight: bolder;
     overflow: hidden;
     text-overflow: ellipsis;
     text-decoration: none;
 }
 
-.inner_card {
-    width: 100%;
-    align-self: center;
-    display: flex;
-    flex-direction: column;
-}
-
-.card_buttons {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-}
-
-.main_products > div a,
-.card_buttons a {
-    text-decoration: none;
-    cursor: pointer;
-}
-
-.card_buttons a {
-    border-radius: 5px;
-    width: 100%;
-    text-align: center;
-    height: 40px;
-    font-weight: 500;
-    font-size: 14px;
-}
-
-@media screen and (max-width: 340px) {
-    .card_buttons a {
-        width: 90px;
-    }
-}
-
-.details_btn:hover {
-    transition: 0.5s;
-    transform: scale(1.02);
-    color: white;
-}
-
-.details_btn {
-    background: #52ab98;
-    color: white;
-    padding-top: 9px;
-    transition: 0.5s;
-}
-
-.card_buttons {
-    margin-top: 10px;
-}
-
-.price_comb h6,
-.price_comb h5 {
-    margin: 0;
-    color: black;
-}
-
-.price_comb h6 {
-    font-size: 14px;
-}
-
-.price_comb h5 {
-    font-weight: bolder;
+.details_img {
+    width: 20px;
+    height: 20px;
 }
 
 @media (max-width: 1125px) {
@@ -113,7 +118,7 @@
         height: auto;
     }
 
-    .main_products p,
+    .card_name,
     .inner_card {
         width: 100%;
     }
