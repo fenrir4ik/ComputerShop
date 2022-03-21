@@ -84,12 +84,13 @@
     margin-top: 10px;
     color: #2b6777;
     font-weight: bolder;
-    font-size: 13px;
+    font-size: 18px;
     font-family: 'Ubuntu', sans-serif;
     transform: scaleY(1.4);
 }
 
 .card_id {
+    margin-top: 5px;
     color: gray;
     text-decoration: underline dotted;
 }

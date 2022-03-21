@@ -44,11 +44,10 @@
                     </div>
                 {% endfor %}
                 <div class="cart_bottom_links">
-                    <form method="post" action="{% url 'clear-cart' %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn clear_cart">Очистить корзину</button>
-                    </form>
-                    <a class="btn checkout" href="{% url 'order-create' %}">Оформить заказ</a>
+                    <div class="checkout_div">
+                        <p class="cart_total">{{ cart_total }} ₴</p>
+                        <a class="btn checkout" href="{% url 'order-create' %}">Оформить заказ</a>
+                    </div>
                 </div>
             </div>
         {% else %}

@@ -31,7 +31,3 @@ class CartService:
     def __change_product_in_cart(self, product_id: int, amount: int):
         """Changes amount of product with given id in user cart"""
         CartItemDAO.change_product_in_cart(self.cart_id, product_id, amount)
-
-    def clear_user_cart(self):
-        """Clear user cart"""
-        CartItemDAO.clear_cart(self.cart_id)

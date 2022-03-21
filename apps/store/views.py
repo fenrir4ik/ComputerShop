@@ -1,7 +1,8 @@
+from django.db.models import Sum, F
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.views import View
-from django.views.generic import ListView, DetailView, TemplateView
+from django.views.generic import ListView, DetailView
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import FormView, CreateView
 
@@ -129,19 +130,15 @@ class UserCartView(CustomerPermission, ListView):
             .values('amount', 'product_id', 'product__name', 'image', 'price', 'product__amount') \
             .order_by('-product_id')
 
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['cart_total'] = context.get('cart_items').aggregate(total = Sum(F('amount')*F('price'))).get('total')
+        return context
+
     def post(self, request, *args, **kwargs):
         kwargs['pk'] = request.POST.get('pk')
         view = SingleProductFormView.as_view()
         return view(request, *args, **kwargs)
-
-
-class UserCartClearView(CustomerPermission, View):
-    """View is used for shopping cart clearing"""
-
-    def post(self, request, *args, **kwargs):
-        cart_service = CartService(request.user.pk)
-        cart_service.clear_user_cart()
-        return redirect('user-cart')
 
 
 class OrderCreateView(CustomerPermission, CreateView):

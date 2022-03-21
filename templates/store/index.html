@@ -35,15 +35,15 @@
                                          alt=""/>
                                     <p class="card_name">{{ product.name }}</p>
                                 </a>
-                                <p class="card_id">Код: {{ product.id }}</p>
+                                <div class="card_button">
+                                    <p class="card_id">Код: {{ product.id }}</p>
+                                    <a class='btn details_btn' href="{% url 'product-detail' pk=product.id %}">
+                                        <img class='details_img' src="{% static 'img/cart-icon.png' %}"
+                                             alt='details'> Детали</a>
+                                </div>
                                 <div class="inner_card">
                                     <div class="price_comb">
                                         <h5 class="product_price">{{ product.price }} ₴</h5>
-                                    </div>
-                                    <div class="card_button">
-                                        <a class='btn details_btn' href="{% url 'product-detail' pk=product.id %}">
-                                            <img class='details_img' src="{% static 'img/cart-icon.png' %}"
-                                                 alt='details'> Детали</a>
                                     </div>
                                 </div>
                             </div>
