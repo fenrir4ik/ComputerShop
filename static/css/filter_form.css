@@ -9,7 +9,7 @@
 
 #filter_outer {
     width: 100%;
-    display: none;
+    display: block;
 }
 
 .filter_inner > label {
@@ -119,6 +119,6 @@
 
 @media screen and (min-width: 993px) {
     #filter_outer {
-        display: block;
+        display: block !important;
     }
 }

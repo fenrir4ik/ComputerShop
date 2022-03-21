@@ -23,7 +23,7 @@
     <div class="container">
         <div class="body_outer">
             <div class="left_panel">
-                {% include 'filters/filter_orders.html' %}
+                {% include 'utils/filter_orders.html' %}
             </div>
             <div class="right_panel">
                 {% if orders_list %}
@@ -68,7 +68,7 @@
                         </div>
                         <br>
                     {% endfor %}
-                    {% include 'filters/pagination.html' %}
+                    {% include 'utils/pagination.html' %}
                 {% else %}
                     <p>Ни одного заказа не обнаружено</p>
                     <a class="btn btn-primary" href=".">Показать все заказы</a>

@@ -19,10 +19,10 @@
         {% endif %}
         <div class="body_outer">
             <div class="left_panel">
-                {% include 'filters/filter_products.html' %}
+                {% include 'utils/filter_products.html' %}
             </div>
             <div class="right_panel">
-                {% include 'filters/sort_products.html' %}
+                {% include 'utils/sort_products.html' %}
                 <a class="btn btn-primary" href="{% url 'product-add' %}">Добавить новый товар</a>
                 {% if products %}
                     <table class="table">
@@ -65,7 +65,7 @@
                         {% endfor %}
                         </tbody>
                     </table>
-                    {% include 'filters/pagination.html' %}
+                    {% include 'utils/pagination.html' %}
                 {% else %}
                     <p>К сожалению, список товаров пуст</p>
                 {% endif %}

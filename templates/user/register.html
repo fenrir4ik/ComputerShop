@@ -59,7 +59,8 @@
                             <label>{{ error }}</label>
                         {% endfor %}
                     </div>
-                    <button id="register_btn">Зарегистрироваться</button>
+                    <button class="btn" id="register_btn">Зарегистрироваться</button>
+                    <h6>Есть аккаунт? <a id="forward_link" href="{% url 'login' %}">Войти</a></h6>
                 </form>
             </div>
         </div>

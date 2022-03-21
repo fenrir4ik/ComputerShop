@@ -1,0 +1,19 @@
+.amount_input {
+    text-align: center;
+}
+
+.amount_input::-webkit-outer-spin-button,
+.amount_input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0;
+}
+
+.amount_div button {
+    margin-top: -5px;
+    padding: 5px;
+    font-size: 20px;
+    color: #2b6777;
+    font-weight: bolder;
+}

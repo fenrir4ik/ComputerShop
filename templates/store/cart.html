@@ -2,75 +2,65 @@
 {% load static %}
 
 {% block styles %}
-    <style>
-        .change-amount {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-around;
-        }
-
-        .change-amount div {
-            margin-right: 10px;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/cart.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/amount_input.css' %}"/>
 {% endblock %}
 
 {% block content %}
     <div class="container py-4">
+        <h2 id="cart_title">Корзина</h2>
         {% if cart_items %}
-            <table class="table">
-                <thead>
-                <tr>
-                    <th scope="col">Id</th>
-                    <th scope="col">Image</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Price</th>
-                    <th scope="col">Amount</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
+            <div id="cart_list">
                 {% for item in cart_items %}
-                    <tr>
-                        <td>{{ item.product_id }}</td>
-                        <td>
-                            <img src="{% get_media_prefix %}{{ item.image }}" width="100" height="100"
-                                 alt='product_image'>
-                        </td>
-                        <td>{{ item.product__name }}</td>
-                        <td>{{ item.price }}</td>
-                        <td width="240px">
-                            <form method="post">
-                                {% csrf_token %}
-                                <div class="form change-amount">
-                                    <div>
-                                        <input name="pk" type="hidden" value="{{ item.product_id }}">
-                                        <input name="amount" type="number" class="form-control"
-                                               value="{{ item.amount }}"
-                                               max="{{ item.product__amount|add:item.amount }}" min="1">
-                                    </div>
-                                    <div>
-                                        <button class="btn btn-primary">Изменить</button>
-                                    </div>
+                    <div class="cart_item">
+                        <div class="cart_item_upper">
+                            <div class="cart_links">
+                                <a class="product_link" href="{% url 'product-detail' pk=item.product_id %}">
+                                    <img class="cart_item_img" src="{% get_media_prefix %}{{ item.image }}"
+                                         alt='product_image'>
+                                </a>
+                                <div class="name_div">
+                                    <a class="product_link" href="{% url 'product-detail' pk=item.product_id %}">
+                                        {{ item.product__name }}
+                                    </a>
                                 </div>
-                            </form>
-                        </td>
-                        <td>
+                            </div>
                             <form method="post"
                                   action="{% url 'delete-cart-item' pk=item.product_id %}?next={{ request.get_full_path }}">
                                 {% csrf_token %}
-                                <button type="submit" class="btn btn-danger">Удалить</button>
+                                <button type="submit" class="btn item_delete"><i class="fa fa-trash"></i></button>
                             </form>
-                        </td>
-                    </tr>
+                        </div>
+                        <div class="cart_item_lower">
+                            <form method="post">
+                                {% csrf_token %}
+                                <div class="form change_amount">
+                                    <input name="pk" type="hidden" value="{{ item.product_id }}">
+                                    {% include 'utils/amount_input.html' %}
+                                </div>
+                            </form>
+                            <p class="item_price">{{ item.price }} ₴</p>
+                        </div>
+                    </div>
                 {% endfor %}
-                </tbody>
-            </table>
-            <a href="{% url 'clear-cart' %}">Очистить корзину</a>
-            <a href="{% url 'order-create' %}">Оформить заказ</a>
+                <div class="cart_bottom_links">
+                    <form method="post" action="{% url 'clear-cart' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn clear_cart">Очистить корзину</button>
+                    </form>
+                    <a class="btn checkout" href="{% url 'order-create' %}">Оформить заказ</a>
+                </div>
+            </div>
         {% else %}
-            <p>Корзина пуста</p>
+            <div class="cart_div">
+                <div id="empty_cart_outer">
+                    <img id="empty_cart_img" src="{% static 'img/empty_cart.png' %}" alt="empty-cart">
+                    <p id="empty_cart_text">Корзина пуста</p>
+                    <p id="forward_text">Но это можно исправить перейдя на
+                        <a id="forward_index" href="{% url 'index' %}">главную</a> страницу :)
+                    </p>
+                </div>
+            </div>
         {% endif %}
-        <a href="{% url 'index' %}">На главную</a>
     </div>
 {% endblock %}

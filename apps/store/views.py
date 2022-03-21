@@ -83,7 +83,11 @@ class SingleProductFormView(CustomerPermission, SingleObjectMixin, FormView):
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
-        return super().post(request, *args, **kwargs)
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return redirect(self.get_success_url())
 
     def form_valid(self, form):
         product_amount = form.cleaned_data.get('amount')
@@ -131,9 +135,8 @@ class UserCartView(CustomerPermission, ListView):
         return view(request, *args, **kwargs)
 
 
-class UserCartClearView(CustomerPermission, TemplateView):
+class UserCartClearView(CustomerPermission, View):
     """View is used for shopping cart clearing"""
-    template_name = 'store/cart_clear.html'
 
     def post(self, request, *args, **kwargs):
         cart_service = CartService(request.user.pk)

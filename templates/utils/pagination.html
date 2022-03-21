@@ -40,7 +40,7 @@
                 {% else %}
                     {% if i == page_obj.number|add:-4 %}
                         <a class="pagination_active"
-                           href="?{% url_param_replace page=page_obj.number|add:-3|page_median:1 %}">
+                           href="?{% url_param_replace page=page_obj.number|add:-2|page_median:1 %}">
                             <p class="page_number">...</p>
                         </a>
                     {% elif i == page_obj.number|add:2 %}

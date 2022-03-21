@@ -21,11 +21,11 @@
     <div class="container">
         <div class="body_outer">
             <div class="left_panel">
-                {% include 'filters/filter_products.html' %}
+                {% include 'utils/filter_products.html' %}
             </div>
             <div class="right_panel">
-                {% include 'filters/sort_products.html' %}
                 {% if products %}
+                    {% include 'utils/sort_products.html' %}
                     <div class="main_products">
                         {% for product in products %}
                             <div>
@@ -49,9 +49,12 @@
                             </div>
                         {% endfor %}
                     </div>
-                    {% include 'filters/pagination.html' %}
+                    {% include 'utils/pagination.html' %}
                 {% else %}
-                    <p>К сожалению, список товаров пуст</p>
+                    <div id="empty_products_outer">
+                        <img id="empty_products_img" src="{% static 'img/empty_products.png' %}" alt="no-products">
+                        <p id="empty_products_text">По заданным параметрам не найден ни один товар</p>
+                    </div>
                 {% endif %}
             </div>
         </div>
