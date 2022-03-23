@@ -99,7 +99,7 @@ class OrdersListView(ManagerPermissionMixin, ListView):
     """View is used for displaying orders list in admin-panel"""
     template_name = 'store/user_orders.html'
     context_object_name = 'orders_list'
-    paginate_by = 3
+    paginate_by = 10
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)

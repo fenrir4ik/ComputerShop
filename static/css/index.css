@@ -35,10 +35,11 @@
     justify-content: space-between;
 }
 
-.card_button {
+.card_detail {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-content: center;
 }
 
 .product_name,
@@ -86,11 +87,10 @@
     font-weight: bolder;
     font-size: 18px;
     font-family: 'Ubuntu', sans-serif;
-    transform: scaleY(1.4);
+    transform: scaleY(1.2);
 }
 
 .card_id {
-    margin-top: 5px;
     color: gray;
     text-decoration: underline dotted;
 }
@@ -226,4 +226,12 @@
     #search input {
         font-size: 0.8em;
     }
+}
+
+.unable_text {
+    color: gray !important;
+}
+
+.unable_image {
+    opacity: 0.3;
 }

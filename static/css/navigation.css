@@ -79,7 +79,7 @@ nav .navbar-nav li a {
 
 @media all and (max-width: 768px) {
     .nav-link {
-        margin-left: 5px;
+        margin-left: 15px !important;
     }
 
     .nav-link::before {

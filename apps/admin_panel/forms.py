@@ -12,7 +12,7 @@ from utils.form_validators import square_image_validator
 
 class ImageForm(forms.ModelForm):
     """Form is used in ImageFormSets to add multiple images to the product"""
-    image = forms.ImageField(required=False, validators=[square_image_validator])
+    image = forms.ImageField(label="Изображение", required=False, validators=[square_image_validator])
 
     class Meta:
         model = ProductImage

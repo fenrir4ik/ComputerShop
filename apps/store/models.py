@@ -115,7 +115,7 @@ class Order(models.Model):
     email = models.CharField(max_length=255, verbose_name="Электронная почта", db_index=True, null=True)
     date_start = models.DateTimeField(blank=True, verbose_name="Дата создания заказа", null=True)
     date_end = models.DateTimeField(blank=True, verbose_name="Дата завершения заказа", null=True)
-    address = models.TextField(verbose_name="Адрес доставки", blank=True, null=True)
+    address = models.CharField(max_length=255, verbose_name="Адрес доставки", blank=True, null=True)
 
     class Meta:
         db_table = 'order'

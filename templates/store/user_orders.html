@@ -1,26 +1,16 @@
 {% extends 'base.html' %}
+{% load template_utils %}
 {% load static %}
 
 {% block styles %}
-    <style>
-        .orders_outer {
-            display: flex;
-            flex-direction: row;
-            justify-content: left;
-            padding: 20px;
-            border-bottom: 1px solid black;
-        }
-
-        .orders_order {
-            margin-right: 200px;
-        }
-    </style>
     <link rel="stylesheet" href="{% static 'css/filter_form.css' %}"/>
     <link rel="stylesheet" href="{% static 'css/pagination.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/orders.css' %}"/>
 {% endblock %}
 
 {% block content %}
-    <div class="container">
+    <div class="container py-4">
+        <h2 id="order_list_title">Список заказов</h2>
         <div class="body_outer">
             <div class="left_panel">
                 {% include 'utils/filter_orders.html' %}
@@ -28,52 +18,141 @@
             <div class="right_panel">
                 {% if orders_list %}
                     {% for order in orders_list %}
-                        <div class="orders_outer">
-                            <div class="orders_order">
-                                <h2>Заказ №{{ order.id }}</h2>
-                                <p>Дата создания заказа: {{ order.date_start }}</p>
-                                {% if order.date_end %}
-                                    <p>Дата завершения заказа: {{ order.date_end }}</p>
-                                {% endif %}
-                                <p>ФИО: {{ order.surname }} {{ order.name }} {{ order.patronymic }}</p>
-                                <p>Статус: {{ order.status.name }}</p>
-                                <p>Тип оплаты: {{ order.payment.type }}</p>
-                                <p>Номер телефона: {{ order.phone_number }}</p>
-                                <p>Почта: {{ order.email }}</p>
-                                <p>Адрес доставки: {{ order.address }}</p>
-                                <p>Общая стоимость товаров: {{ order.order_total }}</p>
-                                {% if user.is_staff %}
-                                    <a class="btn btn-primary" href="{% url 'order-update' pk=order.id %}">Детали</a>
-                                {% else %}
-                                    <a class="btn btn-primary" href="{% url 'order-detail' pk=order.id %}">Детали</a>
-                                {% endif %}
-                                <br><br>
-                            </div>
-                            <div class="orders_products">
-                                <h5>Товары</h5>
-                                <div>
+                        <div class="order_outer">
+                            <button class="collapsible btn order_expand">
+                                <div class="expand_button_inner">
+                                    <div class="order_button_id">
+                                        <p class="button_gray">№{{ order.id }} от {{ order.date_start }}</p>
+                                        <p class="order_status">{{ order.status.name }}</p>
+                                    </div>
+                                    <div class="order_button_total">
+                                        <p class="button_gray">Сумма заказа</p>
+                                        <p class="button_total">{{ order.order_total }} ₴</p>
+                                    </div>
+                                    <div class="order_button_images">
+                                        {% for item in order.products.all|slice:3 %}
+                                            <img class="button_image" src="{% get_media_prefix %}{{ item.image }}"
+                                                 alt="product_image">
+                                        {% endfor %}
+                                        {% if order.products.all|length > 3 %}
+                                            <div class="redundant">
+                                                <p>+{{ order.products.all|length|add:-3 }}</p>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </button>
+                            <div class="order_content">
+                                <div class="order_data">
+                                    <p class="order_title">Информация о заказе</p>
+                                    <div class="info_row">
+                                        <p class="info_title">ФИО</p>
+                                        <p class="info_text">{{ order.surname }} {{ order.name }} {{ order.patronymic }}</p>
+                                    </div>
+                                    <div class="info_row">
+                                        <p class="info_title">Номер</p>
+                                        <p class="info_text">{{ order.phone_number }}</p>
+                                    </div>
+                                    <div class="info_row">
+                                        <p class="info_title">Почта</p>
+                                        <p class="info_text">{{ order.email }}</p>
+                                    </div>
+                                    {% if order.address %}
+                                        <div class="info_row">
+                                            <p class="info_title">Доставка</p>
+                                            <p class="info_text">{{ order.address }}</p>
+                                        </div>
+                                    {% endif %}
+                                    <div class="info_row">
+                                        <p class="info_title">Оплата</p>
+                                        <p class="info_text">{{ order.payment.type }}</p>
+                                    </div>
+                                    <div class="info_row">
+                                        <p class="info_title">Итого</p>
+                                        <p class="info_text">{{ order.order_total }} ₴</p>
+                                    </div>
+                                    {% if order.date_end %}
+                                        <div class="info_row">
+                                            <p class="info_title">Завершен</p>
+                                            <p class="info_text">{{ order.date_end }}</p>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="order_cart">
+                                    <p class="order_title">Товары заказа</p>
                                     {% for item in order.products.all %}
-                                        <div>
-                                            <p>№{{ item.id }}</p>
-                                            <img src="{% get_media_prefix %}{{ item.image }}" alt="" width="150"
-                                                 height="150">
-                                            <p>Цена: {{ item.price }}</p>
-                                            <p>Название: {{ item.product.name }}</p>
-                                            <p>Кол-во: {{ item.amount }}</p>
+                                        <div class="order_item">
+                                            <div class="link_data">
+                                                <a href="{% url 'product-detail' pk=item.id %}">
+                                                    <img class="item_image" src="{% get_media_prefix %}{{ item.image }}"
+                                                         alt="item_image">
+                                                </a>
+                                                <div class="item_name_block">
+                                                    <a class="item_name"
+                                                       href="{% url 'product-detail' pk=item.id %}">{{ item.product.name }}</a>
+                                                </div>
+                                            </div>
+                                            <div class="item_data">
+                                                <div class="item_price_block">
+                                                    <p class="item_title">Цена</p>
+                                                    <p class="item_text">{{ item.price }} ₴</p>
+                                                </div>
+                                                <div class="item_amount_block">
+                                                    <p class="item_title">Количество</p>
+                                                    <p class="item_text">{{ item.amount }}</p>
+                                                </div>
+                                                <div class="item_sum_block">
+                                                    <p class="item_title">Сумма</p>
+                                                    <p class="item_text">{{ item.price|multiply:item.amount }} ₴</p>
+                                                </div>
+                                            </div>
                                         </div>
                                     {% endfor %}
                                 </div>
-
+                                <div class="order_detail_link">
+                                    {% if user.is_staff %}
+                                        <a class="btn order_detail_btn"
+                                           href="{% url 'order-update' pk=order.id %}">Детали</a>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
-                        <br>
                     {% endfor %}
                     {% include 'utils/pagination.html' %}
                 {% else %}
-                    <p>Ни одного заказа не обнаружено</p>
-                    <a class="btn btn-primary" href=".">Показать все заказы</a>
+                    <div id="empty_orders_outer">
+                        <img id="empty_orders_img" src="{% static 'img/empty_orders.png' %}" alt="no-orders">
+                        <p id="empty_orders_text">По заданным параметрам не найден ни один заказ</p>
+                    </div>
                 {% endif %}
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        var coll = document.getElementsByClassName("collapsible");
+        var i;
+
+        for (i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function () {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                var image_list = this.querySelector('.order_button_images');
+                var total = this.querySelector('.order_button_total')
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                    total.style.display = 'flex';
+                    total.style.flexDirection = 'column';
+                    image_list.style.display = 'flex';
+                    image_list.style.flexDirection = 'row';
+                } else {
+                    content.style.maxHeight = 'initial';
+                    total.style.display = 'none';
+                    image_list.style.display = 'none';
+                }
+            });
+        }
+    </script>
 {% endblock %}

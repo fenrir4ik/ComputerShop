@@ -20,4 +20,9 @@ def get_range(value):
 
 @register.filter
 def page_median(from_, to_):
-    return (from_ + to_)//2
+    return (from_ + to_) // 2
+
+
+@register.filter
+def multiply(arg1, arg2):
+    return arg1 * arg2

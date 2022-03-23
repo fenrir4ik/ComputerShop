@@ -22,7 +22,7 @@ class IndexView(ListView):
     """View is used for main page"""
     template_name = 'store/index.html'
     context_object_name = 'products'
-    paginate_by = 8
+    paginate_by = 20
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -164,7 +164,7 @@ class UserOrdersListView(CustomerPermission, ListView):
     """View is used for displaying own user orders"""
     template_name = 'store/user_orders.html'
     context_object_name = 'orders_list'
-    paginate_by = 3
+    paginate_by = 10
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)

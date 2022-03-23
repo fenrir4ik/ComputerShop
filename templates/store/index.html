@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block content %}
-    <div>
+    <div class="search_outer">
         <div class='search_div'>
             <form id='search' action="">
                 <label for='searchline' hidden></label>
@@ -30,20 +30,35 @@
                         {% for product in products %}
                             <div>
                                 <a class="product_name" href="{% url 'product-detail' pk=product.id %}">
-                                    <img class="card_img"
-                                         src='{% get_media_prefix %}{{ product.image }}'
-                                         alt=""/>
-                                    <p class="card_name">{{ product.name }}</p>
+                                    {% if product.amount %}
+                                        <img class="card_img"
+                                             src='{% get_media_prefix %}{{ product.image }}'
+                                             alt=""/>
+                                        <p class="card_name">{{ product.name }}</p>
+                                    {% else %}
+                                        <img class="card_img unable_image"
+                                             src='{% get_media_prefix %}{{ product.image }}'
+                                             alt=""/>
+                                        <p class="card_name unable_text">{{ product.name }}</p>
+                                    {% endif %}
                                 </a>
-                                <div class="card_button">
+                                <div class="card_detail">
                                     <p class="card_id">Код: {{ product.id }}</p>
-                                    <a class='btn details_btn' href="{% url 'product-detail' pk=product.id %}">
-                                        <img class='details_img' src="{% static 'img/cart-icon.png' %}"
-                                             alt='details'> Детали</a>
+                                    {% if product.amount %}
+                                        <a class='btn details_btn' href="{% url 'product-detail' pk=product.id %}">
+                                            <img class='details_img' src="{% static 'img/cart-icon.png' %}"
+                                                 alt='details'> Детали</a>
+                                    {% else %}
+                                        <p class="unable_text">Нет в наличии</p>
+                                    {% endif %}
                                 </div>
                                 <div class="inner_card">
                                     <div class="price_comb">
-                                        <h5 class="product_price">{{ product.price }} ₴</h5>
+                                        {% if product.amount %}
+                                            <h5 class="product_price">{{ product.price }} ₴</h5>
+                                        {% else %}
+                                            <h5 class="product_price unable_text">{{ product.price }} ₴</h5>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
