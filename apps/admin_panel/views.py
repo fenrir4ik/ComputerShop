@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy, reverse
-from django.views.generic import CreateView, ListView, DeleteView, UpdateView
+from django.views.generic import ListView, DeleteView, UpdateView
 
 from apps.admin_panel.filters import AdminProductFilter, AdminOrderFilter
 from apps.admin_panel.forms import ProductAddForm, ProductUpdateForm, OrderChangeForm
@@ -13,38 +13,13 @@ from db.product_dao import ProductDAO
 from services.constants import DEFAULT_PRODUCT_IMAGE, PRODUCT_IMAGE_MAX_AMOUNT
 
 
-class ProductAddView(WarehousePermissionMixin, CreateView):
-    """View is used for products creation via admin panel"""
-    template_name = 'admin_panel/add_product.html'
-    form_class = ProductAddForm
-
-    def post(self, request, *args, **kwargs):
-        self.object = None
-        form = self.get_form()
-        if form.is_valid():
-            return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
-
-    def get_success_url(self):
-        return reverse('product-update', kwargs={'pk': self.object.pk})
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data()
-        context['max_img_num'] = PRODUCT_IMAGE_MAX_AMOUNT
-        return context
-
-
 class ProductsListAdminView(WarehousePermissionMixin, ListView):
-    """View is used for displaying products list in admin-panel"""
+    """View is used for displaying products list and products add form in admin-panel"""
     template_name = 'admin_panel/products_list.html'
     context_object_name = 'products'
     paginate_by = 3
-
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data()
-        context['filter'] = AdminProductFilter(self.request.GET)
-        return context
+    form_class = ProductAddForm
+    success_url = reverse_lazy('admin-products')
 
     def get_queryset(self):
         # amount and date_created not used
@@ -54,6 +29,27 @@ class ProductsListAdminView(WarehousePermissionMixin, ListView):
         queryset = queryset.order_by('-id')
         filter = AdminProductFilter(self.request.GET, queryset=queryset)
         return filter.qs
+
+    def get_form(self):
+        if self.request.method == 'POST':
+            return self.form_class(self.request.POST, self.request.FILES)
+        else:
+            return self.form_class()
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data()
+        context['filter'] = AdminProductFilter(self.request.GET)
+        context['form'] = self.get_form()
+        context['max_img_num'] = PRODUCT_IMAGE_MAX_AMOUNT
+        return context
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(self.success_url)
+        else:
+            return self.get(request, *args, **kwargs)
 
 
 class ProductDeleteView(WarehousePermissionMixin, DeleteView):

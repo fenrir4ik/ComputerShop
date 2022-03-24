@@ -61,6 +61,7 @@ ProductImageUpdateFormSet = inlineformset_factory(Product,
 class BaseProductModelForm(forms.ModelForm):
     price = forms.DecimalField(label="Цена", validators=[MinValueValidator(0.00)], decimal_places=2, max_digits=11,
                                min_value=0.00)
+    description = forms.CharField(label="Описание", widget=forms.Textarea(attrs={'rows': 3}))
 
     class Meta:
         model = Product

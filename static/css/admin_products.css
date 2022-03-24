@@ -1,0 +1,120 @@
+#outer_product_form {
+    display: none;
+    z-index: 2;
+    flex-direction: column;
+    align-items: center;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    overflow-y: scroll;
+    height: 80%;
+}
+
+#form_box {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#product_add_form {
+    background-color: #f2f2f2;
+    border: 1px solid black;
+    font-family: 'Jost', sans-serif;
+    padding: 20px;
+    width: 100%;
+    height: 98%;
+    box-shadow: 0 0 6px 3px rgb(0 0 0 / 50%), 0 0 1px 0 rgb(0 0 0 / 50%);
+}
+
+.close_button {
+    margin-top: -10px;
+    margin-right: -11px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.close_btn {
+    opacity: 0.5;
+}
+
+.close_btn:hover {
+    opacity: 1;
+}
+
+.form_title {
+    color: #2b6777;
+}
+
+.form_field {
+    margin-bottom: 15px;
+}
+
+.errorlist,
+#images_error {
+    list-style-type: none;
+    padding-left: 2px;
+    margin-top: 4px;
+    margin-bottom: 0;
+    color: #2b6777;
+    font-weight: bolder;
+    font-size: 15px;
+}
+
+input:focus,
+select:focus {
+    box-shadow: none !important;
+    outline: 0 none;
+}
+
+#product_form_buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+#btn_add_img {
+    color: #2b6777;
+    border-bottom: 1px solid #2b6777;
+    padding-bottom: 0;
+}
+
+#btn_add_prod {
+    background-color: #2b6777;
+    color: #f2f2f2;
+}
+
+@media screen and (max-width: 1200px) {
+    #product_add_form {
+        min-width: 600px;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    #product_add_form {
+        width: 100%;
+        min-width: 100%;
+        min-height: 100%;
+    }
+
+    #form_box {
+        width: 100%;
+        height: 150%;
+    }
+
+    #outer_product_form {
+        height: 100%;
+    }
+}
+
+@media screen and (max-width: 430px) {
+    #product_form_buttons {
+        flex-direction: column;
+    }
+}
