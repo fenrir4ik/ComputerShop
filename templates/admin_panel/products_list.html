@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="{% static 'css/pagination.css' %}"/>
     <link rel="stylesheet" href="{% static 'css/sort.css' %}"/>
     <link rel="stylesheet" href="{% static 'css/admin_products.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/empty_products_list.css' %}"/>
 {% endblock %}
 
 {% block javascript %}
@@ -52,7 +53,7 @@
             document.getElementById('btn_add_prod').scrollIntoView();
         }
 
-        closePopUp = e => {
+        function closePopUp(e) {
             var popbox = document.getElementById("outer_product_form");
             if (e.target.id === "popup_btn" || (popbox.contains(e.target) && e.target.id !== "popup_close")) {
                 popbox.style.display = "flex";
@@ -186,7 +187,7 @@
                     </div>
                     {% include 'utils/pagination.html' %}
                 {% else %}
-                    <p>К сожалению, список товаров пуст</p>
+                    {% include 'utils/empty_products_list.html' %}
                 {% endif %}
             </div>
         </div>

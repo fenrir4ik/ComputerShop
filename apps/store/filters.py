@@ -27,7 +27,8 @@ class ProductFilter(django_filters.FilterSet):
     )
     price = django_filters.RangeFilter(
         label='Цена',
-        widget=FromToRangeWidget(from_attrs={'placeholder': 'минимальная'}, to_attrs={'placeholder': 'максимальная'})
+        widget=FromToRangeWidget(from_attrs={'placeholder': 'минимальная', 'type': 'number'},
+                                 to_attrs={'placeholder': 'максимальная', 'type': 'number'})
     )
     vendor = django_filters.ModelMultipleChoiceFilter(widget=forms.CheckboxSelectMultiple())
     sort = django_filters.OrderingFilter(

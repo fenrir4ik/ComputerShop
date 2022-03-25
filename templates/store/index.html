@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="{% static 'css/filter_form.css' %}"/>
     <link rel="stylesheet" href="{% static 'css/pagination.css' %}"/>
     <link rel="stylesheet" href="{% static 'css/sort.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/empty_products_list.css' %}"/>
 {% endblock %}
 
 {% block content %}
@@ -66,10 +67,7 @@
                     </div>
                     {% include 'utils/pagination.html' %}
                 {% else %}
-                    <div id="empty_products_outer">
-                        <img id="empty_products_img" src="{% static 'img/empty_products.png' %}" alt="no-products">
-                        <p id="empty_products_text">По заданным параметрам не найден ни один товар</p>
-                    </div>
+                    {% include 'utils/empty_products_list.html' %}
                 {% endif %}
             </div>
         </div>

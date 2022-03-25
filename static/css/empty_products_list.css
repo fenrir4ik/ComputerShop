@@ -1,0 +1,16 @@
+#empty_products_text {
+    color: #2b6777;
+    font-family: 'Montserrat Alternates', sans-serif;
+    text-align: center;
+}
+
+#empty_products_outer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#empty_products_img {
+    width: 300px;
+    height: auto;
+}
