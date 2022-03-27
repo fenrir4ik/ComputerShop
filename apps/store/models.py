@@ -30,8 +30,8 @@ class Category(models.Model):
 
 
 class Product(models.Model):
-    name = models.CharField(max_length=255, verbose_name="Название товара", db_index=True)
-    amount = models.PositiveIntegerField(verbose_name="Кол-во на складе", default=0)
+    name = models.CharField(max_length=255, verbose_name="Название", db_index=True)
+    amount = models.PositiveIntegerField(verbose_name="Количество", default=0)
     category = models.ForeignKey(Category, verbose_name="Категория", on_delete=models.RESTRICT)
     vendor = models.ForeignKey(Vendor, related_name='products', verbose_name="Производитель", on_delete=models.RESTRICT)
     date_created = models.DateTimeField(verbose_name="Дата создания", auto_now_add=True)
@@ -45,7 +45,7 @@ class Product(models.Model):
 
 
 class ProductImage(models.Model):
-    image = models.ImageField(upload_to='product', default=DEFAULT_PRODUCT_IMAGE, blank=False)
+    image = models.ImageField(verbose_name='Изображение', upload_to='product', default=DEFAULT_PRODUCT_IMAGE, blank=False)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     is_main = models.BooleanField(default=False)
 

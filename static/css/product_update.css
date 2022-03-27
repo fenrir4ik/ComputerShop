@@ -1,0 +1,115 @@
+.product_update_outer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.product_update_inner {
+    max-width: 900px;
+    width: 100%;
+    padding: 20px;
+    box-shadow: 0 0 1px 0 rgb(0 0 0 / 50%), 0 0 1px 0 rgb(0 0 0 / 50%);
+}
+
+.product_form * {
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+}
+
+.form_title {
+    font-size: 20px;
+    font-weight: bolder;
+}
+
+.product_form {
+    width: 100%;
+}
+
+.image_formset {
+    margin-bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    padding-left: 10px;
+    padding-right: 10px;
+    box-shadow: 0 0 1px 0 rgb(0 0 0 / 50%), 0 0 1px 0 rgb(0 0 0 / 50%);
+}
+
+.image_form {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.image_div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.image_div img {
+    width: 200px;
+    height: 200px;
+}
+
+.image_form a {
+    text-decoration: none;
+    color: #2b6777;
+}
+
+.image_form a:hover {
+    text-decoration: underline solid;
+    color: #2b6777;
+}
+
+.image_form input {
+    margin-bottom: 10px !important;
+}
+
+.image_form p {
+    margin: 0;
+    font-weight: bolder;
+}
+
+.image_form p:first-of-type label {
+    display: none;
+}
+
+.product_save,
+.product_delete {
+    float: right;
+    font-weight: bolder;
+    border-radius: 5px;
+    width: 100px;
+    margin-left: 20px;
+}
+
+#delete_form {
+    display: none;
+}
+
+.product_save {
+    color: #f2f2f2;
+    background-color: #2b6777;
+}
+
+.product_delete {
+    color: #f2f2f2;
+    background-color: #52ab98;
+}
+
+.product_save:hover {
+    color: #f2f2f2;
+    background-color: #52ab98;
+}
+
+.product_delete:hover {
+    color: #f2f2f2;
+    background-color: #2b6777;
+}
+
+@media screen and (max-width: 410px) {
+    .image_form {
+        display: flex;
+        flex-direction: column;
+    }
+}

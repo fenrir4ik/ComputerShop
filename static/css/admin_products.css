@@ -69,12 +69,6 @@
     font-size: 15px;
 }
 
-input:focus,
-select:focus {
-    box-shadow: none !important;
-    outline: 0 none;
-}
-
 #product_form_buttons {
     display: flex;
     flex-direction: row;
@@ -100,7 +94,7 @@ select:focus {
     margin-bottom: 10px;
 }
 
-.prod_list_top {
+.buttons_top {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -129,6 +123,11 @@ select:focus {
     justify-content: space-around;
     flex-basis: 100%;
     margin-bottom: 10px;
+}
+
+.top_list {
+    display: flex;
+    flex-direction: column;
 }
 
 .product_main {
@@ -270,7 +269,7 @@ select:focus {
 }
 
 @media screen and (max-width: 450px) {
-    .prod_list_top {
+    .buttons_top {
         flex-direction: column;
         align-items: initial;
     }

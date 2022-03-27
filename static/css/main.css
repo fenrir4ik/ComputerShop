@@ -22,7 +22,8 @@ body {
 }
 
 .btn:active:focus:not(:disabled):not(.disabled),
-.btn:focus, .btn:active, .btn:hover {
+.btn:focus, .btn:active, .btn:hover,
+input:focus, select:focus{
     box-shadow: none!important;
     outline: 0;
 }

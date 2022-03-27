@@ -1,6 +1,6 @@
 from django.contrib import messages
+from django.contrib.messages import get_messages
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DeleteView, UpdateView
 
@@ -17,7 +17,7 @@ class ProductsListAdminView(WarehousePermissionMixin, ListView):
     """View is used for displaying products list and products add form in admin-panel"""
     template_name = 'admin_panel/products_list.html'
     context_object_name = 'products'
-    paginate_by = 3
+    paginate_by = 10
     form_class = ProductAddForm
     success_url = reverse_lazy('admin-products')
 
@@ -54,23 +54,20 @@ class ProductsListAdminView(WarehousePermissionMixin, ListView):
 
 class ProductDeleteView(WarehousePermissionMixin, DeleteView):
     """View is used for deletion products in admin-panel"""
-    template_name = 'admin_panel/delete_product.html'
     success_url = reverse_lazy('admin-products')
-    context_object_name = 'product'
-    error_message = "Товар №{} находится в корзинах пользователя и не может быть удален"
+    error_message = "Товар №{} находится в корзине пользователя и не может быть удален"
     success_message = "Товар №{} был успешно удален"
-
-    def get_object(self, queryset=None):
-        id_ = self.kwargs.get('pk')
-        return get_object_or_404(Product, id=id_)
+    model = Product
 
     def form_valid(self, form):
         success_url = self.get_success_url()
         deleted = ProductDAO.delete_product(self.object.pk)
         if deleted:
-            messages.success(self.request, self.success_message.format(self.object.pk))
+            message_tuple = (self.request, messages.SUCCESS, self.success_message.format(self.object.pk))
         else:
-            messages.error(self.request, self.error_message.format(self.object.pk))
+            message_tuple = (self.request, messages.ERROR, self.error_message.format(self.object.pk))
+        if len(get_messages(self.request)) == 0:
+            messages.add_message(*message_tuple)
         return HttpResponseRedirect(success_url)
 
 
@@ -78,6 +75,7 @@ class ProductUpdateView(WarehousePermissionMixin, UpdateView):
     """View is used for updating products in admin-panel"""
     template_name = 'admin_panel/update_product.html'
     form_class = ProductUpdateForm
+    context_object_name = 'product'
 
     def get_queryset(self):
         return ProductDAO.get_products_list(include_price=True, include_image=False)

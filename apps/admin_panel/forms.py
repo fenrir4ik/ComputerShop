@@ -18,11 +18,9 @@ class ImageForm(forms.ModelForm):
         model = ProductImage
         fields = ['image']
 
-    # CSS REPLACE
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        for visible_field in self.visible_fields():
-            visible_field.field.widget.attrs['class'] = 'form-control'
+        self.fields['image'].widget.attrs['class'] = 'form-control'
 
 
 class ProductImageUpdateInlineFormSet(BaseInlineFormSet):
@@ -55,6 +53,7 @@ ProductImageUpdateFormSet = inlineformset_factory(Product,
                                                   fields=['image'],
                                                   can_delete=True,
                                                   max_num=PRODUCT_IMAGE_MAX_AMOUNT,
+                                                  extra=PRODUCT_IMAGE_MAX_AMOUNT,
                                                   min_num=1)
 
 
@@ -127,7 +126,6 @@ class OrderChangeForm(forms.ModelForm):
             visible_field.field.widget.attrs['class'] = 'form-control'
 
         self.fields['address'].empty_value = None
-
         order_status_service = OrderStatusService(status_id=self.instance.status_id,
                                                   delivery_available=bool(self.instance.address))
         self.fields['status'].queryset = order_status_service.get_future_statuses()

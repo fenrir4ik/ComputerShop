@@ -2,34 +2,39 @@
 {% load static %}
 
 {% block styles %}
-    <style>
-        .image_formset {
-            margin-bottom: 40px;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-between;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/product_update.css' %}">
 {% endblock %}
 
 {% block content %}
-    <div class="container py-4">
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form.as_p }}
-            {{ form.image_formset.management_form }}
-            {% for image_form in form.image_formset %}
-                <div class="image_formset">
-                    {% if image_form.instance.image %}
-                        <img src="{{ image_form.instance.image.url }}" width="200" height="200" alt="">
-                    {% else %}
-                        <img src="{% get_media_prefix %}{{ default_product_image }}" width="200" height="200" alt="">
-                    {% endif %}
-                    {{ image_form.as_p }}
-                </div>
-            {% endfor %}
-            <button type="submit" class="btn btn-success">Сохранить</button>
-        </form>
+    <div class="container product_update_outer">
+        <div class="product_update_inner">
+            <h1 class="form_title">Товар № {{ product.pk }}</h1>
+            <form id="update_form" method="post" enctype="multipart/form-data" class="product_form">
+                {% csrf_token %}
+                {{ form.as_p }}
+                {{ form.image_formset.management_form }}
+                {% for image_form in form.image_formset %}
+                    <div class="image_formset">
+                        <div class="image_div">
+                            {% if image_form.instance.image %}
+                                <img src="{{ image_form.instance.image.url }}" alt="product-image">
+                            {% else %}
+                                <img src="{% get_media_prefix %}{{ default_product_image }}" alt="empty-image">
+                            {% endif %}
+                        </div>
+                        <div class="image_form">
+                            {{ image_form.as_p }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </form>
+            <form id="delete_form" action="{% url 'product-delete' pk=product.pk %}" method="post">
+                {% csrf_token %}
+            </form>
+            <div class="bottom_buttons">
+                <button type="submit" form="update_form" class="btn product_save">Сохранить</button>
+                <button type="submit" form="delete_form" class="btn product_delete">Удалить</button>
+            </div>
+        </div>
     </div>
 {% endblock %}

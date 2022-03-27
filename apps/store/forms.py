@@ -38,7 +38,7 @@ class CreateOrderForm(UserBaseForm, forms.ModelForm):
         self.fields['payment'].widget.attrs.update({'required': True})
 
         self.user = user
-        # CSS REPLACE
+
         for visible_field in self.visible_fields():
             visible_field.field.widget.attrs['class'] = 'form-control'
 

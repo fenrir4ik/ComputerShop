@@ -46,7 +46,7 @@
                 if (!error) {
                     let p = document.createElement('p');
                     p.id = "images_error";
-                    p.innerHTML = 'Товар может иметь максимум 3 изображения';
+                    p.innerHTML = `Товар может иметь максимум {{max_img_num}} изображения`;
                     container.insertBefore(p, buttonsDiv);
                 }
             }
@@ -54,13 +54,14 @@
         }
 
         function closePopUp(e) {
-            var popbox = document.getElementById("outer_product_form");
-            if (e.target.id === "popup_btn" || (popbox.contains(e.target) && e.target.id !== "popup_close")) {
-                popbox.style.display = "flex";
+            var popUpMenu = document.getElementById("outer_product_form");
+            if (e.target.id === "popup_btn" || (popUpMenu.contains(e.target) && e.target.id !== "popup_close")) {
+                popUpMenu.style.display = "flex";
             } else {
-                popbox.style.display = "none";
+                popUpMenu.style.display = "none";
             }
         }
+
         document.addEventListener("click", closePopUp)
 
         {% if form.errors or form.image_formset.errors %}
@@ -73,13 +74,6 @@
 
 {% block content %}
     <div class="container">
-        {% if messages %}
-            <div class="alert alert-danger" role="alert">
-                {% for message in messages %}
-                    {{ message }}
-                {% endfor %}
-            </div>
-        {% endif %}
         <div class="body_outer">
             <div class="left_panel">
                 {% include 'utils/filter_products.html' %}
@@ -124,9 +118,25 @@
                         </form>
                     </div>
                 </div>
-                <div class="prod_list_top">
-                    <a id="popup_btn" class="btn btn-primary" onclick="openProductAddForm()">Добавить новый товар</a>
-                    {% include 'utils/sort_products.html' %}
+                <div class="top_list">
+                    {% if messages %}
+                        {% for message in messages %}
+                            {% if message.tags == 'success' %}
+                                <div class="alert alert-success" role="alert">
+                                    {{ message }}
+                                </div>
+                            {% else %}
+                                <div class="alert alert-danger" role="alert">
+                                    {{ message }}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                    <div class="buttons_top">
+                        <a id="popup_btn" class="btn btn-primary" onclick="openProductAddForm()">Добавить новый
+                            товар</a>
+                        {% include 'utils/sort_products.html' %}
+                    </div>
                 </div>
                 {% if products %}
                     <div class="products_list">
@@ -139,12 +149,15 @@
                                     </div>
                                     <div class="product_buttons">
                                         <div class="product_buttons_inner">
-                                            <a class="btn" href="{% url 'product-update' pk=product.id %}">
-                                                <i class="fa fa-refresh" aria-hidden="true"></i>
-                                            </a>
-                                            <a class="btn" href="{% url 'product-delete' pk=product.id %}">
-                                                <i class="fa fa-trash" aria-hidden="true"></i>
-                                            </a>
+                                            <form action="{% url 'product-delete' pk=product.id %}" method="post">
+                                                {% csrf_token %}
+                                                <a class="btn" href="{% url 'product-update' pk=product.id %}">
+                                                    <i class="fa fa-refresh" aria-hidden="true"></i>
+                                                </a>
+                                                <button type="submit" class="btn">
+                                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                                </button>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
