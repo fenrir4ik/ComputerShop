@@ -8,6 +8,7 @@ from apps.admin_panel.filters import AdminProductFilter, AdminOrderFilter
 from apps.admin_panel.forms import ProductAddForm, ProductUpdateForm, OrderChangeForm
 from apps.core.permissions import WarehousePermissionMixin, ManagerPermissionMixin
 from apps.store.models import Product
+from db.cart_item_dao import CartItemDAO
 from db.order_dao import OrderDAO
 from db.product_dao import ProductDAO
 from services.constants import DEFAULT_PRODUCT_IMAGE, PRODUCT_IMAGE_MAX_AMOUNT
@@ -36,8 +37,8 @@ class ProductsListAdminView(WarehousePermissionMixin, ListView):
         else:
             return self.form_class()
 
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data()
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         context['filter'] = AdminProductFilter(self.request.GET)
         context['form'] = self.get_form()
         context['max_img_num'] = PRODUCT_IMAGE_MAX_AMOUNT
@@ -84,7 +85,7 @@ class ProductUpdateView(WarehousePermissionMixin, UpdateView):
         return reverse('product-update', kwargs={'pk': self.object.pk})
 
     def get_context_data(self, **kwargs):
-        context = super(ProductUpdateView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['default_product_image'] = DEFAULT_PRODUCT_IMAGE
         return context
 
@@ -95,8 +96,8 @@ class OrdersListView(ManagerPermissionMixin, ListView):
     context_object_name = 'orders_list'
     paginate_by = 10
 
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         context['filter'] = AdminOrderFilter(self.request.GET)
         return context
 
@@ -118,3 +119,7 @@ class OrderUpdateView(ManagerPermissionMixin, UpdateView):
 
     def get_success_url(self):
         return self.request.path_info
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context

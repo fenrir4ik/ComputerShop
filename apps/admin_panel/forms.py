@@ -126,7 +126,7 @@ class ProductUpdateForm(BaseProductModelForm):
 class OrderChangeForm(forms.ModelForm):
     """Form is used to update user order information and status"""
 
-    status = forms.ModelChoiceField(queryset=None, empty_label=None, required=True)
+    status = forms.ModelChoiceField(label="Статус", queryset=None, empty_label=None, required=True)
 
     class Meta:
         model = Order

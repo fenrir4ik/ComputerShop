@@ -1,5 +1,6 @@
 .amount_input {
     text-align: center;
+    width: 50px;
 }
 
 .amount_input::-webkit-outer-spin-button,

@@ -1,6 +1,6 @@
 <div class="amount_div">
     <button class="btn" type="button" onclick="amount_change(this, '-')">-</button>
-    <input id="product_amount" onchange="this.form.submit()" name="amount" type="number"
+    <input onchange="this.form.submit()" name="amount" type="number"
            class="amount_input"
            value="{{ item.amount }}"
            max="{{ item.product__amount|add:item.amount }}" min="1">

@@ -13,33 +13,35 @@
             <div id="cart_list">
                 {% for item in cart_items %}
                     <div class="cart_item">
-                        <div class="cart_item_upper">
-                            <div class="cart_links">
-                                <a class="product_link" href="{% url 'product-detail' pk=item.product_id %}">
-                                    <img class="cart_item_img" src="{% get_media_prefix %}{{ item.image }}"
-                                         alt='product_image'>
-                                </a>
-                                <div class="name_div">
-                                    <a class="product_link" href="{% url 'product-detail' pk=item.product_id %}">
-                                        {{ item.product__name }}
-                                    </a>
+                        <a class="product_link" href="{% url 'product-detail' pk=item.product_id %}">
+                            <img class="cart_item_img" src="{% get_media_prefix %}{{ item.image }}"
+                                 alt='product_image'>
+                        </a>
+                        <div class="item_main">
+                            <div class="cart_item_upper">
+                                <div class="cart_links">
+                                    <div class="name_div">
+                                        <a class="product_link" href="{% url 'product-detail' pk=item.product_id %}">
+                                            {{ item.product__name }}
+                                        </a>
+                                    </div>
                                 </div>
+                                <form method="post"
+                                      action="{% url 'delete-cart-item' pk=item.product_id %}?next={{ request.get_full_path }}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn item_delete"><i class="fa fa-trash"></i></button>
+                                </form>
                             </div>
-                            <form method="post"
-                                  action="{% url 'delete-cart-item' pk=item.product_id %}?next={{ request.get_full_path }}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn item_delete"><i class="fa fa-trash"></i></button>
-                            </form>
-                        </div>
-                        <div class="cart_item_lower">
-                            <form method="post">
-                                {% csrf_token %}
-                                <div class="form change_amount">
-                                    <input name="pk" type="hidden" value="{{ item.product_id }}">
-                                    {% include 'utils/amount_input.html' %}
-                                </div>
-                            </form>
-                            <p class="item_price">{{ item.price }} ₴</p>
+                            <div class="cart_item_lower">
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <div class="form change_amount">
+                                        <input name="pk" type="hidden" value="{{ item.product_id }}">
+                                        {% include 'utils/amount_input.html' %}
+                                    </div>
+                                </form>
+                                <p class="item_price">{{ item.price }} ₴</p>
+                            </div>
                         </div>
                     </div>
                 {% endfor %}

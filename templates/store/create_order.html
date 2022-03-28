@@ -6,25 +6,11 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container">
-        <div class="form_outer">
-            <form method="POST" id="order_form">
-                <h1>Оформление заказа</h1>
-                {% csrf_token %}
-                {{ form.as_p }}
-                <div class="order_cart">
-                    {% for item in cart_items %}
-                        <div class="order_product">
-                            <p>{{ item.product_id }}</p>
-                            <p><img src="{% get_media_prefix %}{{ item.image }}" alt='product_image'></p>
-                            <p>{{ item.product__name }}</p>
-                            <p>{{ item.price }}</p>
-                            <p>{{ item.amount }}</p>
-                        </div>
-                    {% endfor %}
-                </div>
-                <button type="submit" class="btn btn-primary">Отправить в обработку</button>
-            </form>
+    <div class="container form_outer">
+        <h1>Оформление заказа</h1>
+        {% include 'utils/order_form.html' %}
+        <div class="button_div">
+            <button type="submit" class="btn submit_button" form="order_form">Отправить в обработку</button>
         </div>
     </div>
 {% endblock %}

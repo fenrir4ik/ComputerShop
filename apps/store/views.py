@@ -24,8 +24,8 @@ class IndexView(ListView):
     context_object_name = 'products'
     paginate_by = 20
 
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         context['filter'] = ProductFilter(self.request.GET)
         return context
 
@@ -130,8 +130,8 @@ class UserCartView(CustomerPermission, ListView):
             .values('amount', 'product_id', 'product__name', 'image', 'price', 'product__amount') \
             .order_by('-product_id')
 
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         context['cart_total'] = context.get('cart_items').aggregate(total = Sum(F('amount')*F('price'))).get('total')
         return context
 
@@ -148,7 +148,7 @@ class OrderCreateView(CustomerPermission, CreateView):
     success_url = reverse_lazy('user-orders')
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data()
+        context = super().get_context_data(**kwargs)
         context['cart_items'] = CartItemDAO.get_user_cart(self.request.user.pk) \
             .values('amount', 'product_id', 'product__name', 'image', 'price') \
             .order_by('-product_id')
@@ -166,8 +166,8 @@ class UserOrdersListView(CustomerPermission, ListView):
     context_object_name = 'orders_list'
     paginate_by = 10
 
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         context['filter'] = OrderFilter(self.request.GET)
         return context
 

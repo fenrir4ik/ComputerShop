@@ -50,6 +50,6 @@ class ProfileChangeView(LoginRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         user = self.get_object()
-        context = super().get_context_data()
+        context = super().get_context_data(**kwargs)
         context['user_data'] = {'name': user.name, 'surname': user.surname, 'email': user.email}
         return context
