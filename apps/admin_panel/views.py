@@ -55,7 +55,6 @@ class ProductsListAdminView(WarehousePermissionMixin, ListView):
 
 class ProductDeleteView(WarehousePermissionMixin, DeleteView):
     """View is used for deletion products in admin-panel"""
-    success_url = reverse_lazy('admin-products')
     error_message = "Товар №{} находится в корзине пользователя и не может быть удален"
     success_message = "Товар №{} был успешно удален"
     model = Product
@@ -70,6 +69,10 @@ class ProductDeleteView(WarehousePermissionMixin, DeleteView):
         if len(get_messages(self.request)) == 0:
             messages.add_message(*message_tuple)
         return HttpResponseRedirect(success_url)
+
+    def get_success_url(self):
+        next_page = self.request.GET.get('next')
+        return next_page if next_page else reverse_lazy('admin-products')
 
 
 class ProductUpdateView(WarehousePermissionMixin, UpdateView):

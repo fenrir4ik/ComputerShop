@@ -38,6 +38,7 @@ class ProfileChangeView(LoginRequiredMixin, UpdateView):
     template_name = 'user/profile.html'
     success_url = reverse_lazy('profile')
     success_message = "Профиль успешно изменен"
+    context_object_name = 'user'
 
     def get_object(self, queryset=None):
         return self.request.user
@@ -47,9 +48,3 @@ class ProfileChangeView(LoginRequiredMixin, UpdateView):
         update_session_auth_hash(self.request, user)
         messages.success(self.request, self.success_message)
         return HttpResponseRedirect(self.get_success_url())
-
-    def get_context_data(self, **kwargs):
-        user = self.get_object()
-        context = super().get_context_data(**kwargs)
-        context['user_data'] = {'name': user.name, 'surname': user.surname, 'email': user.email}
-        return context

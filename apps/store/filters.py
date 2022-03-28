@@ -37,7 +37,7 @@ class ProductFilter(django_filters.FilterSet):
             ('price', 'от дешевых к дорогим'),
             ('-price', 'от дорогих к дешевым'),
             ('name', 'по алфавиту'),
-            ('date_created', 'новинки')
+            ('-date_created', 'новинки')
         )
     )
 

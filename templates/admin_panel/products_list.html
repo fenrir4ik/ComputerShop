@@ -149,7 +149,7 @@
                                     </div>
                                     <div class="product_buttons">
                                         <div class="product_buttons_inner">
-                                            <form action="{% url 'product-delete' pk=product.id %}" method="post">
+                                            <form action="{% url 'product-delete' pk=product.id %}?next={{ request.get_full_path }}" method="post">
                                                 {% csrf_token %}
                                                 <a class="btn" href="{% url 'product-update' pk=product.id %}">
                                                     <i class="fa fa-refresh" aria-hidden="true"></i>
