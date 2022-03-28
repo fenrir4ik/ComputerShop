@@ -150,7 +150,7 @@ class OrderCreateView(CustomerPermission, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         context['cart_items'] = CartItemDAO.get_user_cart(self.request.user.pk) \
-            .values('amount', 'product_id', 'product__name', 'image', 'price', 'product__amount') \
+            .values('amount', 'product_id', 'product__name', 'image', 'price') \
             .order_by('-product_id')
         return context
 
@@ -176,12 +176,3 @@ class UserOrdersListView(CustomerPermission, ListView):
         queryset = queryset.order_by('-id')
         filter = OrderFilter(self.request.GET, queryset=queryset)
         return filter.qs
-
-
-class UserOrderDetailView(CustomerPermission, DetailView):
-    """View is used for displaying single order from user orders list"""
-    template_name = 'store/order_detail.html'
-    context_object_name = 'order'
-
-    def get_queryset(self):
-        return OrderDAO.get_all_orders(self.request.user.pk)

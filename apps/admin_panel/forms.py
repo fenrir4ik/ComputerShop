@@ -1,6 +1,9 @@
+import io
+
+import pandas as pd
 from django import forms
 from django.core.exceptions import ValidationError
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, FileExtensionValidator
 from django.forms import formset_factory, inlineformset_factory, BaseInlineFormSet
 
 from apps.store.models import Product, ProductImage, Order
@@ -61,10 +64,13 @@ class BaseProductModelForm(forms.ModelForm):
     price = forms.DecimalField(label="Цена", validators=[MinValueValidator(0.00)], decimal_places=2, max_digits=11,
                                min_value=0.00)
     description = forms.CharField(label="Описание", widget=forms.Textarea(attrs={'rows': 3}))
+    characteristics = forms.FileField(label="Характеристики",
+                                      required=True,
+                                      validators=[FileExtensionValidator(allowed_extensions=['xlsx'])])
 
     class Meta:
         model = Product
-        fields = ['name', 'price', 'amount', 'category', 'vendor', 'description']
+        fields = ['name', 'price', 'amount', 'category', 'vendor', 'description', 'characteristics']
 
     def __init__(self, image_formset=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -81,6 +87,11 @@ class BaseProductModelForm(forms.ModelForm):
         self.process_additional_product_data(product)
         return product
 
+    def clean_characteristics(self):
+        file = self.cleaned_data.get('characteristics')
+        df = pd.read_excel(io.BytesIO(file.read()), sheet_name=0)
+        return df
+
     def process_additional_product_data(self, product):
         raise NotImplemented
 
@@ -93,6 +104,7 @@ class ProductAddForm(BaseProductModelForm):
         super().__init__(data=data, files=files, image_formset=image_formset, **kwargs)
 
     def process_additional_product_data(self, product):
+        characteristics_file = self.cleaned_data.get('characteristics')
         AdditionalProductDataService.add_additional_data(product.pk, self.cleaned_data.get('price'),
                                                          self.image_formset.cleaned_data)
 
@@ -106,6 +118,7 @@ class ProductUpdateForm(BaseProductModelForm):
         self.fields['price'].initial = kwargs.get('instance').price
 
     def process_additional_product_data(self, product):
+        characteristics_file = self.cleaned_data.get('characteristics')
         AdditionalProductDataService.update_additional_data(product.pk, self.cleaned_data.get('price'),
                                                             self.image_formset.cleaned_data)
 

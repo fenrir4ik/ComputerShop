@@ -1,0 +1,18 @@
+.form_outer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#order_form {
+    max-width: 900px;
+    width: 100%;
+    padding: 20px;
+    box-shadow: 0 0 1px 0 rgb(0 0 0 / 50%), 0 0 1px 0 rgb(0 0 0 / 50%);
+}
+
+.form_outer h1 {
+    font-size: 20px;
+    font-weight: bolder;
+    color: #2b6777;
+}
