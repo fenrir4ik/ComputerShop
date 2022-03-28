@@ -1,0 +1,25 @@
+{% load static %}
+<form method="get" class="filter_form">
+    <a onclick="filter_toggle()" class="btn expand_button">
+        <img class="expand_img" src="{% static 'img/filter-icon.png' %}" alt="expand-img"/>ФИЛЬТРЫ
+    </a>
+    <div id="filter_outer">
+        {% block filter_fields %}
+        {% endblock %}
+        <div class="filter_buttons">
+            <button type="submit" class="btn filter_btn">Поиск</button>
+            <a class="btn filter_btn" href=".">Сброс</a>
+        </div>
+    </div>
+</form>
+
+<script>
+    function filter_toggle() {
+        var filter = document.getElementById("filter_outer");
+        if (filter.style.display !== "block") {
+            filter.style.display = "block";
+        } else {
+            filter.style.display = "none"
+        }
+    }
+</script>

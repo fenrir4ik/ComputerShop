@@ -1,0 +1,79 @@
+{% load template_utils %}
+
+<div class="pagination">
+    <div class="pagination_left">
+        {% if page_obj.has_previous %}
+            <a class="pagination_active" href="?{% url_param_replace page=1 %}">
+                <p class="page_item">&laquo;</p>
+            </a>
+            <a class="pagination_active" href="?{% url_param_replace page=page_obj.previous_page_number %}">
+                <p class="page_item">&lsaquo;</p>
+            </a>
+        {% else %}
+            <a class="pagination_disabled">
+                <p class="page_item_disabled">&laquo;</p>
+            </a>
+            <a class="pagination_disabled">
+                <p class="page_item_disabled">&lsaquo;</p>
+            </a>
+        {% endif %}
+    </div>
+    <div class="pagination_mid_range">
+        {% for i in page_obj.paginator.num_pages|get_range %}
+            {% if page_obj.number == i|add:1 %}
+                <a class="pagination_active" href="?{% url_param_replace page=page_obj.number %}">
+                    <p class="page_number page_current">{{ page_obj.number }}</p>
+                </a>
+            {% else %}
+                {% if i == 0 %}
+                    <a class="pagination_active" href="?{% url_param_replace page=1 %}">
+                        <p class="page_number">{{ 1 }}</p>
+                    </a>
+                {% elif i == page_obj.paginator.num_pages|add:-1 %}
+                    <a class="pagination_active" href="?{% url_param_replace page=page_obj.paginator.num_pages %}">
+                        <p class="page_number">{{ page_obj.paginator.num_pages }}</p>
+                    </a>
+                {% elif i >= page_obj.number|add:-3 and i <= page_obj.number|add:1 %}
+                    <a class="pagination_active" href="?{% url_param_replace page=i|add:1 %}">
+                        <p class="page_number">{{ i|add:1 }}</p>
+                    </a>
+                {% else %}
+                    {% if i == page_obj.number|add:-4 %}
+                        <a class="pagination_active"
+                           href="?{% url_param_replace page=page_obj.number|add:-2|page_median:1 %}">
+                            <p class="page_number">...</p>
+                        </a>
+                    {% elif i == page_obj.number|add:2 %}
+                        <a class="pagination_active"
+                           href="?{% url_param_replace page=page_obj.number|add:3|page_median:page_obj.paginator.num_pages %}">
+                            <p class="page_number">...</p>
+                        </a>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    </div>
+    <div class="pagination_mid_small">
+        <p class="current_page">Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</p>
+    </div>
+    <div class="pagination_mid_short">
+        <p class="current_page">{{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</p>
+    </div>
+    <div class="pagination_right">
+        {% if page_obj.has_next %}
+            <a class="pagination_active" href="?{% url_param_replace page=page_obj.next_page_number %}">
+                <p class="page_item">&rsaquo;</p>
+            </a>
+            <a class="pagination_active" href="?{% url_param_replace page=page_obj.paginator.num_pages %}">
+                <p class="page_item">&raquo;</p>
+            </a>
+        {% else %}
+            <a class="pagination_disabled">
+                <p class="page_item_disabled">&rsaquo;</p>
+            </a>
+            <a class="pagination_disabled">
+                <p class="page_item_disabled">&raquo;</p>
+            </a>
+        {% endif %}
+    </div>
+</div>

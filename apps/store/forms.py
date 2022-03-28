@@ -27,7 +27,7 @@ class CreateOrderForm(UserBaseForm, forms.ModelForm):
 
     address = forms.CharField(
         label="Адрес доставки",
-        widget=forms.Textarea(attrs={'placeholder': 'Адрес доставки'}),
+        widget=forms.TextInput(attrs={'placeholder': 'Адрес доставки'}),
         required=False,
         empty_value=None,
     )
@@ -38,7 +38,7 @@ class CreateOrderForm(UserBaseForm, forms.ModelForm):
         self.fields['payment'].widget.attrs.update({'required': True})
 
         self.user = user
-        # CSS REPLACE
+
         for visible_field in self.visible_fields():
             visible_field.field.widget.attrs['class'] = 'form-control'
 

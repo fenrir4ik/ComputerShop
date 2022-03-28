@@ -1,0 +1,21 @@
+<div class="amount_div">
+    <button class="btn" type="button" onclick="amount_change(this, '-')">-</button>
+    <input onchange="this.form.submit()" name="amount" type="number"
+           class="amount_input"
+           value="{{ item.amount }}"
+           max="{{ item.product__amount|add:item.amount }}" min="1">
+    <button class="btn" type="button" onclick="amount_change(this, '+')">+</button>
+</div>
+
+<script>
+    function amount_change(current, option) {
+        var amount_input = current.parentNode.querySelector('[type=number]');
+        if (option === '+') {
+            amount_input.stepUp();
+        } else {
+            amount_input.stepDown();
+        }
+        document.location.reload(true);
+        current.form.submit();
+    }
+</script>

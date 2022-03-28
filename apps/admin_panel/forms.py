@@ -1,6 +1,9 @@
+import io
+
+import pandas as pd
 from django import forms
 from django.core.exceptions import ValidationError
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, FileExtensionValidator
 from django.forms import formset_factory, inlineformset_factory, BaseInlineFormSet
 
 from apps.store.models import Product, ProductImage, Order
@@ -12,17 +15,15 @@ from utils.form_validators import square_image_validator
 
 class ImageForm(forms.ModelForm):
     """Form is used in ImageFormSets to add multiple images to the product"""
-    image = forms.ImageField(required=False, validators=[square_image_validator])
+    image = forms.ImageField(label="Изображение", required=False, validators=[square_image_validator])
 
     class Meta:
         model = ProductImage
         fields = ['image']
 
-    # CSS REPLACE
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        for visible_field in self.visible_fields():
-            visible_field.field.widget.attrs['class'] = 'form-control'
+        self.fields['image'].widget.attrs['class'] = 'form-control'
 
 
 class ProductImageUpdateInlineFormSet(BaseInlineFormSet):
@@ -55,16 +56,21 @@ ProductImageUpdateFormSet = inlineformset_factory(Product,
                                                   fields=['image'],
                                                   can_delete=True,
                                                   max_num=PRODUCT_IMAGE_MAX_AMOUNT,
+                                                  extra=PRODUCT_IMAGE_MAX_AMOUNT,
                                                   min_num=1)
 
 
 class BaseProductModelForm(forms.ModelForm):
     price = forms.DecimalField(label="Цена", validators=[MinValueValidator(0.00)], decimal_places=2, max_digits=11,
                                min_value=0.00)
+    description = forms.CharField(label="Описание", widget=forms.Textarea(attrs={'rows': 3}))
+    characteristics = forms.FileField(label="Характеристики",
+                                      required=True,
+                                      validators=[FileExtensionValidator(allowed_extensions=['xlsx'])])
 
     class Meta:
         model = Product
-        fields = ['name', 'price', 'amount', 'category', 'vendor', 'description']
+        fields = ['name', 'price', 'amount', 'category', 'vendor', 'description', 'characteristics']
 
     def __init__(self, image_formset=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -81,6 +87,11 @@ class BaseProductModelForm(forms.ModelForm):
         self.process_additional_product_data(product)
         return product
 
+    def clean_characteristics(self):
+        file = self.cleaned_data.get('characteristics')
+        df = pd.read_excel(io.BytesIO(file.read()), sheet_name=0)
+        return df
+
     def process_additional_product_data(self, product):
         raise NotImplemented
 
@@ -93,6 +104,7 @@ class ProductAddForm(BaseProductModelForm):
         super().__init__(data=data, files=files, image_formset=image_formset, **kwargs)
 
     def process_additional_product_data(self, product):
+        characteristics_file = self.cleaned_data.get('characteristics')
         AdditionalProductDataService.add_additional_data(product.pk, self.cleaned_data.get('price'),
                                                          self.image_formset.cleaned_data)
 
@@ -106,6 +118,7 @@ class ProductUpdateForm(BaseProductModelForm):
         self.fields['price'].initial = kwargs.get('instance').price
 
     def process_additional_product_data(self, product):
+        characteristics_file = self.cleaned_data.get('characteristics')
         AdditionalProductDataService.update_additional_data(product.pk, self.cleaned_data.get('price'),
                                                             self.image_formset.cleaned_data)
 
@@ -113,7 +126,7 @@ class ProductUpdateForm(BaseProductModelForm):
 class OrderChangeForm(forms.ModelForm):
     """Form is used to update user order information and status"""
 
-    status = forms.ModelChoiceField(queryset=None, empty_label=None, required=True)
+    status = forms.ModelChoiceField(label="Статус", queryset=None, empty_label=None, required=True)
 
     class Meta:
         model = Order
@@ -126,7 +139,6 @@ class OrderChangeForm(forms.ModelForm):
             visible_field.field.widget.attrs['class'] = 'form-control'
 
         self.fields['address'].empty_value = None
-
         order_status_service = OrderStatusService(status_id=self.instance.status_id,
                                                   delivery_available=bool(self.instance.address))
         self.fields['status'].queryset = order_status_service.get_future_statuses()

@@ -2,12 +2,15 @@
 {% load static %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{% static 'css/product_list.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/index.css' %}"/>
     <link rel="stylesheet" href="{% static 'css/filter_form.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/pagination.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/sort_products.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/empty_products_list.css' %}"/>
 {% endblock %}
 
 {% block content %}
-    <div>
+    <div class="search_outer">
         <div class='search_div'>
             <form id='search' action="">
                 <label for='searchline' hidden></label>
@@ -19,36 +22,52 @@
     <div class="container">
         <div class="body_outer">
             <div class="left_panel">
-                {% include 'filters/filter_products.html' %}
+                {% include 'utils/filter_products.html' %}
             </div>
             <div class="right_panel">
-                {% include 'filters/pagination.html' %}
-                {% include 'filters/sort_products.html' %}
                 {% if products %}
+                    {% include 'utils/sort_products.html' %}
                     <div class="main_products">
                         {% for product in products %}
                             <div>
-                                <a href="{% url 'product-detail' pk=product.id %}">
-                                    <img class="card_img"
-                                         src='{% get_media_prefix %}{{ product.image }}'
-                                         alt=""/>
-                                    <p>{{ product.name }}</p>
+                                <a class="product_name" href="{% url 'product-detail' pk=product.id %}">
+                                    {% if product.amount %}
+                                        <img class="card_img"
+                                             src='{% get_media_prefix %}{{ product.image }}'
+                                             alt=""/>
+                                        <p class="card_name">{{ product.name }}</p>
+                                    {% else %}
+                                        <img class="card_img unable_image"
+                                             src='{% get_media_prefix %}{{ product.image }}'
+                                             alt=""/>
+                                        <p class="card_name unable_text">{{ product.name }}</p>
+                                    {% endif %}
                                 </a>
+                                <div class="card_detail">
+                                    <p class="card_id">Код: {{ product.id }}</p>
+                                    {% if product.amount %}
+                                        <a class='btn details_btn' href="{% url 'product-detail' pk=product.id %}">
+                                            <img class='details_img' src="{% static 'img/cart-icon.png' %}"
+                                                 alt='details'> Детали</a>
+                                    {% else %}
+                                        <p class="unable_text">Нет в наличии</p>
+                                    {% endif %}
+                                </div>
                                 <div class="inner_card">
                                     <div class="price_comb">
-                                        <h6>цена</h6>
-                                        <h5>{{ product.price }} ₴</h5>
-                                    </div>
-                                    <div class="card_buttons">
-                                        <a class='details_btn'
-                                           href="{% url 'product-detail' pk=product.id %}">Детали</a>
+                                        {% if product.amount %}
+                                            <h5 class="product_price">{{ product.price }} ₴</h5>
+                                        {% else %}
+                                            <h5 class="product_price unable_text">{{ product.price }} ₴</h5>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
                         {% endfor %}
                     </div>
+                    {% include 'utils/pagination.html' %}
                 {% else %}
-                    <p>К сожалению, список товаров пуст</p>
+                    {% include 'utils/empty_products_list.html' %}
                 {% endif %}
             </div>
         </div>

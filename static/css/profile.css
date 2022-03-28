@@ -8,7 +8,7 @@
     background: url('../img/profile.png') no-repeat;
     background-size: cover;
     border-radius: 50%;
-    border: 1px solid #001540;
+    border: 1px solid #2b6777;
     box-shadow: 0 0 2px 0 rgb(0 0 0), 0 2px 6px 0 rgb(0 0 0);
 }
 
@@ -38,18 +38,18 @@
 
 .profile_item label {
     font-size: 15px;
-    color: #001540;
+    color: #2b6777;
 }
 
 .profile_item .error {
-    color: red;
+    color: #52ab98;
     margin-top: 5px;
     font-size: 13px;
 }
 
 .title_data h4,
 .title_data h6 {
-    color: #001540;
+    color: #2b6777;
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -89,8 +89,8 @@
 .profile_item input {
     height: 40px;
     background-color: white;
-    color: #001540;
-    border: 1px solid #001540;
+    color: #2b6777;
+    border: 1px solid #2b6777;
     padding-left: 10px;
     padding-right: 10px;
     font-size: 14px;
@@ -141,13 +141,12 @@
 
 .button_div button {
     background-color: initial;
-    background-image: linear-gradient(-180deg, #3E6190, #001540);
+    background-image: linear-gradient(-180deg, #2b6777, #52ab98);
     border-radius: 5px;
     box-shadow: rgba(0, 0, 0, 0.1) 0 2px 4px;
     color: #FFFFFF;
     cursor: pointer;
     display: inline-block;
-    font-family: Inter, -apple-system, system-ui, Roboto, "Helvetica Neue", Arial, sans-serif;
     height: 44px;
     line-height: 44px;
     outline: 0;
@@ -165,10 +164,11 @@
     z-index: 9;
     border: 0;
     margin-top: 30px;
+    font-weight: bolder;
 }
 
 .button_div button:hover {
-    background: #001540;
+    background: #52ab98;
 }
 
 @media screen and (max-width: 1400px) {

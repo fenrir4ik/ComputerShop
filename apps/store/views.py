@@ -1,7 +1,8 @@
+from django.db.models import Sum, F
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.views import View
-from django.views.generic import ListView, DetailView, TemplateView
+from django.views.generic import ListView, DetailView
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import FormView, CreateView
 
@@ -21,10 +22,10 @@ class IndexView(ListView):
     """View is used for main page"""
     template_name = 'store/index.html'
     context_object_name = 'products'
-    paginate_by = 10
+    paginate_by = 20
 
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         context['filter'] = ProductFilter(self.request.GET)
         return context
 
@@ -83,7 +84,11 @@ class SingleProductFormView(CustomerPermission, SingleObjectMixin, FormView):
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
-        return super().post(request, *args, **kwargs)
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return redirect(self.get_success_url())
 
     def form_valid(self, form):
         product_amount = form.cleaned_data.get('amount')
@@ -125,20 +130,15 @@ class UserCartView(CustomerPermission, ListView):
             .values('amount', 'product_id', 'product__name', 'image', 'price', 'product__amount') \
             .order_by('-product_id')
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['cart_total'] = context.get('cart_items').aggregate(total = Sum(F('amount')*F('price'))).get('total')
+        return context
+
     def post(self, request, *args, **kwargs):
         kwargs['pk'] = request.POST.get('pk')
         view = SingleProductFormView.as_view()
         return view(request, *args, **kwargs)
-
-
-class UserCartClearView(CustomerPermission, TemplateView):
-    """View is used for shopping cart clearing"""
-    template_name = 'store/cart_clear.html'
-
-    def post(self, request, *args, **kwargs):
-        cart_service = CartService(request.user.pk)
-        cart_service.clear_user_cart()
-        return redirect('user-cart')
 
 
 class OrderCreateView(CustomerPermission, CreateView):
@@ -148,9 +148,9 @@ class OrderCreateView(CustomerPermission, CreateView):
     success_url = reverse_lazy('user-orders')
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data()
+        context = super().get_context_data(**kwargs)
         context['cart_items'] = CartItemDAO.get_user_cart(self.request.user.pk) \
-            .values('amount', 'product_id', 'product__name', 'image', 'price', 'product__amount') \
+            .values('amount', 'product_id', 'product__name', 'image', 'price') \
             .order_by('-product_id')
         return context
 
@@ -164,10 +164,10 @@ class UserOrdersListView(CustomerPermission, ListView):
     """View is used for displaying own user orders"""
     template_name = 'store/user_orders.html'
     context_object_name = 'orders_list'
-    paginate_by = 3
+    paginate_by = 10
 
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         context['filter'] = OrderFilter(self.request.GET)
         return context
 
@@ -176,12 +176,3 @@ class UserOrdersListView(CustomerPermission, ListView):
         queryset = queryset.order_by('-id')
         filter = OrderFilter(self.request.GET, queryset=queryset)
         return filter.qs
-
-
-class UserOrderDetailView(CustomerPermission, DetailView):
-    """View is used for displaying single order from user orders list"""
-    template_name = 'store/order_detail.html'
-    context_object_name = 'order'
-
-    def get_queryset(self):
-        return OrderDAO.get_all_orders(self.request.user.pk)

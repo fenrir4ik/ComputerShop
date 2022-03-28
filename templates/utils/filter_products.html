@@ -1,0 +1,34 @@
+{% extends 'utils/filter_base.html' %}
+
+{% block filter_fields %}
+    {% if user.is_staff %}
+        {% if filter.form.id %}
+            <div class="filter_inner">
+                {{ filter.form.id.label_tag }}<br>
+                {{ filter.form.id }}
+            </div>
+        {% endif %}
+        {% if filter.form.date_created %}
+            <div class="filter_inner">
+                {{ filter.form.date_created.label_tag }}<br>
+                {{ filter.form.date_created }}
+            </div>
+        {% endif %}
+    {% endif %}
+    <div class="filter_inner">
+        {{ filter.form.price.label_tag }}<br>
+        <div id="price_range">
+            {{ filter.form.price }}
+        </div>
+    </div>
+    <div class="filter_inner filter_multiple">
+        {{ filter.form.category.label_tag }}<br>
+        {{ filter.form.category }}
+    </div>
+    <div class="filter_inner filter_multiple">
+        {% if filter.form.vendor.field.choices %}
+            {{ filter.form.vendor.label_tag }}<br>
+            {{ filter.form.vendor }}
+        {% endif %}
+    </div>
+{% endblock %}

@@ -2,59 +2,15 @@
 {% load static %}
 
 {% block styles %}
-    <style>
-        .change-amount {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-around;
-        }
-
-        .change-amount div {
-            margin-right: 10px;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/order_page.css' %}">
 {% endblock %}
 
 {% block content %}
-    <div class="container py-4">
-        <form method="POST">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <table class="table">
-                <tbody>
-                {% for item in cart_items %}
-                    <tr>
-                        <td>{{ item.product_id }}</td>
-                        <td>
-                            <img src="{% get_media_prefix %}{{ item.image }}" width="100" height="100"
-                                 alt='product_image'>
-                        </td>
-                        <td>{{ item.product__name }}</td>
-                        <td>{{ item.price }}</td>
-                        <td width="240px">
-                            <form method="post">
-                                {% csrf_token %}
-                                <div class="form change-amount">
-                                    <div>
-                                        <input name="pk" type="hidden" value="{{ item.product_id }}">
-                                        <input name="amount" type="number" class="form-control"
-                                               value="{{ item.amount }}"
-                                               max="{{ item.product__amount|add:item.amount }}" min="1">
-                                    </div>
-                                    <div>
-                                        <button class="btn btn-primary">Изменить</button>
-                                    </div>
-                                </div>
-                            </form>
-                        </td>
-                        <td>
-                            <button class="btn btn-danger">Удалить</button>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-            <button type="submit" class="btn btn-primary">Отправить в обработку</button>
-        </form>
+    <div class="container form_outer">
+        <h1>Оформление заказа</h1>
+        {% include 'utils/order_form.html' %}
+        <div class="button_div">
+            <button type="submit" class="btn submit_button" form="order_form">Отправить в обработку</button>
+        </div>
     </div>
 {% endblock %}

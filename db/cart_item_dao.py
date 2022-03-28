@@ -69,9 +69,3 @@ class CartItemDAO:
         user_cart = ProductDAO.annotate_queryset_with_image(user_cart, ref='product_id')
         user_cart = ProductDAO.annotate_queryset_with_price(user_cart, ref='product_id')
         return user_cart
-
-    @staticmethod
-    def clear_cart(cart_id: int):
-        """Deletes all products from user cart with given id"""
-        products_in_cart = CartItem.objects.filter(order_id=cart_id).values_list('product_id', flat=True)
-        CartItemDAO.delete_products_in_cart(cart_id, products_in_cart)

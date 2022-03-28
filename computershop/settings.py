@@ -117,7 +117,7 @@ AUTHENTICATION_BACKENDS = [
 
 LANGUAGE_CODE = 'ru-ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Kiev'
 
 USE_I18N = True
 
@@ -151,3 +151,5 @@ MEDIA_URL = '/media/'
 # Login url settings
 LOGIN_URL = '/user/login'
 LOGIN_REDIRECT_URL = '/'
+
+ALLOWED_HOSTS = ['127.0.0.1', '192.168.43.156']

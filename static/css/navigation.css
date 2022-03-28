@@ -1,67 +1,92 @@
-/* NAVIGATION */
-
-@media all and (min-width: 992px) {
-    .dropdown-menu li {
-        position: relative;
-    }
-
-    .nav-item .submenu {
-        display: none;
-        position: absolute;
-        left: 100%;
-        top: -7px;
-    }
-
-    .nav-item .submenu-left {
-        right: 100%;
-        left: auto;
-    }
-
-    .dropdown-menu > li:hover > .submenu {
-        display: block;
-    }
-}
-
 nav {
-    background: #001540;
-}
-
-.navbar-dark .navbar-nav .nav-link {
-    color: white;
-    -webkit-transition: .1s;
-    -webkit-background-clip: text;
-}
-
-.navbar-dark .navbar-nav .nav-link:hover {
-    color: white;
-    -webkit-text-stroke: 0.5px white;
+    background: white;
+    border-bottom: 1px solid lightgrey;
 }
 
 #brand-img {
-    height: 50px;
-    padding-bottom: 4px;
+    height: 30px;
 }
 
 .navbar-toggler {
     border: 0;
 }
 
-@media (max-width: 300px) {
-    .navbar-brand {
-        font-size: 14px;
-    }
-}
-
-.dropdown-menu {
-    background: #3E6190;
+.collapse {
+    height: 65px;
+    align-content: center;
 }
 
 .dropdown-item {
-    color: white;
+    color: rgba(0, 0, 0, .55);
+    font-size: 14px;
 }
 
-.dropdown-item:hover,
+.dropdown-item:hover {
+    color: white !important;
+    background-color: #2b6777;
+}
+
 .dropdown-item:active {
-    background-color: #001540;
     color: white;
+    background-color: black;
+}
+
+@media all and (max-width: 767px) {
+    .collapse {
+        height: auto;
+    }
+}
+
+.navbar-toggler:focus,
+.navbar-toggler:active,
+.navbar-toggler-icon:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+nav .navbar-nav li a {
+    color: #2b6777 !important;
+}
+
+.nav-link {
+    position: relative;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.nav-link:hover {
+    color: #52ab98 !important;
+}
+
+.nav-link::before {
+    content: "";
+    position: absolute;
+    display: block;
+    width: 100%;
+    align-self: center;
+    height: 1px;
+    bottom: 0;
+    left: 0;
+    background-color: #52ab98;
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.nav-link:hover::before {
+    transform: scaleX(1);
+}
+
+@media all and (max-width: 768px) {
+    .nav-link {
+        margin-left: 15px !important;
+    }
+
+    .nav-link::before {
+        height: 0;
+    }
+
+    .container-fluid {
+        padding: 0;
+    }
 }

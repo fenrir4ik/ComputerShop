@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{% static 'css/form_page.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/profile_form.css' %}"/>
 {% endblock %}
 
 {% block content %}
@@ -26,8 +26,8 @@
                             <label class="form_error">{{ error }}</label>
                         {% endfor %}
                     </div>
-                    <button id="login_btn">Войти</button>
-                    <h6>Нет аккаунта? <a id="reg_link" href="{% url 'registration' %}">Создать аккаунт</a></h6>
+                    <button id="login_btn" class="btn">Войти</button>
+                    <h6>Нет аккаунта? <a id="forward_link" href="{% url 'registration' %}">Создать аккаунт</a></h6>
                 </form>
             </div>
             <div class="form_img login_img">

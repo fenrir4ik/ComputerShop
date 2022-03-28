@@ -1,7 +1,8 @@
+
 .main_products {
-    width: 95%;
+    width: 100%;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
 }
 
 @media screen and (max-width: 992px) {
@@ -11,12 +12,11 @@
 }
 
 .main_products > div {
-    margin: 30px;
     height: auto;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    box-shadow: 0 0 2px 0 rgb(0 0 0 / 50%), 0 2px 6px 0 rgb(0 0 0 / 50%);
+    box-shadow: 0 0 1px 0 rgb(0 0 0 / 50%), 0 0 1px 0 rgb(0 0 0 / 50%);
     padding: 10px;
     background: white;
 }
@@ -27,10 +27,78 @@
     align-self: center;
 }
 
-.main_products p {
+.inner_card {
     width: 100%;
-    height: 46px;
-    font-size: 16px;
+    align-self: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.card_detail {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-content: center;
+}
+
+.product_name,
+.details_btn {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.details_img {
+    width: 17px;
+    height: 17px;
+}
+
+.details_btn {
+    border-radius: 5px;
+    width: 87px;
+    text-align: center;
+    height: 35px;
+    font-weight: 600;
+    font-size: 13px;
+    background: #52ab98;
+    color: white;
+}
+
+@media screen and (max-width: 340px) {
+    .details_btn {
+        width: 90px;
+    }
+}
+
+.details_btn:hover {
+    color: white;
+    background-color: #52aba2;
+}
+
+.price_comb {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.product_price {
+    margin-top: 10px;
+    color: #2b6777;
+    font-weight: bolder;
+    font-size: 18px;
+    font-family: 'Ubuntu', sans-serif;
+    transform: scaleY(1.2);
+}
+
+.card_id {
+    color: gray;
+    text-decoration: underline dotted;
+}
+
+.card_name {
+    width: 100%;
+    height: 40px;
+    font-size: 14px;
     align-self: center;
     margin-top: 10px;
     color: black;
@@ -38,75 +106,11 @@
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
+    font-family: 'Roboto', sans-serif;
+    font-weight: bolder;
     overflow: hidden;
     text-overflow: ellipsis;
     text-decoration: none;
-}
-
-.inner_card {
-    width: 100%;
-    align-self: center;
-    display: flex;
-    flex-direction: column;
-}
-
-.card_buttons {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-}
-
-.main_products > div a,
-.card_buttons a {
-    text-decoration: none;
-    cursor: pointer;
-}
-
-.card_buttons a {
-    border-radius: 5px;
-    width: 100%;
-    text-align: center;
-    height: 40px;
-    font-weight: 500;
-    font-size: 14px;
-}
-
-@media screen and (max-width: 340px) {
-    .card_buttons a {
-        width: 90px;
-    }
-}
-
-.details_btn:hover {
-    transition: 0.5s;
-    transform: scale(1.02);
-    color: white;
-}
-
-.details_btn {
-    border: 4px solid #001540;
-    background: #001540;
-    color: white;
-    padding-top: 5px;
-    transition: 0.5s;
-}
-
-.card_buttons {
-    margin-top: 10px;
-}
-
-.price_comb h6,
-.price_comb h5 {
-    margin: 0;
-    color: black;
-}
-
-.price_comb h6 {
-    font-size: 14px;
-}
-
-.price_comb h5 {
-    font-weight: bolder;
 }
 
 @media (max-width: 1125px) {
@@ -115,48 +119,16 @@
         height: auto;
     }
 
-    .main_products p,
+    .card_name,
     .inner_card {
         width: 100%;
-    }
-}
-
-.sort_list {
-    list-style: none;
-    color: black;
-    float: right;
-    display: flex;
-    flex-direction: row;
-    margin: 0;
-}
-
-.sort_link {
-    text-decoration: none;
-    color: black;
-}
-
-.sort_title {
-    padding-right: 5px;
-}
-
-.sort_link:hover {
-    color: black;
-    -webkit-text-stroke: 0.5px black;
-}
-
-
-@media (max-width: 320px) {
-    .sort_list {
-        float: none;
-        justify-content: space-around;
-        font-size: 14px;
     }
 }
 
 /* SEARCH UNDER NAVIGATION */
 
 .search_div {
-    height: 350px;
+    height: 400px;
     width: 100%;
     background: url('../img/home-img.png') no-repeat center;
     background-size: cover;
@@ -189,35 +161,34 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: 33px;
+    height: 40px;
     line-height: 30px;
     outline: 0;
     border: 0;
     display: block;
-    font-size: 1em;
-    border-radius: 15px;
+    font-size: 14px;
+    border-radius: 20px;
     padding: 0 20px;
     padding-bottom: 2px;
 }
 
 .main-search {
     padding: 10px;
-    width: 25px;
-    height: 25px;
+    width: 40px;
+    height: 40px;
     position: absolute;
     top: -1px;
-    right: 15px;
+    right: 5px;
     color: black;
     text-align: center;
     background: url('../img/search.png') no-repeat;
-    background-size: 33px;
+    background-size: 40px;
     border: 0;
 }
 
 #searchline {
     opacity: 0.8;
     background: white;
-    cursor: pointer;
 }
 
 #searchline:focus {
@@ -239,4 +210,12 @@
     #search input {
         font-size: 0.8em;
     }
+}
+
+.unable_text {
+    color: gray !important;
+}
+
+.unable_image {
+    opacity: 0.3;
 }
