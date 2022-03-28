@@ -1,2 +1,2 @@
 # ComputerShop
- E-commerce website project
+ Django e-commerce website project
