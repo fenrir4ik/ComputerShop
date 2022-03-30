@@ -132,7 +132,7 @@ class UserCartView(CustomerPermission, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['cart_total'] = context.get('cart_items').aggregate(total = Sum(F('amount')*F('price'))).get('total')
+        context['cart_total'] = context.get('cart_items').aggregate(total=Sum(F('amount') * F('price'))).get('total')
         return context
 
     def post(self, request, *args, **kwargs):

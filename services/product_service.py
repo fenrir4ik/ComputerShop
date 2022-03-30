@@ -27,6 +27,8 @@ class AdditionalProductDataService:
 
 
 class ProductPriceHistoryService:
+    """Service for managing product prices and its history"""
+
     @staticmethod
     def get_product_price_history(product_id):
         price_records = PriceDAO.get_product_price_history(product_id)

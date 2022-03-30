@@ -139,6 +139,11 @@
     padding-left: 10px;
 }
 
+.help_text {
+    font-size: 13px;
+    color: #2b6777;
+}
+
 .product_image {
     flex-basis: 22.5%;
     display: flex;

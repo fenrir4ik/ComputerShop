@@ -64,9 +64,12 @@ class BaseProductModelForm(forms.ModelForm):
     price = forms.DecimalField(label="Цена", validators=[MinValueValidator(0.00)], decimal_places=2, max_digits=11,
                                min_value=0.00)
     description = forms.CharField(label="Описание", widget=forms.Textarea(attrs={'rows': 3}))
-    characteristics = forms.FileField(label="Характеристики",
-                                      required=True,
-                                      validators=[FileExtensionValidator(allowed_extensions=['xlsx'])])
+    characteristics = forms.FileField(
+        label="Характеристики",
+        required=True,
+        help_text="Файл должен быть оформлен в виде таблицы Excel (.xlsx), которая имеет следующие колонки: Characteristic, Value.",
+        validators=[FileExtensionValidator(allowed_extensions=['xlsx'])]
+    )
 
     class Meta:
         model = Product

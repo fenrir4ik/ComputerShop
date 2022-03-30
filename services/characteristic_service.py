@@ -4,6 +4,8 @@ from db.characteristic_dao import CharacteristicDAO
 
 
 class CharacteristicService:
+    """Service for managing product characteristics"""
+
     @staticmethod
     def add_product_characteristics(product_id: int, characteristics: List[Dict]):
         for characteristic in characteristics:
