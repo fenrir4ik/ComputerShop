@@ -1,21 +1,20 @@
-import io
-
-import pandas as pd
 from django import forms
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, FileExtensionValidator
+from django.db import transaction
 from django.forms import formset_factory, inlineformset_factory, BaseInlineFormSet
 
 from apps.store.models import Product, ProductImage, Order
 from services.constants import PRODUCT_IMAGE_MAX_AMOUNT
 from services.order_status_service import OrderStatusService
 from services.product_service import AdditionalProductDataService
-from utils.form_validators import square_image_validator
+from utils.parsers import parse_inmemory_excel_to_dataframe
+from utils.validators import SquareImageValidator
 
 
 class ImageForm(forms.ModelForm):
     """Form is used in ImageFormSets to add multiple images to the product"""
-    image = forms.ImageField(label="Изображение", required=False, validators=[square_image_validator])
+    image = forms.ImageField(label="Изображение", required=False, validators=[SquareImageValidator()])
 
     class Meta:
         model = ProductImage
@@ -35,7 +34,8 @@ class ProductImageUpdateInlineFormSet(BaseInlineFormSet):
             # validate image if it has changed and delete checkbox is not True
             if 'image' in form.changed_data and 'delete' not in form.changed_data:
                 try:
-                    square_image_validator(form.cleaned_data.get('image'))
+                    validator = SquareImageValidator()
+                    validator(form.cleaned_data.get('image'))
                 except ValidationError as ex:
                     form.add_error('image', ex.message)
 
@@ -70,7 +70,7 @@ class BaseProductModelForm(forms.ModelForm):
 
     class Meta:
         model = Product
-        fields = ['name', 'price', 'amount', 'category', 'vendor', 'description', 'characteristics']
+        fields = ['name', 'price', 'amount', 'category', 'vendor', 'description']
 
     def __init__(self, image_formset=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -83,14 +83,29 @@ class BaseProductModelForm(forms.ModelForm):
         return self.image_formset.is_valid() and super().is_valid()
 
     def save(self, commit=True):
-        product = super().save(commit=commit)
-        self.process_additional_product_data(product)
+        with transaction.atomic():
+            product = super().save(commit=commit)
+            if commit:
+                self.process_additional_product_data(product)
         return product
 
     def clean_characteristics(self):
         file = self.cleaned_data.get('characteristics')
-        df = pd.read_excel(io.BytesIO(file.read()), sheet_name=0)
-        return df
+        if file is None:
+            return None
+
+        try:
+            df = parse_inmemory_excel_to_dataframe(file)
+        except ValueError:
+            raise ValidationError("Ошибка в ходе загрузки файла, проверьте его корректность.")
+        allowed_columns = ['Characteristic', 'Value']
+        if not sorted(df.columns) == allowed_columns:
+            raise ValidationError(f"Файл должен иметь только следующие колонки: {', '.join(allowed_columns)}.")
+
+        df.dropna(inplace=True)
+        if len(df) == 0:
+            raise ValidationError("Файл не имеет ни одной характеристики.")
+        return df.to_dict(orient='records')
 
     def process_additional_product_data(self, product):
         raise NotImplemented
@@ -104,9 +119,10 @@ class ProductAddForm(BaseProductModelForm):
         super().__init__(data=data, files=files, image_formset=image_formset, **kwargs)
 
     def process_additional_product_data(self, product):
-        characteristics_file = self.cleaned_data.get('characteristics')
-        AdditionalProductDataService.add_additional_data(product.pk, self.cleaned_data.get('price'),
-                                                         self.image_formset.cleaned_data)
+        AdditionalProductDataService.add_additional_data(product.pk,
+                                                         self.cleaned_data.get('price'),
+                                                         self.image_formset.cleaned_data,
+                                                         self.cleaned_data.get('characteristics'))
 
 
 class ProductUpdateForm(BaseProductModelForm):
@@ -116,11 +132,13 @@ class ProductUpdateForm(BaseProductModelForm):
         image_formset = ProductImageUpdateFormSet(*args, **kwargs)
         super().__init__(image_formset=image_formset, *args, **kwargs)
         self.fields['price'].initial = kwargs.get('instance').price
+        self.fields['characteristics'].required = False
 
     def process_additional_product_data(self, product):
-        characteristics_file = self.cleaned_data.get('characteristics')
-        AdditionalProductDataService.update_additional_data(product.pk, self.cleaned_data.get('price'),
-                                                            self.image_formset.cleaned_data)
+        AdditionalProductDataService.update_additional_data(product.pk,
+                                                            self.cleaned_data.get('price'),
+                                                            self.image_formset.cleaned_data,
+                                                            self.cleaned_data.get('characteristics'))
 
 
 class OrderChangeForm(forms.ModelForm):
@@ -131,7 +149,7 @@ class OrderChangeForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = ['name', 'surname', 'patronymic', 'email', 'phone_number', 'address', 'date_start', 'date_end',
-                  'payment', 'status']
+                  'payment']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

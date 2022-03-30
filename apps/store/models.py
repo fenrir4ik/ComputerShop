@@ -29,6 +29,13 @@ class Category(models.Model):
         return self.name
 
 
+class Characteristic(models.Model):
+    name = models.CharField(verbose_name="Название характеристики", max_length=50, unique=True)
+
+    class Meta:
+        db_table = 'characteristic'
+
+
 class Product(models.Model):
     name = models.CharField(max_length=255, verbose_name="Название", db_index=True)
     amount = models.PositiveIntegerField(verbose_name="Количество", default=0)
@@ -36,6 +43,7 @@ class Product(models.Model):
     vendor = models.ForeignKey(Vendor, related_name='products', verbose_name="Производитель", on_delete=models.RESTRICT)
     date_created = models.DateTimeField(verbose_name="Дата создания", auto_now_add=True)
     description = models.TextField(verbose_name="Описание")
+    characteristics = models.ManyToManyField(Characteristic, related_name='products', through='ProductCharacteristic')
 
     class Meta:
         db_table = 'product'
@@ -44,8 +52,21 @@ class Product(models.Model):
         return f'Product[{self.pk}], {self.name=}, {self.amount=}'
 
 
+class ProductCharacteristic(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    characteristic = models.ForeignKey(Characteristic, related_name='char_item', on_delete=models.CASCADE)
+    value = models.CharField(verbose_name='Значение', max_length=50)
+
+    class Meta:
+        db_table = 'product_characteristic'
+
+    def __str__(self):
+        return f"{self.characteristic.name}: {self.value}"
+
+
 class ProductImage(models.Model):
-    image = models.ImageField(verbose_name='Изображение', upload_to='product', default=DEFAULT_PRODUCT_IMAGE, blank=False)
+    image = models.ImageField(verbose_name='Изображение', upload_to='product', default=DEFAULT_PRODUCT_IMAGE,
+                              blank=False)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     is_main = models.BooleanField(default=False)
 

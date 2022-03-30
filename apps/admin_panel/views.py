@@ -8,7 +8,6 @@ from apps.admin_panel.filters import AdminProductFilter, AdminOrderFilter
 from apps.admin_panel.forms import ProductAddForm, ProductUpdateForm, OrderChangeForm
 from apps.core.permissions import WarehousePermissionMixin, ManagerPermissionMixin
 from apps.store.models import Product
-from db.cart_item_dao import CartItemDAO
 from db.order_dao import OrderDAO
 from db.product_dao import ProductDAO
 from services.constants import DEFAULT_PRODUCT_IMAGE, PRODUCT_IMAGE_MAX_AMOUNT
@@ -33,7 +32,7 @@ class ProductsListAdminView(WarehousePermissionMixin, ListView):
 
     def get_form(self):
         if self.request.method == 'POST':
-            return self.form_class(self.request.POST, self.request.FILES)
+            return self.form if hasattr(self, 'form') else self.form_class(self.request.POST, self.request.FILES)
         else:
             return self.form_class()
 
@@ -45,9 +44,9 @@ class ProductsListAdminView(WarehousePermissionMixin, ListView):
         return context
 
     def post(self, request, *args, **kwargs):
-        form = self.get_form()
-        if form.is_valid():
-            form.save()
+        self.form = self.get_form()
+        if self.form.is_valid():
+            self.form.save()
             return HttpResponseRedirect(self.success_url)
         else:
             return self.get(request, *args, **kwargs)

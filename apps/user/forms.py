@@ -4,7 +4,7 @@ from django.contrib.auth.password_validation import validate_password
 
 from apps.core.models import User
 from db.user_dao import UserDAO
-from utils import form_validators
+from utils.validators import NameValidator, SurnameValidator, PatronymicValidator, PhoneNumberValidator
 
 
 class UserBaseForm(forms.Form):
@@ -12,19 +12,19 @@ class UserBaseForm(forms.Form):
     name = forms.CharField(
         label="Имя",
         widget=forms.TextInput(attrs={'placeholder': 'Имя'}),
-        validators=[form_validators.name_validator],
+        validators=[NameValidator()],
         max_length=45
     )
     surname = forms.CharField(
         label="Фамилия",
         widget=forms.TextInput(attrs={'placeholder': 'Фамилия'}),
-        validators=[form_validators.surname_validator],
+        validators=[SurnameValidator()],
         max_length=45
     )
     patronymic = forms.CharField(
         label="Отчество",
         widget=forms.TextInput(attrs={'placeholder': 'Отчество'}),
-        validators=[form_validators.patronymic_validator],
+        validators=[PatronymicValidator()],
         max_length=45
     )
     email = forms.EmailField(
@@ -36,7 +36,7 @@ class UserBaseForm(forms.Form):
         widget=forms.TextInput(attrs={'placeholder': 'Номер телефона'}),
         required=False,
         empty_value=None,
-        validators=[form_validators.phone_number_validator],
+        validators=[PhoneNumberValidator()],
         max_length=12
     )
 

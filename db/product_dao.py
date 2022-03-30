@@ -1,6 +1,6 @@
 from django.db.models import OuterRef, Subquery, Q, QuerySet
 
-from apps.store.models import Product, ProductPrice, ProductImage, CartItem
+from apps.store.models import Product, ProductPrice, ProductImage, CartItem, Characteristic
 
 
 class ProductDAO:
@@ -40,9 +40,10 @@ class ProductDAO:
         """
         try:
             cart_lookup = CartItem.objects.filter(product_id=OuterRef('pk')).values('product_id')
-            return Product.objects.filter(pk=product_id) \
-                .exclude(pk__in=Subquery(cart_lookup)) \
-                .get(pk=product_id) \
-                .delete()
+            product = Product.objects.filter(pk=product_id).exclude(pk__in=Subquery(cart_lookup)).get(pk=product_id)
+            deleted = product.delete()
+            if deleted:
+                Characteristic.objects.filter(products=None).delete()
+            return deleted
         except Product.DoesNotExist:
             return False
