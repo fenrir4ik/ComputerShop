@@ -12,6 +12,32 @@
             <form id="update_form" method="post" enctype="multipart/form-data" class="product_form">
                 {% csrf_token %}
                 {{ form.as_p }}
+                <div class="chars_example">
+                    <label>Файл должен быть оформлен в виде таблицы Excel (.xlsx), в следующем формате:</label><br>
+                    <img class="excel_img" src="{% static 'img/excel_example.png' %}" alt="excel_example">
+                </div>
+                <label class="current_chars">Текущие характеристики:</label>
+                <div class="characteristics">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th scope="col">Характеристика</th>
+                                <th scope="col">Значение</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for characteristic in product_characteristics %}
+                                <tr>
+                                    <td>{{ characteristic.name }}</td>
+                                    <td>{{ characteristic.value }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <label>Изображения товара:</label>
                 {{ form.image_formset.management_form }}
                 {% for image_form in form.image_formset %}
                     <div class="image_formset">
@@ -32,8 +58,8 @@
                 {% csrf_token %}
             </form>
             <div class="bottom_buttons">
-                <button type="submit" form="update_form" class="btn product_save">Сохранить</button>
                 <button type="submit" form="delete_form" class="btn product_delete">Удалить</button>
+                <button type="submit" form="update_form" class="btn product_save">Сохранить</button>
             </div>
         </div>
     </div>

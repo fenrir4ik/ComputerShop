@@ -11,6 +11,7 @@ from apps.store.filters import ProductFilter, OrderFilter
 from apps.store.forms import AddProductToCartForm, CreateOrderForm
 from apps.store.models import Product
 from db.cart_item_dao import CartItemDAO
+from db.characteristic_dao import CharacteristicDAO
 from db.image_dao import ImageDAO
 from db.order_dao import OrderDAO
 from db.product_dao import ProductDAO
@@ -53,6 +54,7 @@ class SingleProductView(DetailView):
 
         context['product_images'] = ImageDAO.get_product_images(product_id)
         context['product_price_history'] = ProductPriceHistoryService.get_product_price_history(product_id)
+        context['product_characteristics'] = CharacteristicDAO.get_product_characteristics(product_id)
 
         if self.request.user.is_authenticated:
             product_amount = self.object.get('amount')

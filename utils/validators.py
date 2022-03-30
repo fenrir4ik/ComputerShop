@@ -38,3 +38,14 @@ class SquareImageValidator:
             return image
         else:
             raise ValidationError(self.message)
+
+
+def validate_df_emptiness(df):
+    if len(df) == 0:
+        raise ValidationError("Файл не имеет ни одной характеристики.")
+
+
+def validate_allowed_characteristics_columns(df):
+    allowed_columns = ['Characteristic', 'Value']
+    if not sorted(df.columns) == allowed_columns:
+        raise ValidationError(f"Файл должен иметь только следующие колонки: {', '.join(allowed_columns)}.")

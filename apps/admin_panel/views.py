@@ -8,6 +8,7 @@ from apps.admin_panel.filters import AdminProductFilter, AdminOrderFilter
 from apps.admin_panel.forms import ProductAddForm, ProductUpdateForm, OrderChangeForm
 from apps.core.permissions import WarehousePermissionMixin, ManagerPermissionMixin
 from apps.store.models import Product
+from db.characteristic_dao import CharacteristicDAO
 from db.order_dao import OrderDAO
 from db.product_dao import ProductDAO
 from services.constants import DEFAULT_PRODUCT_IMAGE, PRODUCT_IMAGE_MAX_AMOUNT
@@ -89,6 +90,7 @@ class ProductUpdateView(WarehousePermissionMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['default_product_image'] = DEFAULT_PRODUCT_IMAGE
+        context['product_characteristics'] = CharacteristicDAO.get_product_characteristics(self.object.pk)
         return context
 
 

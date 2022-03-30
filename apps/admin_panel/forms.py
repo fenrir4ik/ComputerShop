@@ -9,7 +9,7 @@ from services.constants import PRODUCT_IMAGE_MAX_AMOUNT
 from services.order_status_service import OrderStatusService
 from services.product_service import AdditionalProductDataService
 from utils.parsers import parse_inmemory_excel_to_dataframe
-from utils.validators import SquareImageValidator
+from utils.validators import SquareImageValidator, validate_df_emptiness, validate_allowed_characteristics_columns
 
 
 class ImageForm(forms.ModelForm):
@@ -67,7 +67,6 @@ class BaseProductModelForm(forms.ModelForm):
     characteristics = forms.FileField(
         label="Характеристики",
         required=True,
-        help_text="Файл должен быть оформлен в виде таблицы Excel (.xlsx), которая имеет следующие колонки: Characteristic, Value.",
         validators=[FileExtensionValidator(allowed_extensions=['xlsx'])]
     )
 
@@ -96,18 +95,12 @@ class BaseProductModelForm(forms.ModelForm):
         file = self.cleaned_data.get('characteristics')
         if file is None:
             return None
-
         try:
             df = parse_inmemory_excel_to_dataframe(file)
         except ValueError:
             raise ValidationError("Ошибка в ходе загрузки файла, проверьте его корректность.")
-        allowed_columns = ['Characteristic', 'Value']
-        if not sorted(df.columns) == allowed_columns:
-            raise ValidationError(f"Файл должен иметь только следующие колонки: {', '.join(allowed_columns)}.")
-
-        df.dropna(inplace=True)
-        if len(df) == 0:
-            raise ValidationError("Файл не имеет ни одной характеристики.")
+        validate_allowed_characteristics_columns(df)
+        validate_df_emptiness(df)
         return df.to_dict(orient='records')
 
     def process_additional_product_data(self, product):

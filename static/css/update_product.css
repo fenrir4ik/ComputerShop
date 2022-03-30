@@ -50,6 +50,7 @@
 .image_div img {
     width: 200px;
     height: 200px;
+    margin-top: 10px;
 }
 
 .image_form a {
@@ -75,13 +76,41 @@
     display: none;
 }
 
+.characteristics {
+    box-shadow: 0 0 1px 0 rgb(0 0 0 / 50%), 0 0 1px 0 rgb(0 0 0 / 50%);
+    margin-bottom: 20px;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.helptext {
+    margin-top: 20px;
+}
+
+.chars_example {
+    margin-top: -15px;
+    margin-bottom: 20px;
+}
+
+.excel_img {
+    height: 120px;
+    width: auto;
+}
+
 .product_save,
 .product_delete {
-    float: right;
     font-weight: bolder;
     border-radius: 5px;
     width: 100px;
     margin-left: 20px;
+}
+
+.bottom_buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
 }
 
 #delete_form {
@@ -112,5 +141,16 @@
     .image_form {
         display: flex;
         flex-direction: column;
+    }
+
+    .bottom_buttons {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .product_save,
+    .product_delete {
+        margin: 0;
     }
 }

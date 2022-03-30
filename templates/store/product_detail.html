@@ -69,6 +69,9 @@
                 <p>Товар закончился</p>
             {% endif %}
         {% endif %}
+        {% for characteristic in product_characteristics %}
+            <p>{{ characteristic.name }}, {{ characteristic.value }}</p>
+        {% endfor %}
         <div id="price_chart" style="width: 100%">
             <canvas id="chart"></canvas>
         </div>
