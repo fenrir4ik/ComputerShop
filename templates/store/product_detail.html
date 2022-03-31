@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/product_detail.css' %}">
+{% endblock %}
+
 {% block javascript %}
     <script src="{% static 'js/chart.min.js' %}"></script>
     <script>

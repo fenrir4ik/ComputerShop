@@ -54,7 +54,7 @@
 }
 
 .details_btn {
-    border-radius: 5px;
+    border-radius: 0;
     width: 87px;
     text-align: center;
     height: 35px;

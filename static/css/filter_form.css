@@ -73,7 +73,7 @@
     color: white;
     width: 45%;
     margin: 5px;
-    border-radius: 7px;
+    border-radius: 0;
 }
 
 .filter_btn:hover {
@@ -95,7 +95,7 @@
     color: #2b6777;
     background-color: #c8d8e4;
     width: 98%;
-    border-radius: 7px;
+    border-radius: 0;
     margin-bottom: 10px;
     display: none;
 }

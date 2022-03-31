@@ -59,6 +59,7 @@ class ProductCharacteristic(models.Model):
 
     class Meta:
         db_table = 'product_characteristic'
+        unique_together = ('product', 'characteristic')
 
     def __str__(self):
         return f"{self.characteristic.name}: {self.value}"
