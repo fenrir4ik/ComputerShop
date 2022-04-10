@@ -76,13 +76,21 @@ WSGI_APPLICATION = 'computershop.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    #     'NAME': 'computershop_v2',
+    #     'USER': 'postgres',
+    #     'PASSWORD': '12121212',
+    #     'HOST': 'localhost',
+    #     'PORT': '',
+    # },
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': 'computershop_v2',
-        'USER': 'postgres',
+        'USER': 'root',
         'PASSWORD': '12121212',
         'HOST': 'localhost',
-        'PORT': '',
+        'PORT': '3306',
     }
 }
 
@@ -117,13 +125,17 @@ AUTHENTICATION_BACKENDS = [
 
 LANGUAGE_CODE = 'ru-ru'
 
-TIME_ZONE = 'Europe/Kiev'
+
 
 USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+# USE_TZ = True
+
+USE_TZ = False
+
+TIME_ZONE = 'Europe/Kiev'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/

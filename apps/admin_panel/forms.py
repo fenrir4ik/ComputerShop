@@ -145,7 +145,7 @@ class OrderChangeForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = ['name', 'surname', 'patronymic', 'email', 'phone_number', 'address', 'date_start', 'date_end',
-                  'payment']
+                  'payment', 'status']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

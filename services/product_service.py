@@ -54,7 +54,9 @@ class ProductPriceHistoryService:
     def __interpolate_price(price_dict_by_months):
         empty_months = []
         left_price, right_price = 0, 0
+        month_n = 0
         for key, value in price_dict_by_months.items():
+            month_n+=1
             if value:
                 if len(empty_months) == 0:
                     left_price = value
@@ -68,6 +70,9 @@ class ProductPriceHistoryService:
                     left_price = right_price
             else:
                 empty_months.append(key)
+                if month_n == len(price_dict_by_months):
+                    for month in empty_months:
+                        price_dict_by_months[month] = round(left_price, 2)
         return price_dict_by_months
 
     @staticmethod

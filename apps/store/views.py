@@ -55,7 +55,7 @@ class SingleProductView(DetailView):
         context['product_images'] = ImageDAO.get_product_images(product_id)
         context['product_price_history'] = ProductPriceHistoryService.get_product_price_history(product_id)
         context['product_characteristics'] = CharacteristicDAO.get_product_characteristics(product_id)
-
+        
         if self.request.user.is_authenticated:
             product_amount = self.object.get('amount')
             user_id = self.request.user.pk
