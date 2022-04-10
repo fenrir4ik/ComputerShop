@@ -20,11 +20,9 @@
                                 <li>
                                     <a class="dropdown-item" href="{% url 'admin-products' %}">Управление товарами</a>
                                 </li>
-                                {% if user.is_manager %}
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'admin-orders' %}">Управление заказами</a>
-                                    </li>
-                                {% endif %}
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'admin-orders' %}">Управление заказами</a>
+                                </li>
                             </ul>
                         </li>
                     {% else %}

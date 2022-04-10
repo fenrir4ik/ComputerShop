@@ -4,7 +4,7 @@ from django.core.validators import MinValueValidator, FileExtensionValidator
 from django.db import transaction
 from django.forms import formset_factory, inlineformset_factory, BaseInlineFormSet
 
-from apps.store.models import Product, ProductImage, Order
+from apps.store.models import Product, ProductImage, Order, OrderStatus
 from services.constants import PRODUCT_IMAGE_MAX_AMOUNT
 from services.order_status_service import OrderStatusService
 from services.product_service import AdditionalProductDataService
@@ -158,7 +158,8 @@ class OrderChangeForm(forms.ModelForm):
         self.fields['status'].queryset = order_status_service.get_future_statuses()
 
         readonly_fields = ['date_start', 'date_end']
-        if not self.instance.is_new:
+
+        if not self.instance.status_id == OrderStatus.retrieve_id('new'):
             readonly_fields.extend(['name', 'surname', 'patronymic', 'email', 'phone_number', 'address', 'payment'])
         for field in readonly_fields:
             self.fields[field].disabled = True

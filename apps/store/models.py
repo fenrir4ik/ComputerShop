@@ -9,12 +9,15 @@ from services.constants import DEFAULT_PRODUCT_IMAGE
 
 
 class Vendor(models.Model):
-    name = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=255, unique=True)
+    email = models.EmailField(max_length=255, unique=True, db_index=True)
+    phone_number = models.CharField(max_length=12, unique=True, db_index=True)
+    postal_code = models.CharField(max_length=12, db_index=True)
+    description = models.TextField(verbose_name="Описание")
 
     class Meta:
         db_table = 'vendor'
 
-    # add more info about vendor
     def __str__(self):
         return self.name
 
@@ -144,10 +147,6 @@ class Order(models.Model):
 
     def __str__(self):
         return f'Order[{self.pk}], {self.user_id=}, {self.status=}, {self.date_start=}, {self.date_end=}'
-
-    @property
-    def is_new(self):
-        return self.status.id == OrderStatus.retrieve_id('new')
 
     def save(self, *args, **kwargs):
         if self.status_id == OrderStatus.retrieve_id('completed'):

@@ -6,7 +6,7 @@ from django.views.generic import ListView, DeleteView, UpdateView
 
 from apps.admin_panel.filters import AdminProductFilter, AdminOrderFilter
 from apps.admin_panel.forms import ProductAddForm, ProductUpdateForm, OrderChangeForm
-from apps.core.permissions import WarehousePermissionMixin, ManagerPermissionMixin
+from apps.core.permissions import ManagerPermissionMixin
 from apps.store.models import Product
 from db.characteristic_dao import CharacteristicDAO
 from db.order_dao import OrderDAO
@@ -14,7 +14,7 @@ from db.product_dao import ProductDAO
 from services.constants import DEFAULT_PRODUCT_IMAGE, PRODUCT_IMAGE_MAX_AMOUNT
 
 
-class ProductsListAdminView(WarehousePermissionMixin, ListView):
+class ProductsListAdminView(ManagerPermissionMixin, ListView):
     """View is used for displaying products list and products add form in admin-panel"""
     template_name = 'admin_panel/products_list.html'
     context_object_name = 'products'
@@ -53,7 +53,7 @@ class ProductsListAdminView(WarehousePermissionMixin, ListView):
             return self.get(request, *args, **kwargs)
 
 
-class ProductDeleteView(WarehousePermissionMixin, DeleteView):
+class ProductDeleteView(ManagerPermissionMixin, DeleteView):
     """View is used for deletion products in admin-panel"""
     error_message = "Товар №{} находится в корзине пользователя и не может быть удален"
     success_message = "Товар №{} был успешно удален"
@@ -75,7 +75,7 @@ class ProductDeleteView(WarehousePermissionMixin, DeleteView):
         return next_page if next_page else reverse_lazy('admin-products')
 
 
-class ProductUpdateView(WarehousePermissionMixin, UpdateView):
+class ProductUpdateView(ManagerPermissionMixin, UpdateView):
     """View is used for updating products in admin-panel"""
     template_name = 'admin_panel/update_product.html'
     form_class = ProductUpdateForm
