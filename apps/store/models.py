@@ -8,12 +8,20 @@ from apps.core.models import User
 from services.constants import DEFAULT_PRODUCT_IMAGE
 
 
+class Country(models.Model):
+    name = models.CharField(max_length=60, unique=True)
+
+    class Meta:
+        db_table = 'country'
+
+
 class Vendor(models.Model):
     name = models.CharField(max_length=255, unique=True)
     email = models.EmailField(max_length=255, unique=True, db_index=True)
     phone_number = models.CharField(max_length=12, unique=True, db_index=True)
     postal_code = models.CharField(max_length=12, db_index=True)
     description = models.TextField(verbose_name="Описание")
+    country = models.ForeignKey(Country, on_delete=models.RESTRICT)
 
     class Meta:
         db_table = 'vendor'
