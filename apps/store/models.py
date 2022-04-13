@@ -55,6 +55,7 @@ class Product(models.Model):
     date_created = models.DateTimeField(verbose_name="Дата создания", auto_now_add=True)
     description = models.TextField(verbose_name="Описание")
     characteristics = models.ManyToManyField(Characteristic, related_name='products', through='ProductCharacteristic')
+    rating = models.DecimalField(decimal_places=3, max_digits=6, default=0)
 
     class Meta:
         db_table = 'product'

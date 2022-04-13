@@ -33,13 +33,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'silk.apps.SilkAppConfig',
+    'silk',
     'django_filters',
     'apps.core',
     'apps.store',
     'apps.user',
     'apps.admin_panel',
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -124,8 +125,6 @@ AUTHENTICATION_BACKENDS = [
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
 LANGUAGE_CODE = 'ru-ru'
-
-
 
 USE_I18N = True
 
