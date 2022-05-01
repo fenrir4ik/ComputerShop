@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'apps.core',
     'apps.store',
     'apps.user',
-    'apps.admin_panel',
+    'apps.admin_panel'
 ]
 
 

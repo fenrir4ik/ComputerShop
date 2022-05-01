@@ -56,7 +56,7 @@ class SingleProductView(DetailView):
         context['product_price_history'] = ProductPriceHistoryService.get_product_price_history(product_id)
         context['product_characteristics'] = CharacteristicDAO.get_product_characteristics(product_id)
         
-        if self.request.user.is_authenticated:
+        if self.request.user.is_authenticated and not self.request.user.is_staff:
             product_amount = self.object.get('amount')
             user_id = self.request.user.pk
             context['product_amount_in_cart'] = CartItemDAO.get_product_amount_in_cart_by_user_id(user_id, product_id)
