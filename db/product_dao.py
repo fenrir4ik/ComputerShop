@@ -26,7 +26,7 @@ class ProductDAO:
         return queryset
 
     @staticmethod
-    def annotate_queryset_with_image(queryset, ref: str = 'pk') -> QuerySet:
+    def annotate_queryset_with_image(queryset: QuerySet, ref: str = 'pk') -> QuerySet:
         """Annotates given queryset of products with image, using ref as OuterRef"""
         product_image = ProductImage.objects.filter(Q(product=OuterRef(ref)) & Q(is_main=True))
         queryset = queryset.annotate(image=Subquery(product_image.values('image')[:1]))
