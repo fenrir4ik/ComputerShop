@@ -5,7 +5,7 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DeleteView, UpdateView
 
 from apps.admin_panel.filters import AdminProductFilter, AdminOrderFilter
-from apps.admin_panel.forms import ProductAddForm, ProductUpdateForm, OrderChangeForm
+from apps.admin_panel.forms import ProductAddForm, ProductUpdateForm, ChangeOrderForm
 from apps.core.permissions import ManagerPermissionMixin
 from apps.store.models import Product
 from db.characteristic_dao import CharacteristicDAO
@@ -115,7 +115,7 @@ class OrdersListView(ManagerPermissionMixin, ListView):
 class OrderUpdateView(ManagerPermissionMixin, UpdateView):
     """View is used for updating orders in admin-panel"""
     template_name = 'admin_panel/update_order.html'
-    form_class = OrderChangeForm
+    form_class = ChangeOrderForm
     context_object_name = 'order'
 
     def get_queryset(self):
@@ -123,7 +123,3 @@ class OrderUpdateView(ManagerPermissionMixin, UpdateView):
 
     def get_success_url(self):
         return self.request.path_info
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context

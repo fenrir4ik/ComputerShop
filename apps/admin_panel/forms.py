@@ -5,6 +5,7 @@ from django.db import transaction
 from django.forms import formset_factory, inlineformset_factory, BaseInlineFormSet
 
 from apps.store.models import Product, ProductImage, Order, OrderStatus
+from apps.user.forms import UserBaseForm
 from services.constants import PRODUCT_IMAGE_MAX_AMOUNT
 from services.order_status_service import OrderStatusService
 from services.product_service import AdditionalProductDataService
@@ -137,7 +138,7 @@ class ProductUpdateForm(BaseProductModelForm):
                                                             self.cleaned_data.get('characteristics'))
 
 
-class OrderChangeForm(forms.ModelForm):
+class ChangeOrderForm(UserBaseForm, forms.ModelForm):
     """Form is used to update user order information and status"""
 
     status = forms.ModelChoiceField(label="Статус", queryset=None, empty_label=None, required=True)
