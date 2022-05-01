@@ -3,6 +3,7 @@ from django.utils import timezone
 
 from apps.store.models import Order, OrderStatus
 from apps.user.forms import UserBaseForm
+from db.cart_item_dao import CartItemDAO
 from db.order_dao import OrderDAO
 
 
@@ -12,7 +13,7 @@ class AddProductToCartForm(forms.Form):
     def __init__(self, amount_in_cart, max_amount, *args, **kwargs):
         super().__init__(*args, **kwargs)
         amount_in_cart = None if amount_in_cart < 1 else amount_in_cart
-        self.fields['amount'] = forms.IntegerField(label="Кол-во",
+        self.fields['amount'] = forms.IntegerField(label="В корзине",
                                                    min_value=1,
                                                    max_value=max_amount,
                                                    initial=amount_in_cart)
@@ -25,17 +26,12 @@ class CreateOrderForm(UserBaseForm, forms.ModelForm):
         model = Order
         fields = ['name', 'surname', 'patronymic', 'phone_number', 'email', 'address', 'payment']
 
-    address = forms.CharField(
-        label="Адрес доставки",
-        widget=forms.TextInput(attrs={'placeholder': 'Адрес доставки'}),
-        required=False,
-        empty_value=None,
-    )
 
     def __init__(self, user, data=None, files=None, instance=None, **kwargs):
         super().__init__(data=data, files=files, instance=instance, **kwargs)
         self.fields['phone_number'].widget.attrs.update({'required': True})
         self.fields['payment'].widget.attrs.update({'required': True})
+        self.fields['address'].empty_value = None
 
         self.user = user
 
@@ -49,5 +45,6 @@ class CreateOrderForm(UserBaseForm, forms.ModelForm):
         order.user = self.user
         order.status_id = OrderStatus.retrieve_id('new')
         order.date_start = timezone.now()
-        order.save()
+        if CartItemDAO.get_user_cart(self.user.pk).exists():
+            order.save()
         return order
