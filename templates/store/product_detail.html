@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load template_utils %}
 {% load static %}
 
 {% block styles %}
@@ -7,6 +8,7 @@
 
 {% block javascript %}
     <script src="{% static 'js/chart.min.js' %}"></script>
+    <script src="{% static 'js/image_slider.js' %}"></script>
     <script>
         const data = {
             labels: [{% for month in product_price_history.keys %}"{{ month }}",{% endfor %}],
@@ -14,7 +16,7 @@
                 label: 'Динамика цены',
                 data: [{{ product_price_history.values|safeseq|join:", " }}],
                 fill: false,
-                borderColor: 'rgb(75, 192, 192)',
+                borderColor: '#2b6777',
                 tension: 0.1
             }]
         };
@@ -22,8 +24,12 @@
             type: 'line',
             data: data,
             options: {
+                responsive: true,
+                maintainAspectRatio: false,
                 legend: {
-                    onClick: null
+                    labels: {
+                        fontSize: 15
+                    }
                 }
             }
         };
@@ -36,47 +42,77 @@
 
 {% block content %}
     <div class="container py-4">
-        <p>Товар № {{ product.id }}</p>
-        <p>Название: {{ product.name }}</p>
-        <p>Цена: {{ product.price }}</p>
-        <p>Описание: {{ product.description }}</p>
-        <p>Кол-во: {{ product.amount }}</p>
-        {% for image in product_images %}
-            <img src="{{ image.image.url }}" alt="" width="400" height="400">
-        {% endfor %}
-        {% if form %}
-            <p>В корзине: {{ product_amount_in_cart }}</p>
-            {% if product.amount|add:product_amount_in_cart > 0 %}
-                {% if user.is_authenticated and not user.is_staff %}
+        <h1 class="detail_title">{{ product.name }}</h1>
+        <h6 class="product_code">Код товара: {{ product.id }}</h6>
+        <div class="upper_product_detail">
+            <div class="image_part">
+                <div class="slideshow-container">
+                    {% for image in product_images %}
+                        <div class="img_slide fade">
+                            <img src="{{ image.image.url }}" alt="product_image" class="detail_img">
+                        </div>
+                    {% endfor %}
+                    <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+                    <a class="next" onclick="plusSlides(1)">&#10095;</a>
+                </div>
+                <br>
+                <div style="text-align:center">
+                    {% for i in product_images|length|get_range %}
+                        <span class="dot" onclick="currentSlide({{ i|add:1 }})"></span>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="product_info">
+                <div class="info_inner">
                     {% if product.amount > 0 %}
-                        <form method="post">
-                            {% csrf_token %}
-                            {{ form.as_p }}
-                            {% if product_amount_in_cart == 0 %}
-                                <button type="submit" class="btn btn-success">В корзину</button>
-                            {% else %}
-                                <button type="submit" class="btn btn-success">Изменить количество</button>
-                            {% endif %}
-                        </form>
+                        <div class="product_amount" style="background-color: #52ab98">
+                            <p>Есть в наличии</p>
+                        </div>
                     {% else %}
-                        <p>Товар закончился</p>
+                        <div class="product_amount" style="background-color: darkgray">
+                            <p>Товар закончился</p>
+                        </div>
                     {% endif %}
-                    {% if product_amount_in_cart > 0 %}
-                        <form method="post"
-                              action="{% url 'delete-cart-item' pk=product.id %}?next={{ request.get_full_path }}">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-danger">Удалить из корзины</button>
-                        </form>
+                    <p class="description_title">Описание товара</p>
+                    <p class="detail_description">{{ product.description }}</p>
+                    <p class="detail_price">{{ product.price }} ₴</p>
+                    {% if form %}
+                        {% if product.amount|add:product_amount_in_cart > 0 %}
+                            {% if user.is_authenticated and not user.is_staff %}
+                                <form method="post">
+                                    {% csrf_token %}
+                                    {{ form.as_p }}
+                                    {% if product_amount_in_cart == 0 %}
+                                        <button type="submit" class="btn detail_btn">Добавить в корзину</button>
+                                    {% else %}
+                                        <button type="submit" class="btn detail_btn">Изменить количество</button>
+                                    {% endif %}
+                                </form>
+                                {% if product_amount_in_cart > 0 %}
+                                    <form method="post"
+                                          action="{% url 'delete-cart-item' pk=product.id %}?next={{ request.get_full_path }}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn detail_btn">Удалить из корзины</button>
+                                    </form>
+                                {% endif %}
+                            {% endif %}
+                        {% else %}
+                            <p>Товар закончился</p>
+                        {% endif %}
                     {% endif %}
-                {% endif %}
-            {% else %}
-                <p>Товар закончился</p>
-            {% endif %}
-        {% endif %}
-        {% for characteristic in product_characteristics %}
-            <p>{{ characteristic.name }}, {{ characteristic.value }}</p>
-        {% endfor %}
-        <div id="price_chart" style="width: 100%">
+                </div>
+            </div>
+        </div>
+        <div class="detail_chars">
+            <h3 class="chars_title">Характеристики</h3>
+            {% for characteristic in product_characteristics %}
+                <div class="char_item">
+                    <p class="char_name">{{ characteristic.name }}</p>
+                    <p class="char_value">{{ characteristic.value }}</p>
+                </div>
+            {% endfor %}
+        </div>
+        <div id="price_chart">
             <canvas id="chart"></canvas>
         </div>
     </div>

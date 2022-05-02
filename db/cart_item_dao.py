@@ -31,7 +31,7 @@ class CartItemDAO:
         """Adds given amount of product to user cart with given cart_id"""
         with transaction.atomic():
             CartItem.objects.create(order_id=cart_id, product_id=product_id, amount=amount)
-            # DIPL Product.objects.filter(pk=product_id).update(amount=F('amount') - amount)
+            Product.objects.filter(pk=product_id).update(amount=F('amount') - amount)
 
     @staticmethod
     def change_product_in_cart(cart_id: int, product_id: int, amount_difference: int):
@@ -43,7 +43,7 @@ class CartItemDAO:
         with transaction.atomic():
             CartItem.objects.filter(order_id=cart_id, product_id=product_id).update(
                 amount=F('amount') + amount_difference)
-            # DIPL Product.objects.filter(pk=product_id).update(amount=F('amount') - amount_difference)
+            Product.objects.filter(pk=product_id).update(amount=F('amount') - amount_difference)
 
     @staticmethod
     def delete_products_in_cart(cart_id: int, products_id: Union[int, QuerySet]):
@@ -57,8 +57,8 @@ class CartItemDAO:
             products_id = list(products_id)
         with transaction.atomic():
             cart_item = CartItem.objects.filter(order_id=cart_id, product_id__in=products_id).select_for_update()
-            # DIPL Product.objects.filter(pk__in=products_id) \
-            #     .update(amount=F('amount') + Subquery(cart_item.filter(product_id=OuterRef('pk')).values('amount')))
+            Product.objects.filter(pk__in=products_id)\
+                .update(amount=F('amount') + Subquery(cart_item.filter(product_id=OuterRef('pk')).values('amount')))
             cart_item.delete()
 
     @staticmethod

@@ -163,4 +163,4 @@ MEDIA_URL = '/media/'
 LOGIN_URL = '/user/login'
 LOGIN_REDIRECT_URL = '/'
 
-ALLOWED_HOSTS = ['127.0.0.1', '192.168.43.156']
+ALLOWED_HOSTS = ['127.0.0.1', '192.168.0.104']
