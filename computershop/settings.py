@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'computershop.wsgi.application'
 DATABASES = {
     # 'default': {
     #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    #     'NAME': 'computershop_v2',
+    #     'NAME': 'computershop_v3',
     #     'USER': 'postgres',
     #     'PASSWORD': '12121212',
     #     'HOST': 'localhost',

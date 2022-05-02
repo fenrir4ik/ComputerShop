@@ -5,3 +5,4 @@ media/product/*
 __pycache__/
 env/
 staticdata/
+data.json
