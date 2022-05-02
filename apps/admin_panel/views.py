@@ -5,16 +5,16 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DeleteView, UpdateView
 
 from apps.admin_panel.filters import AdminProductFilter, AdminOrderFilter
-from apps.admin_panel.forms import ProductAddForm, ProductUpdateForm, OrderChangeForm
-from apps.core.permissions import WarehousePermissionMixin, ManagerPermissionMixin
+from apps.admin_panel.forms import ProductAddForm, ProductUpdateForm, ChangeOrderForm
+from apps.core.permissions import ManagerPermissionMixin
 from apps.store.models import Product
-from db.cart_item_dao import CartItemDAO
+from db.characteristic_dao import CharacteristicDAO
 from db.order_dao import OrderDAO
 from db.product_dao import ProductDAO
 from services.constants import DEFAULT_PRODUCT_IMAGE, PRODUCT_IMAGE_MAX_AMOUNT
 
 
-class ProductsListAdminView(WarehousePermissionMixin, ListView):
+class ProductsListAdminView(ManagerPermissionMixin, ListView):
     """View is used for displaying products list and products add form in admin-panel"""
     template_name = 'admin_panel/products_list.html'
     context_object_name = 'products'
@@ -33,7 +33,7 @@ class ProductsListAdminView(WarehousePermissionMixin, ListView):
 
     def get_form(self):
         if self.request.method == 'POST':
-            return self.form_class(self.request.POST, self.request.FILES)
+            return self.form if hasattr(self, 'form') else self.form_class(self.request.POST, self.request.FILES)
         else:
             return self.form_class()
 
@@ -45,15 +45,15 @@ class ProductsListAdminView(WarehousePermissionMixin, ListView):
         return context
 
     def post(self, request, *args, **kwargs):
-        form = self.get_form()
-        if form.is_valid():
-            form.save()
+        self.form = self.get_form()
+        if self.form.is_valid():
+            self.form.save()
             return HttpResponseRedirect(self.success_url)
         else:
             return self.get(request, *args, **kwargs)
 
 
-class ProductDeleteView(WarehousePermissionMixin, DeleteView):
+class ProductDeleteView(ManagerPermissionMixin, DeleteView):
     """View is used for deletion products in admin-panel"""
     error_message = "Товар №{} находится в корзине пользователя и не может быть удален"
     success_message = "Товар №{} был успешно удален"
@@ -75,7 +75,7 @@ class ProductDeleteView(WarehousePermissionMixin, DeleteView):
         return next_page if next_page else reverse_lazy('admin-products')
 
 
-class ProductUpdateView(WarehousePermissionMixin, UpdateView):
+class ProductUpdateView(ManagerPermissionMixin, UpdateView):
     """View is used for updating products in admin-panel"""
     template_name = 'admin_panel/update_product.html'
     form_class = ProductUpdateForm
@@ -90,6 +90,7 @@ class ProductUpdateView(WarehousePermissionMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['default_product_image'] = DEFAULT_PRODUCT_IMAGE
+        context['product_characteristics'] = CharacteristicDAO.get_product_characteristics(self.object.pk)
         return context
 
 
@@ -114,7 +115,7 @@ class OrdersListView(ManagerPermissionMixin, ListView):
 class OrderUpdateView(ManagerPermissionMixin, UpdateView):
     """View is used for updating orders in admin-panel"""
     template_name = 'admin_panel/update_order.html'
-    form_class = OrderChangeForm
+    form_class = ChangeOrderForm
     context_object_name = 'order'
 
     def get_queryset(self):
@@ -122,7 +123,3 @@ class OrderUpdateView(ManagerPermissionMixin, UpdateView):
 
     def get_success_url(self):
         return self.request.path_info
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context

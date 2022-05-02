@@ -217,6 +217,7 @@
 .checkout {
     background-color: #52ab98;
     color: #f2f2f2;
+    border-radius: 0;
 }
 
 .checkout_div {
@@ -227,7 +228,7 @@
     background-color: #c8d8e4;
     height: 60px;
     border: 1px solid #2b6777;
-    border-radius: 4px;
+    border-radius: 0;
 }
 
 .cart_total {

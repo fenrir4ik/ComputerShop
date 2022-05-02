@@ -8,6 +8,7 @@ from django.urls import reverse, reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, UpdateView
 
+from apps.core.permissions import CustomerPermission
 from apps.user.forms import RegistrationForm, LoginForm, ProfileChangeForm
 
 
@@ -32,7 +33,7 @@ class UserLogoutView(LoginRequiredMixin, View):
         return redirect(reverse('index'))
 
 
-class ProfileChangeView(LoginRequiredMixin, UpdateView):
+class ProfileChangeView(CustomerPermission, LoginRequiredMixin, UpdateView):
     """View is used to change user profile information in 'profile' section"""
     form_class = ProfileChangeForm
     template_name = 'user/profile.html'

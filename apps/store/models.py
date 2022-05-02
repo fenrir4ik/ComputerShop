@@ -8,13 +8,24 @@ from apps.core.models import User
 from services.constants import DEFAULT_PRODUCT_IMAGE
 
 
+class Country(models.Model):
+    name = models.CharField(max_length=60, unique=True)
+
+    class Meta:
+        db_table = 'country'
+
+
 class Vendor(models.Model):
-    name = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=255, unique=True)
+    email = models.EmailField(max_length=255, unique=True, db_index=True)
+    phone_number = models.CharField(max_length=12, unique=True, db_index=True)
+    postal_code = models.CharField(max_length=12, db_index=True)
+    description = models.TextField(verbose_name="Описание")
+    country = models.ForeignKey(Country, on_delete=models.RESTRICT)
 
     class Meta:
         db_table = 'vendor'
 
-    # add more info about vendor
     def __str__(self):
         return self.name
 
@@ -29,6 +40,13 @@ class Category(models.Model):
         return self.name
 
 
+class Characteristic(models.Model):
+    name = models.CharField(verbose_name="Название характеристики", max_length=50, unique=True)
+
+    class Meta:
+        db_table = 'characteristic'
+
+
 class Product(models.Model):
     name = models.CharField(max_length=255, verbose_name="Название", db_index=True)
     amount = models.PositiveIntegerField(verbose_name="Количество", default=0)
@@ -36,6 +54,8 @@ class Product(models.Model):
     vendor = models.ForeignKey(Vendor, related_name='products', verbose_name="Производитель", on_delete=models.RESTRICT)
     date_created = models.DateTimeField(verbose_name="Дата создания", auto_now_add=True)
     description = models.TextField(verbose_name="Описание")
+    characteristics = models.ManyToManyField(Characteristic, related_name='products', through='ProductCharacteristic')
+    rating = models.DecimalField(decimal_places=3, max_digits=6, default=0)
 
     class Meta:
         db_table = 'product'
@@ -44,8 +64,22 @@ class Product(models.Model):
         return f'Product[{self.pk}], {self.name=}, {self.amount=}'
 
 
+class ProductCharacteristic(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    characteristic = models.ForeignKey(Characteristic, related_name='char_item', on_delete=models.CASCADE)
+    value = models.CharField(verbose_name='Значение', max_length=50)
+
+    class Meta:
+        db_table = 'product_characteristic'
+        unique_together = ('product', 'characteristic')
+
+    def __str__(self):
+        return f"{self.characteristic.name}: {self.value}"
+
+
 class ProductImage(models.Model):
-    image = models.ImageField(verbose_name='Изображение', upload_to='product', default=DEFAULT_PRODUCT_IMAGE, blank=False)
+    image = models.ImageField(verbose_name='Изображение', upload_to='product', default=DEFAULT_PRODUCT_IMAGE,
+                              blank=False)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     is_main = models.BooleanField(default=False)
 
@@ -122,10 +156,6 @@ class Order(models.Model):
 
     def __str__(self):
         return f'Order[{self.pk}], {self.user_id=}, {self.status=}, {self.date_start=}, {self.date_end=}'
-
-    @property
-    def is_new(self):
-        return self.status.id == OrderStatus.retrieve_id('new')
 
     def save(self, *args, **kwargs):
         if self.status_id == OrderStatus.retrieve_id('completed'):

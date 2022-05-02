@@ -71,7 +71,8 @@ class OrderFilter(BaseOrderFilter):
     def search_by_keyword(self, queryset, name, value):
         queryset_filtered_by_id = self.filter_queryset_by_id(queryset, value)
         queryset_filtered_by_products_names = self.filter_queryset_by_products_name(queryset, value)
-        return queryset_filtered_by_id.union(queryset_filtered_by_products_names)
+        queryset_union = queryset_filtered_by_id.union(queryset_filtered_by_products_names)
+        return queryset_union
 
     def filter_queryset_by_id(self, queryset, value):
         try:

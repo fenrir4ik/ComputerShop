@@ -1,21 +1,21 @@
-import io
-
-import pandas as pd
 from django import forms
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, FileExtensionValidator
+from django.db import transaction
 from django.forms import formset_factory, inlineformset_factory, BaseInlineFormSet
 
-from apps.store.models import Product, ProductImage, Order
+from apps.store.models import Product, ProductImage, Order, OrderStatus
+from apps.user.forms import UserBaseForm
 from services.constants import PRODUCT_IMAGE_MAX_AMOUNT
 from services.order_status_service import OrderStatusService
 from services.product_service import AdditionalProductDataService
-from utils.form_validators import square_image_validator
+from utils.parsers import parse_inmemory_excel_to_dataframe
+from utils.validators import SquareImageValidator, validate_df_emptiness, validate_allowed_characteristics_columns
 
 
 class ImageForm(forms.ModelForm):
     """Form is used in ImageFormSets to add multiple images to the product"""
-    image = forms.ImageField(label="Изображение", required=False, validators=[square_image_validator])
+    image = forms.ImageField(label="Изображение", required=False, validators=[SquareImageValidator()])
 
     class Meta:
         model = ProductImage
@@ -35,7 +35,8 @@ class ProductImageUpdateInlineFormSet(BaseInlineFormSet):
             # validate image if it has changed and delete checkbox is not True
             if 'image' in form.changed_data and 'delete' not in form.changed_data:
                 try:
-                    square_image_validator(form.cleaned_data.get('image'))
+                    validator = SquareImageValidator()
+                    validator(form.cleaned_data.get('image'))
                 except ValidationError as ex:
                     form.add_error('image', ex.message)
 
@@ -64,13 +65,15 @@ class BaseProductModelForm(forms.ModelForm):
     price = forms.DecimalField(label="Цена", validators=[MinValueValidator(0.00)], decimal_places=2, max_digits=11,
                                min_value=0.00)
     description = forms.CharField(label="Описание", widget=forms.Textarea(attrs={'rows': 3}))
-    characteristics = forms.FileField(label="Характеристики",
-                                      required=True,
-                                      validators=[FileExtensionValidator(allowed_extensions=['xlsx'])])
+    characteristics = forms.FileField(
+        label="Характеристики",
+        required=True,
+        validators=[FileExtensionValidator(allowed_extensions=['xlsx'])]
+    )
 
     class Meta:
         model = Product
-        fields = ['name', 'price', 'amount', 'category', 'vendor', 'description', 'characteristics']
+        fields = ['name', 'price', 'amount', 'category', 'vendor', 'description']
 
     def __init__(self, image_formset=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -83,14 +86,23 @@ class BaseProductModelForm(forms.ModelForm):
         return self.image_formset.is_valid() and super().is_valid()
 
     def save(self, commit=True):
-        product = super().save(commit=commit)
-        self.process_additional_product_data(product)
+        with transaction.atomic():
+            product = super().save(commit=commit)
+            if commit:
+                self.process_additional_product_data(product)
         return product
 
     def clean_characteristics(self):
         file = self.cleaned_data.get('characteristics')
-        df = pd.read_excel(io.BytesIO(file.read()), sheet_name=0)
-        return df
+        if file is None:
+            return None
+        try:
+            df = parse_inmemory_excel_to_dataframe(file)
+        except ValueError:
+            raise ValidationError("Ошибка в ходе загрузки файла, проверьте его корректность.")
+        validate_allowed_characteristics_columns(df)
+        validate_df_emptiness(df)
+        return df.to_dict(orient='records')
 
     def process_additional_product_data(self, product):
         raise NotImplemented
@@ -104,9 +116,10 @@ class ProductAddForm(BaseProductModelForm):
         super().__init__(data=data, files=files, image_formset=image_formset, **kwargs)
 
     def process_additional_product_data(self, product):
-        characteristics_file = self.cleaned_data.get('characteristics')
-        AdditionalProductDataService.add_additional_data(product.pk, self.cleaned_data.get('price'),
-                                                         self.image_formset.cleaned_data)
+        AdditionalProductDataService.add_additional_data(product.pk,
+                                                         self.cleaned_data.get('price'),
+                                                         self.image_formset.cleaned_data,
+                                                         self.cleaned_data.get('characteristics'))
 
 
 class ProductUpdateForm(BaseProductModelForm):
@@ -116,14 +129,16 @@ class ProductUpdateForm(BaseProductModelForm):
         image_formset = ProductImageUpdateFormSet(*args, **kwargs)
         super().__init__(image_formset=image_formset, *args, **kwargs)
         self.fields['price'].initial = kwargs.get('instance').price
+        self.fields['characteristics'].required = False
 
     def process_additional_product_data(self, product):
-        characteristics_file = self.cleaned_data.get('characteristics')
-        AdditionalProductDataService.update_additional_data(product.pk, self.cleaned_data.get('price'),
-                                                            self.image_formset.cleaned_data)
+        AdditionalProductDataService.update_additional_data(product.pk,
+                                                            self.cleaned_data.get('price'),
+                                                            self.image_formset.cleaned_data,
+                                                            self.cleaned_data.get('characteristics'))
 
 
-class OrderChangeForm(forms.ModelForm):
+class ChangeOrderForm(UserBaseForm, forms.ModelForm):
     """Form is used to update user order information and status"""
 
     status = forms.ModelChoiceField(label="Статус", queryset=None, empty_label=None, required=True)
@@ -144,7 +159,8 @@ class OrderChangeForm(forms.ModelForm):
         self.fields['status'].queryset = order_status_service.get_future_statuses()
 
         readonly_fields = ['date_start', 'date_end']
-        if not self.instance.is_new:
+
+        if not self.instance.status_id == OrderStatus.retrieve_id('new'):
             readonly_fields.extend(['name', 'surname', 'patronymic', 'email', 'phone_number', 'address', 'payment'])
         for field in readonly_fields:
             self.fields[field].disabled = True

@@ -11,6 +11,7 @@ from apps.store.filters import ProductFilter, OrderFilter
 from apps.store.forms import AddProductToCartForm, CreateOrderForm
 from apps.store.models import Product
 from db.cart_item_dao import CartItemDAO
+from db.characteristic_dao import CharacteristicDAO
 from db.image_dao import ImageDAO
 from db.order_dao import OrderDAO
 from db.product_dao import ProductDAO
@@ -53,8 +54,9 @@ class SingleProductView(DetailView):
 
         context['product_images'] = ImageDAO.get_product_images(product_id)
         context['product_price_history'] = ProductPriceHistoryService.get_product_price_history(product_id)
-
-        if self.request.user.is_authenticated:
+        context['product_characteristics'] = CharacteristicDAO.get_product_characteristics(product_id)
+        
+        if self.request.user.is_authenticated and not self.request.user.is_staff:
             product_amount = self.object.get('amount')
             user_id = self.request.user.pk
             context['product_amount_in_cart'] = CartItemDAO.get_product_amount_in_cart_by_user_id(user_id, product_id)
@@ -132,7 +134,7 @@ class UserCartView(CustomerPermission, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['cart_total'] = context.get('cart_items').aggregate(total = Sum(F('amount')*F('price'))).get('total')
+        context['cart_total'] = context.get('cart_items').aggregate(total=Sum(F('amount') * F('price'))).get('total')
         return context
 
     def post(self, request, *args, **kwargs):

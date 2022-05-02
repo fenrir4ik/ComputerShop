@@ -1,10 +1,10 @@
-from typing import List
+from typing import List, Dict
 
 from db.image_dao import ImageDAO
 from services.constants import PRODUCT_IMAGE_MAX_AMOUNT
 
 
-def _parse_image_formset_to_list(cleaned_data: list) -> List[dict]:
+def _parse_image_formset_to_list(cleaned_data: list) -> List[Dict]:
     """
     Retrieves cleaned data and parse it into the list of dicts for future product images updating
     Returns list of dicts with keys: image, old_image_id, delete
@@ -25,7 +25,7 @@ def _parse_image_formset_to_list(cleaned_data: list) -> List[dict]:
 class ImageService:
     """Service is used for product image managing, like adding and updating product images"""
     @staticmethod
-    def add_product_images(product_id: int, image_list: List[dict]):
+    def add_product_images(product_id: int, image_list: List[Dict]):
         """Method takes in product id and image list and adds images for given product"""
         main_image_empty = True
         for image_dict in image_list:
@@ -36,7 +36,7 @@ class ImageService:
             ImageDAO.create_default_product_image(product_id)
 
     @staticmethod
-    def update_product_images(product_id: int, image_list: List[dict]):
+    def update_product_images(product_id: int, image_list: List[Dict]):
         """Method takes in product id and image list and updates images for given product"""
         image_list = _parse_image_formset_to_list(image_list)
 
@@ -65,7 +65,7 @@ class ImageService:
                 ImageDAO.create_default_product_image(product_id)
 
     @staticmethod
-    def __images_update_available(product_id: int, image_list: List[dict]) -> bool:
+    def __images_update_available(product_id: int, image_list: List[Dict]) -> bool:
         """Check if image update available to prevent incompatible data creation during simultaneous product editing"""
         current_image_n = ImageDAO.get_product_image_number(product_id)
         created_image_n = 0

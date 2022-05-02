@@ -8,7 +8,46 @@
 {% block content %}
     <div class="container form_outer">
         <h1>Изменение заказа</h1>
-        {% include 'utils/order_form.html' %}
+        <form method="POST" id="order_form">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form_field">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {{ field.errors }}
+                </div>
+            {% endfor %}
+            {% if order %}
+                <div class="order_cart">
+                    {% for item in order.products.all %}
+                        <div class="order_product">
+                            <div class="product_inner links_div">
+                                <a class="product_image" href="{% url 'product-detail' pk=item.product_id %}">
+                                    <img src="{% get_media_prefix %}{{ item.image }}" alt='product_image'>
+                                </a>
+                                <div class="column_element name_element">
+                                    <p class="column_title">Название</p>
+                                    <a class="product_name" href="{% url 'product-detail' pk=item.product_id %}">
+                                        <p>{{ item.product.name }}</p>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="product_inner info_div">
+                                <div class="column_element price_element">
+                                    <p class="column_title">Цена</p>
+                                    <p class="column_data">{{ item.price }} ₴</p>
+                                </div>
+                                <div class="column_element amount_element">
+                                    <p class="column_title">Количество</p>
+                                    <p class="column_data">{{ item.amount }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <h5 class="order_total">Итого: {{ order.order_total }} ₴</h5>
+            {% endif %}
+        </form>
         <div class="button_div">
             <button type="submit" class="btn submit_button" form="order_form">Сохранить</button>
         </div>

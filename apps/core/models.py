@@ -1,8 +1,6 @@
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, Group
-from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import CheckConstraint, Q
 
 
 class UserManager(BaseUserManager):
@@ -31,14 +29,8 @@ class UserManager(BaseUserManager):
         user = self.create_user(email, name, surname, patronymic, phone_number, password)
         user.is_staff = True
         user.is_superuser = True
-        user.role = UserRole.MANAGER
         user.save(using=self._db)
         return user
-
-
-class UserRole(models.IntegerChoices):
-    MANAGER = 1, 'Manager'
-    WAREHOUSE_WORKER = 2, 'Warehouse worker'
 
 
 class User(AbstractBaseUser):
@@ -50,7 +42,6 @@ class User(AbstractBaseUser):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now=True)
-    role = models.PositiveSmallIntegerField(choices=UserRole.choices, blank=True, null=True)
 
     objects = UserManager()
 
@@ -59,9 +50,6 @@ class User(AbstractBaseUser):
 
     class Meta:
         db_table = 'user'
-        constraints = [
-            CheckConstraint(check=Q(role__in=UserRole.values), name="valid_role")
-        ]
 
     def __str__(self):
         return f'{self.name} {self.surname} {self.patronymic}'
@@ -71,20 +59,3 @@ class User(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return self.is_superuser
-
-    def save(self, *args, **kwargs):
-        if self.role:
-            self.is_staff = True
-        super().save(*args, **kwargs)
-
-    def clean(self):
-        super().clean()
-        if self.is_staff and not self.role:
-            raise ValidationError("Укажите роль для пользователя")
-
-    def has_role(self, role):
-        return self.role == role
-
-    @property
-    def is_manager(self):
-        return self.role == UserRole.MANAGER

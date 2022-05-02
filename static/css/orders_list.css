@@ -262,6 +262,7 @@
     width: 80px;
     margin-top: 10px;
     margin-bottom: 20px;
+    border-radius: 0;
 }
 
 .order_detail_btn:hover {
