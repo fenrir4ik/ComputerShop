@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-from django.db.models import Avg
+from django.db.models import Avg, QuerySet
 from django.db.models.functions import TruncMonth
 
 from apps.store.models import ProductPrice
@@ -30,7 +30,7 @@ class PriceDAO:
         ProductPrice(product_id=product_id, price=price).save()
 
     @staticmethod
-    def get_product_price_history(product_id):
+    def get_product_price_history(product_id: int) -> QuerySet:
         year_ago = get_date_year_ago()
         return ProductPrice.objects.annotate(month=TruncMonth('date_actual')) \
             .values('month') \

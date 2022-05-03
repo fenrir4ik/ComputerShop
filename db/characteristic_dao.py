@@ -1,3 +1,5 @@
+from typing import Dict, List
+
 from django.db.models import F
 
 from apps.store.models import Characteristic, ProductCharacteristic
@@ -19,7 +21,7 @@ class CharacteristicDAO:
         Characteristic.objects.filter(products=None).delete()
 
     @staticmethod
-    def get_product_characteristics(product_id):
+    def get_product_characteristics(product_id: int) -> List[Dict]:
         return ProductCharacteristic.objects.filter(product_id=product_id) \
             .select_related('characteristic') \
             .values('value', name=F('characteristic__name'))
