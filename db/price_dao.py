@@ -2,9 +2,9 @@ from decimal import Decimal
 
 from django.db.models import Avg, QuerySet
 from django.db.models.functions import TruncMonth
+from django.utils import timezone
 
 from apps.store.models import ProductPrice
-from utils.date import get_date_year_ago
 
 
 class PriceDAO:
@@ -31,8 +31,11 @@ class PriceDAO:
 
     @staticmethod
     def get_product_price_history(product_id: int) -> QuerySet:
-        year_ago = get_date_year_ago()
+        """
+        Returns yearly product price history
+        """
+        year_ago_date = timezone.now() - timezone.timedelta(days=365)
         return ProductPrice.objects.annotate(month=TruncMonth('date_actual')) \
             .values('month') \
             .annotate(avg_price=Avg('price')) \
-            .filter(product_id=product_id, date_actual__gte=year_ago)
+            .filter(product_id=product_id, date_actual__gte=year_ago_date)

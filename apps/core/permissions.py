@@ -1,7 +1,7 @@
 import abc
 
 from django.http import HttpResponseForbidden
-#PermissionRequiredMixin
+
 
 class BasePermission(abc.ABC):
     @abc.abstractmethod
