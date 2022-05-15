@@ -55,6 +55,7 @@ class Product(models.Model):
     date_created = models.DateTimeField(verbose_name="Дата создания", auto_now_add=True)
     description = models.TextField(verbose_name="Описание")
     characteristics = models.ManyToManyField(Characteristic, related_name='products', through='ProductCharacteristic')
+    reviews = models.ManyToManyField(User, through='Review')
     rating = models.DecimalField(decimal_places=3, max_digits=6, default=0)
 
     class Meta:
@@ -175,6 +176,15 @@ class CartItem(models.Model):
     constraints = [
         models.CheckConstraint(check=models.Q(amount__gte=1), name='amount_positive'),
     ]
+
+
+class Review(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    message = models.TextField(max_length=500)
+
+    class Meta:
+        db_table = 'review'
 
 
 @receiver(post_delete, sender=ProductImage)

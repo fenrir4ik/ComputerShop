@@ -15,6 +15,7 @@ from db.characteristic_dao import CharacteristicDAO
 from db.image_dao import ImageDAO
 from db.order_dao import OrderDAO
 from db.product_dao import ProductDAO
+from db.review_dao import ReviewDAO
 from services.cart_service import CartService
 from services.product_service import ProductPriceHistoryService
 
@@ -55,6 +56,7 @@ class SingleProductView(DetailView):
         context['product_images'] = ImageDAO.get_product_images(product_id)
         context['product_price_history'] = ProductPriceHistoryService.get_product_price_history(product_id)
         context['product_characteristics'] = CharacteristicDAO.get_product_characteristics(product_id)
+        context['reviews'] = ReviewDAO.get_product_reviews(product_id)
         
         if self.request.user.is_authenticated and not self.request.user.is_staff:
             product_amount = self.object.get('amount')
