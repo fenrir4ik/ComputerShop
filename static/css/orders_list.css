@@ -23,7 +23,7 @@
 }
 
 .order_outer {
-    box-shadow: 0 0 1px 0 rgb(0 0 0 / 50%), 0 0 1px 0 rgb(0 0 0 / 50%);
+   box-shadow: 0 0 1px 0 #00000080, 0 0 1px 0 #00000080;
 }
 
 .order_expand,
@@ -170,7 +170,7 @@
     flex-direction: row;
     justify-content: space-between;
     padding: 5px;
-    box-shadow: 0 0 1px 0 rgb(0 0 0 / 50%), 0 0 1px 0 rgb(0 0 0 / 50%);
+    box-shadow: 0 0 1px 0 #00000080, 0 0 1px 0 #00000080;
 }
 
 .item_name {

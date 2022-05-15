@@ -32,3 +32,8 @@ def page_median(from_, to_):
 @register.filter
 def multiply(arg1, arg2):
     return arg1 * arg2
+
+
+@register.simple_tag()
+def relevance_percentage(relevance_k):
+    return int(relevance_k / 50000 * 100)

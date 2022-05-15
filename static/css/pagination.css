@@ -2,7 +2,7 @@
 .pagination_disabled {
     width: 35px;
     height: 25px;
-    box-shadow: 0 0 2px 0 rgb(0 0 0 / 50%), 0 2px 6px 0 rgb(0 0 0 / 50%);
+    box-shadow: 0 0 2px 0 #00000080, 0 2px 6px 0 #00000080;
     text-align: center;
     text-decoration: none !important;
     color: black;
