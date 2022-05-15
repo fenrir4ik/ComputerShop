@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'apps.admin_panel'
 ]
 
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -139,11 +138,10 @@ TIME_ZONE = 'Europe/Kiev'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
-
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticdata')
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -163,4 +161,5 @@ MEDIA_URL = '/media/'
 LOGIN_URL = '/user/login'
 LOGIN_REDIRECT_URL = '/'
 
-ALLOWED_HOSTS = ['127.0.0.1', '192.168.0.104']
+# ALLOWED_HOSTS = ['localhost', '192.168.0.104', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '*', '127.0.0.1']
