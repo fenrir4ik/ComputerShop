@@ -162,5 +162,7 @@ class ChangeOrderForm(UserBaseForm, forms.ModelForm):
 
         if not self.instance.status_id == OrderStatus.retrieve_id('new'):
             readonly_fields.extend(['name', 'surname', 'patronymic', 'email', 'phone_number', 'address', 'payment'])
+            if self.instance.status_id == OrderStatus.retrieve_id('completed'):
+                readonly_fields.append('status')
         for field in readonly_fields:
             self.fields[field].disabled = True

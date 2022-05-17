@@ -6,6 +6,7 @@ from django.utils import timezone
 
 from apps.core.models import User
 from services.constants import DEFAULT_PRODUCT_IMAGE
+from services.recommender_service import RecommenderService
 
 
 class Country(models.Model):
@@ -161,6 +162,7 @@ class Order(models.Model):
     def save(self, *args, **kwargs):
         if self.status_id == OrderStatus.retrieve_id('completed'):
             self.date_end = timezone.now()
+        RecommenderService.process_cart_products(self.pk)
         super().save(*args, **kwargs)
 
 
@@ -192,3 +194,4 @@ def delete_image_from_storage(sender, instance, *args, **kwargs):
     product_image = ProductImage.objects.filter(pk=instance.pk).exists()
     if instance.pk and not product_image and instance.image != DEFAULT_PRODUCT_IMAGE:
         instance.image.delete(False)
+

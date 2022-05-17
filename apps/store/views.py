@@ -54,7 +54,7 @@ class SingleProductView(DetailView):
         product_id = self.object.get('id')
 
         context['product_images'] = ImageDAO.get_product_images(product_id)
-        context['product_price_history'] = ProductPriceHistoryService.get_product_price_history(product_id)
+        context['product_price_history'] = ProductPriceHistoryService.get_yearly_price_history(product_id)
         context['product_characteristics'] = CharacteristicDAO.get_product_characteristics(product_id)
         context['reviews'] = ReviewDAO.get_product_reviews(product_id)
         
