@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'silk',
     'django_filters',
+    'django_celery_beat',
     'apps.core',
     'apps.store',
     'apps.user',

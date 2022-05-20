@@ -17,7 +17,7 @@ from db.order_dao import OrderDAO
 from db.product_dao import ProductDAO
 from db.review_dao import ReviewDAO
 from services.cart_service import CartService
-from services.product_service import ProductPriceHistoryService
+from services.product_service import PriceHistoryService
 
 
 class IndexView(ListView):
@@ -29,13 +29,13 @@ class IndexView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['filter'] = ProductFilter(self.request.GET)
+        context['minmax_rating'] = ProductDAO.get_min_max_product_rating()
         return context
 
     def get_queryset(self):
-        # amount and date_created not used
         queryset = ProductDAO.get_products_list()
-        queryset = queryset.values('id', 'image', 'name', 'price', 'amount', 'date_created')
-        queryset = queryset.order_by('-id')
+        queryset = queryset.values('id', 'image', 'name', 'price', 'rating', 'amount', 'date_created')
+        queryset = queryset.order_by('-rating')
         filter = ProductFilter(self.request.GET, queryset=queryset)
         return filter.qs
 
@@ -54,7 +54,7 @@ class SingleProductView(DetailView):
         product_id = self.object.get('id')
 
         context['product_images'] = ImageDAO.get_product_images(product_id)
-        context['product_price_history'] = ProductPriceHistoryService.get_yearly_price_history(product_id)
+        context['product_price_history'] = PriceHistoryService.get_single_product_price_history(product_id)
         context['product_characteristics'] = CharacteristicDAO.get_product_characteristics(product_id)
         context['reviews'] = ReviewDAO.get_product_reviews(product_id)
         
@@ -156,6 +156,7 @@ class OrderCreateView(CustomerPermission, CreateView):
         context['cart_items'] = CartItemDAO.get_user_cart(self.request.user.pk) \
             .values('amount', 'product_id', 'product__name', 'image', 'price') \
             .order_by('-product_id')
+        context['order_total'] = context['cart_items'].aggregate(order_total=Sum('price')).get('order_total')
         return context
 
     def get_form_kwargs(self):

@@ -160,10 +160,12 @@ class Order(models.Model):
         return f'Order[{self.pk}], {self.user_id=}, {self.status=}, {self.date_start=}, {self.date_end=}'
 
     def save(self, *args, **kwargs):
-        if self.status_id == OrderStatus.retrieve_id('completed'):
+        if self.status_id == OrderStatus.retrieve_id('completed') and not self.date_end:
             self.date_end = timezone.now()
-        RecommenderService.process_cart_products(self.pk)
-        super().save(*args, **kwargs)
+            super().save(*args, **kwargs)
+            RecommenderService.process_cart_items(self.pk)
+        else:
+            super().save(*args, **kwargs)
 
 
 class CartItem(models.Model):

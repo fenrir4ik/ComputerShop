@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 {% load static %}
-{% load template_utils %}
 
 {% block styles %}
     <link rel="stylesheet" href="{% static 'css/order_page.css' %}">
@@ -45,7 +44,7 @@
                     </div>
                 {% endfor %}
             </div>
-            <h5 class="order_total">Итого: {% get_order_total cart_items %} ₴</h5>
+            <h5 class="order_total">Итого: {{ order_total }} ₴</h5>
         </form>
         <div class="button_div">
             <button type="submit" class="btn submit_button" form="order_form">Отправить в обработку</button>

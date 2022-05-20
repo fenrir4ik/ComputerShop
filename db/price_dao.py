@@ -16,14 +16,19 @@ class PriceDAO:
     }
 
     @staticmethod
+    def get_last_product_price(product_id: int):
+        return models.ProductPrice.objects.filter(product_id=product_id) \
+            .values_list('price', flat=True).order_by('-date_actual')[0]
+
+    @staticmethod
     def update_product_price(product_id: int, price: Decimal):
         """
         Updates price of given product
         This method is used during product update
         Product price history will be formed as a result of multiple price updates
         """
-        old_price_instance = models.ProductPrice.objects.filter(product_id=product_id).order_by('-date_actual').first()
-        if old_price_instance.price != price:
+        old_price = PriceDAO.get_last_product_price(product_id)
+        if old_price != price:
             PriceDAO.create_product_price(product_id, price)
 
     @staticmethod
@@ -42,14 +47,14 @@ class PriceDAO:
         date_start = kwargs.get('date_start')
         aggregation_period = kwargs.get('aggregation_period')
         agg_function = PriceDAO.aggregation_period_dict[aggregation_period]
-        return models.ProductPrice.objects.annotate(period=agg_function('date_actual')) \
-            .values('product_id', 'period') \
-            .annotate(avg_price=Avg('price')) \
-            .filter(date_actual__gte=date_start)
+        return models.ProductPrice.objects.annotate(period=agg_function('date_actual'), avg_price=Avg('price')) \
+            .values('product_id', 'period', 'avg_price') \
+            .filter(date_actual__gte=date_start)\
+            .order_by('period')
 
     @staticmethod
-    def get_product_price_history_by_id(product_ids: List[int], **kwargs):
+    def get_product_price_history_by_id(id_list: List[int], **kwargs):
         """
         Returns product price history for particular product
         """
-        return PriceDAO.get_all_product_price_history(**kwargs).filter(product_id__in=product_ids)
+        return PriceDAO.get_all_product_price_history(**kwargs).filter(product_id__in=id_list)

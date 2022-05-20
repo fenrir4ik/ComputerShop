@@ -66,7 +66,7 @@
                                 {% if user.is_staff %}
                                     <p class="actuality_title">Релевантность:</p>
                                     <div class="actuality_bar"
-                                         style="background: linear-gradient(to right, #2b6777 {% relevance_percentage product.price %}%, #ffffff 0%);">
+                                         style="background: linear-gradient(to right, #2b6777 {{ product.rating|rating_percentage:minmax_rating }}%, #ffffff 0%);">
                                     </div>
                                 {% endif %}
                             </div>

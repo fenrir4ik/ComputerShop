@@ -26,7 +26,6 @@ class CreateOrderForm(UserBaseForm, forms.ModelForm):
         model = Order
         fields = ['name', 'surname', 'patronymic', 'phone_number', 'email', 'address', 'payment']
 
-
     def __init__(self, user, data=None, files=None, instance=None, **kwargs):
         super().__init__(data=data, files=files, instance=instance, **kwargs)
         self.fields['phone_number'].widget.attrs.update({'required': True})

@@ -34,11 +34,13 @@ class ProductFilter(django_filters.FilterSet):
     sort = django_filters.OrderingFilter(
         label="Отсортировать",
         choices=(
+            ('-rating', 'популярные'),
             ('price', 'от дешевых к дорогим'),
             ('-price', 'от дорогих к дешевым'),
             ('name', 'по алфавиту'),
             ('-date_created', 'новинки')
-        )
+        ),
+        empty_label = 'все'
     )
 
     class Meta:

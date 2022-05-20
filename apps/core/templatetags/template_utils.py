@@ -1,5 +1,4 @@
 from django import template
-from django.db.models import Sum
 
 register = template.Library()
 
@@ -12,11 +11,6 @@ def url_param_replace(context, **kwargs):
     for k in [k for k, v in d.items() if not v]:
         del d[k]
     return d.urlencode()
-
-
-@register.simple_tag()
-def get_order_total(cart_items):
-    return cart_items.aggregate(order_total=Sum('price')).get('order_total')
 
 
 @register.filter
@@ -34,6 +28,6 @@ def multiply(arg1, arg2):
     return arg1 * arg2
 
 
-@register.simple_tag()
-def relevance_percentage(relevance_k):
-    return int(relevance_k / 50000 * 100)
+@register.filter
+def rating_percentage(rating, minmax_tuple):
+    return int(rating / (minmax_tuple[1] - minmax_tuple[0])*100)
