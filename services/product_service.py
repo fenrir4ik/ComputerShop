@@ -26,11 +26,10 @@ class AdditionalProductDataService:
             CharacteristicService().update_product_characteristics(product_id, characteristics)
 
 
-class PriceHistoryService:
+class PriceHistoryChartService:
     """Service for managing product prices and its history"""
 
-    @staticmethod
-    def get_single_product_price_history(product_id: int):
+    def get_product_price_history(self, product_id: int):
         price_repository = PriceRepository()
         price_records = price_repository.get_product_price_history_by_id([product_id],
                                                                          aggregation_period=PH_PERIOD,
@@ -39,26 +38,36 @@ class PriceHistoryService:
         distributed_dates = get_periods_from_range(PH_START, timezone.now(), period=PH_PERIOD)
         if not price_records:
             price_records[next(iter(distributed_dates.keys()))] = price_repository.get_last_product_price(product_id)
-        aggregated_price = PriceHistoryService.process_price_history(distributed_dates, price_records)
-        aggregated_price = PriceHistoryService.__expand_price_dict(aggregated_price)
+        price_history_service = PriceHistoryProcessor()
+        aggregated_price = price_history_service.process_price_history(distributed_dates, price_records)
+        aggregated_price = price_history_service.expand_price_period(aggregated_price)
         return aggregated_price
 
-    @staticmethod
-    def process_price_history(distributed_dates: dict, price_records: dict):
-        aggregated_price = PriceHistoryService.__refill_all_periods(distributed_dates, price_records)
-        aggregated_price = PriceHistoryService.__define_first_period(aggregated_price)
-        aggregated_price = PriceHistoryService.__interpolate_price(aggregated_price)
+
+class PriceHistoryProcessor:
+    """Service for processing price history retrieved from database"""
+
+    def process_price_history(self, distributed_dates: dict, price_records: dict):
+        aggregated_price = self.__refill_all_periods(distributed_dates, price_records)
+        aggregated_price = self.__define_first_period(aggregated_price)
+        aggregated_price = self.__interpolate_price(aggregated_price)
         return aggregated_price
 
-    @staticmethod
-    def __refill_all_periods(distributed_dates: dict, price_records: dict):
+    def __refill_all_periods(self, distributed_dates: dict, price_records: dict):
+        """
+        Converts price_records which is dict (key: period, value: average_price for given period)
+        Into distributed_dates which contains all periods
+        If period is not in price_records, the average price is set to None
+        """
         result_dates = distributed_dates.copy()
         for period in result_dates.keys():
             result_dates[period] = price_records.get(period)
         return result_dates
 
-    @staticmethod
-    def __define_first_period(aggregated_price: dict):
+    def __define_first_period(self, aggregated_price: dict):
+        """
+        If first period of sales history is None, it should be defined as first period in dictionary which is not None
+        """
         result_price = aggregated_price.copy()
         first_period = next(iter(result_price.keys()))
         for key, value in result_price.items():
@@ -69,8 +78,10 @@ class PriceHistoryService:
                     result_price[first_period] = value
         return result_price
 
-    @staticmethod
-    def __interpolate_price(aggregated_price: dict):
+    def __interpolate_price(self, aggregated_price: dict):
+        """
+        Performs interpolating price inside price history
+        """
         result_price = aggregated_price.copy()
         empty_periods = []
         left_price, right_price = 0, 0
@@ -95,9 +106,25 @@ class PriceHistoryService:
                         result_price[period] = round(left_price, 2)
         return result_price
 
-    @staticmethod
-    def __expand_price_dict(aggregated_price):
+    def expand_price_period(self, aggregated_price):
+        """
+        For creating chart there should be 2 periods or more
+        """
         result_price = aggregated_price.copy()
         if len(result_price.keys()) == 1:
             result_price[timezone.now().strftime('%Y-%m-%d')] = next(iter(result_price.values()))
         return result_price
+
+
+class SalesHistoryProcessor:
+    """Service for processing sales history retrieved from database"""
+
+    def process_sales_history(self, distributed_dates: dict, sales_records: dict):
+        """
+        Sales records may not contain sales for given period
+        As a result sales history returned for every period, and if there is no sales for given period it is set to 0
+        """
+        result_sales = distributed_dates.copy()
+        for key in result_sales.keys():
+            result_sales[key] = sales_records.get(key, 0)
+        return result_sales

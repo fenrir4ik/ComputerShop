@@ -17,7 +17,7 @@ from db.order_repository import OrderRepository
 from db.product_repository import ProductRepository
 from db.review_repository import ReviewRepository
 from services.cart_service import CartService
-from services.product_service import PriceHistoryService
+from services.product_service import PriceHistoryChartService
 
 
 class IndexView(ListView):
@@ -54,7 +54,7 @@ class SingleProductView(DetailView):
         product_id = self.object.get('id')
 
         context['product_images'] = ImageRepository().get_product_images(product_id)
-        context['product_price_history'] = PriceHistoryService.get_single_product_price_history(product_id)
+        context['product_price_history'] = PriceHistoryChartService().get_product_price_history(product_id)
         context['product_characteristics'] = CharacteristicRepository().get_product_characteristics(product_id)
         context['reviews'] = ReviewRepository().get_product_reviews(product_id)
 

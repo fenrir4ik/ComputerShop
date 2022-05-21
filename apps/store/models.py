@@ -163,7 +163,7 @@ class Order(models.Model):
         if self.status_id == OrderStatus.retrieve_id('completed') and not self.date_end:
             self.date_end = timezone.now()
             super().save(*args, **kwargs)
-            RecommenderService.process_cart_items(self.pk)
+            RecommenderService().process_cart_items(self.pk)
         else:
             super().save(*args, **kwargs)
 

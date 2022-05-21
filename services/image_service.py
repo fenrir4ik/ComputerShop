@@ -44,7 +44,7 @@ class ImageService:
         image_repository = ImageRepository()
         image_list = _parse_image_formset_to_list(image_list)
 
-        if all(map(lambda image: image.get('delete'), image_list)):
+        if all(map(lambda img: img.get('delete'), image_list)):
             image_repository.delete_all_product_images(product_id)
             image_repository.create_default_product_image(product_id)
             return

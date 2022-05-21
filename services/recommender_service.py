@@ -1,17 +1,16 @@
-import matplotlib.pyplot as plt
 import numpy as np
 from django.db.models import QuerySet
 from django.utils import timezone
 
-from db.product_dao import ProductDAO
-from db.recommender_dao import RecommenderDAO
-from services.constants import REC_START, REC_PERIOD, REC_DEFAULT_CORRELATION, REC_SOFTSIGN_H
-from services.product_service import PriceHistoryService
-from services.sales_service import SalesHistoryService
+from db.cart_item_repository import CartItemRepository
+from db.product_repository import ProductRepository
+from db.recommender_repository import RecommenderRepository
+from services.product_service import SalesHistoryProcessor, PriceHistoryProcessor
+from services.settings import REC_START, REC_PERIOD, REC_DEFAULT_CORRELATION, REC_SOFTSIGN_H
 from utils.date import get_periods_from_range
 
 
-def get_linear_approx_k(x: np.ndarray, y: np.ndarray) -> tuple:
+def get_linear_approx_k(x: np.ndarray, y: np.ndarray) -> float:
     """Returns coefficient k for line that approximate given plane graph"""
     if len(x) != len(y):
         raise ValueError(f"Length of x axis doesn't match y axis: {len(x)} != {len(y)}")
@@ -20,28 +19,12 @@ def get_linear_approx_k(x: np.ndarray, y: np.ndarray) -> tuple:
     return k
 
 
-def plot(X, price, amount):
-    fig, ax1 = plt.subplots(constrained_layout=True)
-    ax2 = ax1.twinx()
-
-    ax1.plot(X, price, 'c', label='        Ціна')
-    ax2.plot(X, amount, 'm', label='Кількість')
-
-    ax1.set_xlabel('Місяць', fontsize=40)
-    ax1.set_ylabel('Ціна, грн', fontsize=40)
-    ax2.set_ylabel('Кількість, шт', fontsize=40)
-
-    ax1.legend(loc='upper center', bbox_to_anchor=(0.5, 0.90))
-    ax2.legend(loc='upper center')
-    plt.show()
-
-
 def get_price_sales_correlation(price: np.ndarray, sales: np.ndarray):
     matrix = np.corrcoef(price, sales)
     return matrix[0, 1]
 
 
-def get_sales_growth_speed(k_coefficient):
+def get_sales_growth_speed(k_coefficient: float) -> float:
     k_coefficient = k_coefficient / REC_SOFTSIGN_H
 
     def soft_sign(x):
@@ -51,30 +34,30 @@ def get_sales_growth_speed(k_coefficient):
 
 
 class RecommenderService:
-    distributed_dates = get_periods_from_range(REC_START, timezone.now(), period=REC_PERIOD)
+    def __init__(self):
+        self.distributed_dates = get_periods_from_range(REC_START, timezone.now(), period=REC_PERIOD)
 
-    @staticmethod
-    def process_cart_items(cart_id: int):
-        cart_products = list(RecommenderDAO.get_cart_products_id(cart_id))
-        products_price_history = RecommenderDAO.get_price_history(cart_products)
-        products_sales_history = RecommenderDAO.get_sales_history(cart_products)
-        products_price_history = RecommenderService.__parse_product_history_queryset(products_price_history,
-                                                                                     data_field_name='avg_price')
-        products_sales_history = RecommenderService.__parse_product_history_queryset(products_sales_history,
-                                                                                     data_field_name='total_products')
+    def process_cart_items(self, cart_id: int):
+        cart_products = list(CartItemRepository().get_cart_products_id(cart_id))
+        products_price_history = RecommenderRepository().get_price_history(cart_products)
+        products_sales_history = RecommenderRepository().get_sales_history(cart_products)
+        products_price_history = self.__parse_history_data(products_price_history, data_field_name='avg_price')
+        products_sales_history = self.__parse_history_data(products_sales_history, data_field_name='total_products')
         for product_id in cart_products:
             product_prices = products_price_history.get(product_id)
             product_sales = products_sales_history.get(product_id)
-            product_prices, product_sales = RecommenderService.get_formatted_data(product_prices, product_sales)
-            rating_update = RecommenderService.evaluate_rating_update(product_prices, product_sales)
+            product_prices, product_sales = self.__get_formatted_data(product_prices, product_sales)
+            rating_update = self.evaluate_rating_update(product_prices, product_sales)
             if rating_update != 0.0:
-                ProductDAO.update_product_rating(product_id, rating_update)
+                ProductRepository().update_product_rating(product_id, rating_update)
 
-    @staticmethod
-    def __parse_product_history_queryset(qs: QuerySet,
-                                         pk_field_name: str = 'product_id',
-                                         period_field_name: str = 'period',
-                                         data_field_name: str = None) -> dict:
+    def __parse_history_data(self,
+                             qs: QuerySet,
+                             pk_field_name: str = 'product_id',
+                             period_field_name: str = 'period',
+                             data_field_name: str = None) -> dict:
+        """Parses given qs to format suitable for future processing"""
+
         parsed_data = {}
         for row in qs:
             key = row.get(pk_field_name)
@@ -82,8 +65,7 @@ class RecommenderService:
             parsed_data[key][row.get(period_field_name).strftime("%Y-%m-%d")] = row.get(data_field_name)
         return parsed_data
 
-    @staticmethod
-    def evaluate_rating_update(price_data: np.ndarray, sales_data: np.ndarray) -> float:
+    def evaluate_rating_update(self, price_data: np.ndarray, sales_data: np.ndarray) -> float:
         if sales_data is None:
             return 0.0
         else:
@@ -96,25 +78,15 @@ class RecommenderService:
         else:
             correlation = get_price_sales_correlation(price_data, sales_data)
         v = get_sales_growth_speed(k)
-        rating_update = abs(correlation)*v
-
-        # print(f'price_data:')
-        # print(price_data)
-        # print(f'sales_data:')
-        # print(sales_data)
-        # print(f'time_range:')
-        # print(time_range)
-        # print(rating_update, correlation, v)
-        # plot(time_range, price_data, sales_data)
+        rating_update = abs(correlation) * v
         return rating_update
 
-    @staticmethod
-    def get_formatted_data(price_data: dict, sales_data: dict) -> tuple:
+    def __get_formatted_data(self, price_data: dict, sales_data: dict) -> tuple:
         price, sales = None, None
         if price_data is not None:
-            price = PriceHistoryService.process_price_history(RecommenderService.distributed_dates, price_data)
+            price = PriceHistoryProcessor().process_price_history(self.distributed_dates, price_data)
             price = np.array(list(price.values()), dtype=np.float32)
         if sales_data is not None:
-            sales = SalesHistoryService.process_sales_history(RecommenderService.distributed_dates, sales_data)
+            sales = SalesHistoryProcessor().process_sales_history(self.distributed_dates, sales_data)
             sales = np.array(list(sales.values()), dtype=np.int)
         return price, sales
