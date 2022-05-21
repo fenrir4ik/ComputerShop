@@ -8,10 +8,10 @@ from apps.admin_panel.filters import AdminProductFilter, AdminOrderFilter
 from apps.admin_panel.forms import ProductAddForm, ProductUpdateForm, ChangeOrderForm
 from apps.core.permissions import ManagerPermissionMixin
 from apps.store.models import Product
-from db.characteristic_dao import CharacteristicDAO
-from db.order_dao import OrderDAO
-from db.product_dao import ProductDAO
-from services.constants import DEFAULT_PRODUCT_IMAGE, PRODUCT_IMAGE_MAX_AMOUNT
+from db.characteristic_repository import CharacteristicRepository
+from db.order_repository import OrderRepository
+from db.product_repository import ProductRepository
+from services.settings import DEFAULT_PRODUCT_IMAGE, PRODUCT_IMAGE_MAX_AMOUNT
 
 
 class ProductsListAdminView(ManagerPermissionMixin, ListView):
@@ -24,7 +24,7 @@ class ProductsListAdminView(ManagerPermissionMixin, ListView):
 
     def get_queryset(self):
         # amount and date_created not used
-        queryset = ProductDAO.get_products_list()
+        queryset = ProductRepository().get_products_list()
         queryset = queryset.values('id', 'image', 'name', 'price', 'amount', 'vendor__name', 'category__name',
                                    'date_created')
         queryset = queryset.order_by('-id')
@@ -61,7 +61,7 @@ class ProductDeleteView(ManagerPermissionMixin, DeleteView):
 
     def form_valid(self, form):
         success_url = self.get_success_url()
-        deleted = ProductDAO.delete_product(self.object.pk)
+        deleted = ProductRepository().delete_product(self.object.pk)
         if deleted:
             message_tuple = (self.request, messages.SUCCESS, self.success_message.format(self.object.pk))
         else:
@@ -82,7 +82,7 @@ class ProductUpdateView(ManagerPermissionMixin, UpdateView):
     context_object_name = 'product'
 
     def get_queryset(self):
-        return ProductDAO.get_products_list(include_price=True, include_image=False)
+        return ProductRepository().get_products_list(include_price=True, include_image=False)
 
     def get_success_url(self):
         return reverse('product-update', kwargs={'pk': self.object.pk})
@@ -90,7 +90,7 @@ class ProductUpdateView(ManagerPermissionMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['default_product_image'] = DEFAULT_PRODUCT_IMAGE
-        context['product_characteristics'] = CharacteristicDAO.get_product_characteristics(self.object.pk)
+        context['product_characteristics'] = CharacteristicRepository().get_product_characteristics(self.object.pk)
         return context
 
 
@@ -106,7 +106,7 @@ class OrdersListView(ManagerPermissionMixin, ListView):
         return context
 
     def get_queryset(self):
-        queryset = OrderDAO.get_all_orders()
+        queryset = OrderRepository().get_all_orders()
         queryset = queryset.order_by('-id')
         filter = AdminOrderFilter(self.request.GET, queryset=queryset)
         return filter.qs
@@ -119,7 +119,7 @@ class OrderUpdateView(ManagerPermissionMixin, UpdateView):
     context_object_name = 'order'
 
     def get_queryset(self):
-        return OrderDAO.get_all_orders()
+        return OrderRepository().get_all_orders()
 
     def get_success_url(self):
         return self.request.path_info

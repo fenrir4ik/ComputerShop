@@ -5,7 +5,7 @@ from django.dispatch import receiver
 from django.utils import timezone
 
 from apps.core.models import User
-from services.constants import DEFAULT_PRODUCT_IMAGE
+from services.settings import DEFAULT_PRODUCT_IMAGE
 from services.recommender_service import RecommenderService
 
 

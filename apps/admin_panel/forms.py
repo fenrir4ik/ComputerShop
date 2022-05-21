@@ -6,7 +6,7 @@ from django.forms import formset_factory, inlineformset_factory, BaseInlineFormS
 
 from apps.store.models import Product, ProductImage, Order, OrderStatus
 from apps.user.forms import UserBaseForm
-from services.constants import PRODUCT_IMAGE_MAX_AMOUNT
+from services.settings import PRODUCT_IMAGE_MAX_AMOUNT
 from services.order_status_service import OrderStatusService
 from services.product_service import AdditionalProductDataService
 from utils.parsers import parse_inmemory_excel_to_dataframe

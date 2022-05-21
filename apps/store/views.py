@@ -10,12 +10,12 @@ from apps.core.permissions import CustomerPermission
 from apps.store.filters import ProductFilter, OrderFilter
 from apps.store.forms import AddProductToCartForm, CreateOrderForm
 from apps.store.models import Product
-from db.cart_item_dao import CartItemDAO
-from db.characteristic_dao import CharacteristicDAO
-from db.image_dao import ImageDAO
-from db.order_dao import OrderDAO
-from db.product_dao import ProductDAO
-from db.review_dao import ReviewDAO
+from db.cart_item_repository import CartItemRepository
+from db.characteristic_repository import CharacteristicRepository
+from db.image_repository import ImageRepository
+from db.order_repository import OrderRepository
+from db.product_repository import ProductRepository
+from db.review_repository import ReviewRepository
 from services.cart_service import CartService
 from services.product_service import PriceHistoryService
 
@@ -29,11 +29,11 @@ class IndexView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['filter'] = ProductFilter(self.request.GET)
-        context['minmax_rating'] = ProductDAO.get_min_max_product_rating()
+        context['minmax_rating'] = ProductRepository().get_min_max_product_rating()
         return context
 
     def get_queryset(self):
-        queryset = ProductDAO.get_products_list()
+        queryset = ProductRepository().get_products_list()
         queryset = queryset.values('id', 'image', 'name', 'price', 'rating', 'amount', 'date_created')
         queryset = queryset.order_by('-rating')
         filter = ProductFilter(self.request.GET, queryset=queryset)
@@ -46,22 +46,23 @@ class SingleProductView(DetailView):
     context_object_name = 'product'
 
     def get_queryset(self):
-        queryset = ProductDAO.get_products_list(include_image=False)
+        queryset = ProductRepository().get_products_list(include_image=False)
         return queryset.values('id', 'name', 'price', 'description', 'amount')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         product_id = self.object.get('id')
 
-        context['product_images'] = ImageDAO.get_product_images(product_id)
+        context['product_images'] = ImageRepository().get_product_images(product_id)
         context['product_price_history'] = PriceHistoryService.get_single_product_price_history(product_id)
-        context['product_characteristics'] = CharacteristicDAO.get_product_characteristics(product_id)
-        context['reviews'] = ReviewDAO.get_product_reviews(product_id)
-        
+        context['product_characteristics'] = CharacteristicRepository().get_product_characteristics(product_id)
+        context['reviews'] = ReviewRepository().get_product_reviews(product_id)
+
         if self.request.user.is_authenticated and not self.request.user.is_staff:
             product_amount = self.object.get('amount')
             user_id = self.request.user.pk
-            context['product_amount_in_cart'] = CartItemDAO.get_product_amount_in_cart_by_user_id(user_id, product_id)
+            context['product_amount_in_cart'] = CartItemRepository().get_product_amount_in_cart_by_user_id(user_id,
+                                                                                                           product_id)
             context['form'] = AddProductToCartForm(amount_in_cart=context['product_amount_in_cart'],
                                                    max_amount=product_amount + context['product_amount_in_cart'])
         return context
@@ -79,10 +80,8 @@ class SingleProductFormView(CustomerPermission, SingleObjectMixin, FormView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['amount_in_cart'] = CartItemDAO.get_product_amount_in_cart_by_user_id(
-            self.request.user.pk,
-            self.object.get('id')
-        )
+        kwargs['amount_in_cart'] = CartItemRepository().get_product_amount_in_cart_by_user_id(self.request.user.pk,
+                                                                                              self.object.get('id'))
         kwargs['max_amount'] = kwargs['amount_in_cart'] + self.object.get('amount')
         return kwargs
 
@@ -130,7 +129,7 @@ class UserCartView(CustomerPermission, ListView):
     context_object_name = 'cart_items'
 
     def get_queryset(self):
-        return CartItemDAO.get_user_cart(self.request.user.pk) \
+        return CartItemRepository().get_user_cart(self.request.user.pk) \
             .values('amount', 'product_id', 'product__name', 'image', 'price', 'product__amount') \
             .order_by('-product_id')
 
@@ -153,7 +152,7 @@ class OrderCreateView(CustomerPermission, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['cart_items'] = CartItemDAO.get_user_cart(self.request.user.pk) \
+        context['cart_items'] = CartItemRepository().get_user_cart(self.request.user.pk)\
             .values('amount', 'product_id', 'product__name', 'image', 'price') \
             .order_by('-product_id')
         context['order_total'] = context['cart_items'].aggregate(order_total=Sum('price')).get('order_total')
@@ -177,7 +176,7 @@ class UserOrdersListView(CustomerPermission, ListView):
         return context
 
     def get_queryset(self):
-        queryset = OrderDAO.get_all_orders(self.request.user.pk)
+        queryset = OrderRepository().get_all_orders(self.request.user.pk)
         queryset = queryset.order_by('-id')
         filter = OrderFilter(self.request.GET, queryset=queryset)
         return filter.qs
