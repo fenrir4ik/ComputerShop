@@ -66,3 +66,6 @@ class CartItemRepository:
         user_cart = product_repository.annotate_queryset_with_image(user_cart, ref='product_id')
         user_cart = product_repository.annotate_queryset_with_price(user_cart, ref='product_id')
         return user_cart
+
+    def get_cart_products_id(self, cart_id: int) -> QuerySet:
+        return self.CartItem.objects.filter(order_id=cart_id).values_list('product_id', flat=True)

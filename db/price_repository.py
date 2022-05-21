@@ -37,20 +37,18 @@ class PriceRepository:
         """
         self.ProductPrice(product_id=product_id, price=price).save()
 
-    def get_all_products_price_history(self, **kwargs) -> QuerySet:
+    def get_all_products_price_history(self, date_start, aggregation_period) -> QuerySet:
         """
         Returns product price history
         """
-        date_start = kwargs.get('date_start')
-        aggregation_period = kwargs.get('aggregation_period')
         agg_function = self.aggregation_period_dict[aggregation_period]
         return self.ProductPrice.objects.annotate(period=agg_function('date_actual'), avg_price=Avg('price')) \
             .values('product_id', 'period', 'avg_price') \
             .filter(date_actual__gte=date_start) \
             .order_by('period')
 
-    def get_product_price_history_by_id(self, id_list: List[int], **kwargs):
+    def get_product_price_history_by_id(self, id_list: List[int], date_start, aggregation_period):
         """
         Returns product price history for particular product or set of products
         """
-        return self.get_all_products_price_history(**kwargs).filter(product_id__in=id_list)
+        return self.get_all_products_price_history(date_start, aggregation_period).filter(product_id__in=id_list)
