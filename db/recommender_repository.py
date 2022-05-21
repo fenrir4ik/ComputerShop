@@ -19,12 +19,12 @@ class RecommenderRepository:
         self.CartItem = apps.get_model('store', 'CartItem')
         self.OrderStatus = apps.get_model('store', 'OrderStatus')
 
-    def get_price_history(self, id_list: List[int]) -> QuerySet:
-        return PriceRepository().get_product_price_history_by_id(id_list,
+    def get_price_history(self, *id_list) -> QuerySet:
+        return PriceRepository().get_product_price_history_by_id(*id_list,
                                                                  aggregation_period=REC_PERIOD,
                                                                  date_start=REC_START)
 
-    def get_sales_history(self, id_list: List[int]) -> QuerySet:
+    def get_sales_history(self, *id_list) -> QuerySet:
         date_start = REC_START
         aggregation_period = REC_PERIOD
         agg_function = self.__aggregation_period_dict[aggregation_period]

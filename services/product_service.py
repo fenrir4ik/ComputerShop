@@ -31,7 +31,7 @@ class PriceHistoryChartService:
 
     def get_product_price_history(self, product_id: int):
         price_repository = PriceRepository()
-        price_records = price_repository.get_product_price_history_by_id([product_id],
+        price_records = price_repository.get_product_price_history_by_id(product_id,
                                                                          aggregation_period=PH_PERIOD,
                                                                          date_start=PH_START)
         price_records = dict((row['period'].strftime("%Y-%m-%d"), round(row['avg_price'], 2)) for row in price_records)

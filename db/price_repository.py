@@ -47,7 +47,7 @@ class PriceRepository:
             .filter(date_actual__gte=date_start) \
             .order_by('period')
 
-    def get_product_price_history_by_id(self, id_list: List[int], date_start, aggregation_period):
+    def get_product_price_history_by_id(self, *id_list, date_start, aggregation_period):
         """
         Returns product price history for particular product or set of products
         """

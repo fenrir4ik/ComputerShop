@@ -39,10 +39,13 @@ class RecommenderService:
 
     def process_cart_items(self, cart_id: int):
         cart_products = list(CartItemRepository().get_cart_products_id(cart_id))
-        products_price_history = RecommenderRepository().get_price_history(cart_products)
-        products_sales_history = RecommenderRepository().get_sales_history(cart_products)
-        products_price_history = self.__parse_history_data(products_price_history, data_field_name='avg_price')
-        products_sales_history = self.__parse_history_data(products_sales_history, data_field_name='total_products')
+        products_price_history = RecommenderRepository().get_price_history(*cart_products)
+        products_sales_history = RecommenderRepository().get_sales_history(*cart_products)
+        products_price_history = self.__divide_history_by_products(products_price_history,
+                                                                   data_field_name='avg_price')
+        products_sales_history = self.__divide_history_by_products(products_sales_history,
+                                                                   data_field_name='total_products')
+
         for product_id in cart_products:
             product_prices = products_price_history.get(product_id)
             product_sales = products_sales_history.get(product_id)
@@ -51,11 +54,11 @@ class RecommenderService:
             if rating_update != 0.0:
                 ProductRepository().update_product_rating(product_id, rating_update)
 
-    def __parse_history_data(self,
-                             qs: QuerySet,
-                             pk_field_name: str = 'product_id',
-                             period_field_name: str = 'period',
-                             data_field_name: str = None) -> dict:
+    def __divide_history_by_products(self,
+                                     qs: QuerySet,
+                                     pk_field_name: str = 'product_id',
+                                     period_field_name: str = 'period',
+                                     data_field_name: str = None) -> dict:
         """Parses given qs to format suitable for future processing"""
 
         parsed_data = {}
