@@ -7,7 +7,6 @@ from django.db.models.functions import TruncMonth, TruncWeek, TruncDay
 
 
 class PriceRepository:
-    """Repository is used to interact with ProductPrice model instances"""
     aggregation_period_dict = {
         'month': TruncMonth,
         'week': TruncWeek,

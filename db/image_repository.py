@@ -9,8 +9,6 @@ from services.settings import DEFAULT_PRODUCT_IMAGE
 
 
 class ImageRepository:
-    """Repository is used to interact with ProductImage model instances"""
-
     def __init__(self):
         self.ProductImage = apps.get_model('store', 'ProductImage')
 

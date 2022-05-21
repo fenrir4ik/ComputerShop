@@ -3,8 +3,6 @@ from django.db.models import QuerySet
 
 
 class ReviewRepository:
-    """Repository is used to interact with Vendor model instances"""
-
     def __init__(self):
         self.Review = apps.get_model('store', 'Review')
 

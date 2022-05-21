@@ -5,8 +5,6 @@ from django.db.models import F
 
 
 class CharacteristicRepository:
-    """Repository is used to interact with ProductImage model instances"""
-
     def __init__(self):
         self.ProductCharacteristic = apps.get_model('store', 'ProductCharacteristic')
         self.Characteristic = apps.get_model('store', 'Characteristic')

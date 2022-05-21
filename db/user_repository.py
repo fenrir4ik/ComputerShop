@@ -6,8 +6,6 @@ from apps.core.models import User
 
 
 class UserRepository:
-    """Repository is used to interact with User model instances"""
-
     def __init__(self):
         self.User = apps.get_model('user', 'User')
 

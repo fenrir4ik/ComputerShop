@@ -5,8 +5,6 @@ from django.db.models import QuerySet
 
 
 class VendorRepository:
-    """Repository is used to interact with Vendor model instances"""
-
     def __init__(self):
         self.Vendor = apps.get_model('store', 'Vendor')
 

@@ -9,8 +9,6 @@ from db.product_repository import ProductRepository
 
 
 class CartItemRepository:
-    """Repository is used to interact with CartItem model instances"""
-
     def __init__(self):
         self.CartItem = apps.get_model('store', 'CartItem')
         self.Product = apps.get_model('store', 'Product')

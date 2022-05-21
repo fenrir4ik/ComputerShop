@@ -3,8 +3,6 @@ from django.db.models import OuterRef, Subquery, Q, QuerySet, F, Min, Max
 
 
 class ProductRepository:
-    """Repository is used to interact with Product model instances"""
-
     def __init__(self):
         self.Product = apps.get_model('store', 'Product')
         self.CartItem = apps.get_model('store', 'CartItem')

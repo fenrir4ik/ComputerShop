@@ -5,8 +5,6 @@ from django.db.models import QuerySet
 
 
 class OrderStatusRepository:
-    """Repository is used to interact with OrderStatus model instances"""
-
     def __init__(self):
         self.OrderStatus = apps.get_model('store', 'OrderStatus')
 

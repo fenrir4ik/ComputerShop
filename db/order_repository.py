@@ -5,8 +5,6 @@ from db.product_repository import ProductRepository
 
 
 class OrderRepository:
-    """Repository is used to interact with Order model instances"""
-
     def __init__(self):
         self.Order = apps.get_model('store', 'Order')
         self.CartItem = apps.get_model('store', 'CartItem')
