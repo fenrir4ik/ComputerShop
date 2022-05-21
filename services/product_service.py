@@ -13,18 +13,17 @@ from utils.date import get_periods_from_range
 class AdditionalProductDataService:
     """Service for managing additional product data: price and image"""
 
-    @staticmethod
-    def add_additional_data(product_id: int, price: Decimal, image_list: List[dict], characteristics: List[Dict]):
+    def add_additional_data(self, product_id: int, price: Decimal, image_list: List[dict], characteristics: List[Dict]):
         PriceRepository().create_product_price(product_id, price)
-        ImageService.add_product_images(product_id, image_list)
-        CharacteristicService.add_product_characteristics(product_id, characteristics)
+        ImageService().add_product_images(product_id, image_list)
+        CharacteristicService().add_product_characteristics(product_id, characteristics)
 
-    @staticmethod
-    def update_additional_data(product_id: int, price: Decimal, image_list: List[dict], characteristics: List[Dict]):
+    def update_additional_data(self, product_id: int, price: Decimal, image_list: List[dict],
+                               characteristics: List[Dict]):
         PriceRepository().update_product_price(product_id, price)
-        ImageService.update_product_images(product_id, image_list)
+        ImageService().update_product_images(product_id, image_list)
         if characteristics:
-            CharacteristicService.update_product_characteristics(product_id, characteristics)
+            CharacteristicService().update_product_characteristics(product_id, characteristics)
 
 
 class PriceHistoryService:
@@ -34,8 +33,8 @@ class PriceHistoryService:
     def get_single_product_price_history(product_id: int):
         price_repository = PriceRepository()
         price_records = price_repository.get_product_price_history_by_id([product_id],
-                                                                          aggregation_period=PH_PERIOD,
-                                                                          date_start=PH_START)
+                                                                         aggregation_period=PH_PERIOD,
+                                                                         date_start=PH_START)
         price_records = dict((row['period'].strftime("%Y-%m-%d"), round(row['avg_price'], 2)) for row in price_records)
         distributed_dates = get_periods_from_range(PH_START, timezone.now(), period=PH_PERIOD)
         if not price_records:

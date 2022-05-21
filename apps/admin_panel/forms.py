@@ -6,9 +6,9 @@ from django.forms import formset_factory, inlineformset_factory, BaseInlineFormS
 
 from apps.store.models import Product, ProductImage, Order, OrderStatus
 from apps.user.forms import UserBaseForm
-from services.settings import PRODUCT_IMAGE_MAX_AMOUNT
 from services.order_status_service import OrderStatusService
 from services.product_service import AdditionalProductDataService
+from services.settings import PRODUCT_IMAGE_MAX_AMOUNT
 from utils.parsers import parse_inmemory_excel_to_dataframe
 from utils.validators import SquareImageValidator, validate_df_emptiness, validate_allowed_characteristics_columns
 
@@ -116,10 +116,10 @@ class ProductAddForm(BaseProductModelForm):
         super().__init__(data=data, files=files, image_formset=image_formset, **kwargs)
 
     def process_additional_product_data(self, product):
-        AdditionalProductDataService.add_additional_data(product.pk,
-                                                         self.cleaned_data.get('price'),
-                                                         self.image_formset.cleaned_data,
-                                                         self.cleaned_data.get('characteristics'))
+        AdditionalProductDataService().add_additional_data(product.pk,
+                                                           self.cleaned_data.get('price'),
+                                                           self.image_formset.cleaned_data,
+                                                           self.cleaned_data.get('characteristics'))
 
 
 class ProductUpdateForm(BaseProductModelForm):
@@ -132,10 +132,10 @@ class ProductUpdateForm(BaseProductModelForm):
         self.fields['characteristics'].required = False
 
     def process_additional_product_data(self, product):
-        AdditionalProductDataService.update_additional_data(product.pk,
-                                                            self.cleaned_data.get('price'),
-                                                            self.image_formset.cleaned_data,
-                                                            self.cleaned_data.get('characteristics'))
+        AdditionalProductDataService().update_additional_data(product.pk,
+                                                              self.cleaned_data.get('price'),
+                                                              self.image_formset.cleaned_data,
+                                                              self.cleaned_data.get('characteristics'))
 
 
 class ChangeOrderForm(UserBaseForm, forms.ModelForm):

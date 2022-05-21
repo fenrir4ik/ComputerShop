@@ -24,8 +24,11 @@ def _parse_image_formset_to_list(cleaned_data: list) -> List[Dict]:
 
 class ImageService:
     """Service is used for product image managing, like adding and updating product images"""
-    @staticmethod
-    def add_product_images(product_id: int, image_list: List[Dict]):
+
+    def __init__(self):
+        self.max_images_number = PRODUCT_IMAGE_MAX_AMOUNT
+
+    def add_product_images(self, product_id: int, image_list: List[Dict]):
         """Method takes in product id and image list and adds images for given product"""
         image_repository = ImageRepository()
         main_image_empty = True
@@ -36,8 +39,7 @@ class ImageService:
         if main_image_empty:
             image_repository.create_default_product_image(product_id)
 
-    @staticmethod
-    def update_product_images(product_id: int, image_list: List[Dict]):
+    def update_product_images(self, product_id: int, image_list: List[Dict]):
         """Method takes in product id and image list and updates images for given product"""
         image_repository = ImageRepository()
         image_list = _parse_image_formset_to_list(image_list)
@@ -47,7 +49,7 @@ class ImageService:
             image_repository.create_default_product_image(product_id)
             return
 
-        if ImageService.__images_update_available(product_id, image_list):
+        if self.__images_update_available(product_id, image_list):
             main_image_empty = True
             for image_dict in image_list:
                 if image_dict:
@@ -66,8 +68,7 @@ class ImageService:
             if main_image_empty:
                 image_repository.create_default_product_image(product_id)
 
-    @staticmethod
-    def __images_update_available(product_id: int, image_list: List[Dict]) -> bool:
+    def __images_update_available(self, product_id: int, image_list: List[Dict]) -> bool:
         """Check if image update available to prevent incompatible data creation during simultaneous product editing"""
         image_repository = ImageRepository()
         current_image_n = image_repository.get_product_image_number(product_id)
@@ -83,4 +84,4 @@ class ImageService:
             elif image and not old_image_id and not delete:
                 created_image_n += 1
         image_number_after_update = current_image_n - deleted_image_n + created_image_n
-        return image_number_after_update <= PRODUCT_IMAGE_MAX_AMOUNT
+        return image_number_after_update <= self.max_images_number
