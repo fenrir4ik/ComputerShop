@@ -7,7 +7,7 @@ from django.db.models.functions import TruncMonth, TruncWeek, TruncDay
 
 
 class PriceRepository:
-    aggregation_period_dict = {
+    __aggregation_period_dict = {
         'month': TruncMonth,
         'week': TruncWeek,
         'day': TruncDay
@@ -41,7 +41,7 @@ class PriceRepository:
         """
         Returns product price history
         """
-        agg_function = self.aggregation_period_dict[aggregation_period]
+        agg_function = self.__aggregation_period_dict[aggregation_period]
         return self.ProductPrice.objects.annotate(period=agg_function('date_actual'), avg_price=Avg('price')) \
             .values('product_id', 'period', 'avg_price') \
             .filter(date_actual__gte=date_start) \
