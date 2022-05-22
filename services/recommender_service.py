@@ -1,4 +1,7 @@
+import logging
+
 import numpy as np
+from dateutil.relativedelta import relativedelta
 from django.db.models import QuerySet
 from django.utils import timezone
 
@@ -6,8 +9,11 @@ from db.cart_item_repository import CartItemRepository
 from db.product_repository import ProductRepository
 from db.recommender_repository import RecommenderRepository
 from services.product_service import SalesHistoryProcessor, PriceHistoryProcessor
-from services.settings import REC_START, REC_PERIOD, REC_DEFAULT_CORRELATION, REC_SOFTSIGN_H
+from services.settings import REC_START, REC_PERIOD, REC_DEFAULT_CORRELATION, REC_SOFTSIGN_H, REC_FADING_CYCLE_DURATION, \
+    REC_FADING_CYCLES
 from utils.date import get_periods_from_range
+
+logger = logging.getLogger(__name__)
 
 
 def get_linear_approx_k(x: np.ndarray, y: np.ndarray) -> float:
@@ -93,3 +99,23 @@ class RecommenderService:
             sales = SalesHistoryProcessor().process_sales_history(self.distributed_dates, sales_data)
             sales = np.array(list(sales.values()), dtype=np.int)
         return price, sales
+
+    def fade_products_rating(self):
+        current_time = timezone.now()
+        logger.info(f'{current_time} | Fading cycle starting...')
+        repository = RecommenderRepository()
+        product_last_bought_time = repository.get_products_last_bought_time()
+        cycle_duration = REC_FADING_CYCLE_DURATION
+
+        for product_data in product_last_bought_time:
+            product_id = product_data.get('id')
+            last_time = product_data.get('last_time')
+            rating = product_data.get('rating')
+            cycles_passed = int((current_time - last_time) / cycle_duration)
+            fading_coefficient = 1 - cycles_passed / REC_FADING_CYCLES
+            repository.decrease_product_rating(product_id, fading_coefficient)
+            logger.info(
+                f'{current_time} | Pid: {product_id}, old_rating: {rating:.7f}, new_rating: {float(rating) * fading_coefficient:.7f}'
+            )
+
+        logger.info(f'{current_time} | Fading cycle executed, {len(product_last_bought_time)} products processed.')

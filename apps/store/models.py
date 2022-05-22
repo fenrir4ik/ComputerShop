@@ -57,7 +57,7 @@ class Product(models.Model):
     description = models.TextField(verbose_name="Описание")
     characteristics = models.ManyToManyField(Characteristic, related_name='products', through='ProductCharacteristic')
     reviews = models.ManyToManyField(User, through='Review')
-    rating = models.DecimalField(decimal_places=3, max_digits=6, default=0)
+    rating = models.DecimalField(decimal_places=6, max_digits=16, default=0)
 
     class Meta:
         db_table = 'product'

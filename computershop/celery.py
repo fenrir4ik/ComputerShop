@@ -11,8 +11,8 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 
 app.conf.beat_schedule = {
     'products_rating_update': {
-        'task': 'services.tasks.my_task',
-        'schedule': 5
+        'task': 'apps.store.tasks.products_rating_update',
+        'schedule': crontab(minute=0, hour=0, day_of_week='sunday')
     }
 }
 

@@ -164,3 +164,27 @@ LOGIN_REDIRECT_URL = '/'
 
 # ALLOWED_HOSTS = ['localhost', '192.168.0.104', '127.0.0.1']
 ALLOWED_HOSTS = ['localhost', '*', '127.0.0.1']
+
+# Celery settings
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
+
+# Logger settings
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'recommender.log'),
+        },
+    },
+    'loggers': {
+        'services.recommender_service': {
+            'handlers': ['file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}

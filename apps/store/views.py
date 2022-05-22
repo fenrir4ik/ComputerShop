@@ -152,7 +152,7 @@ class OrderCreateView(CustomerPermission, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['cart_items'] = CartItemRepository().get_user_cart(self.request.user.pk)\
+        context['cart_items'] = CartItemRepository().get_user_cart(self.request.user.pk) \
             .values('amount', 'product_id', 'product__name', 'image', 'price') \
             .order_by('-product_id')
         context['order_total'] = context['cart_items'].aggregate(order_total=Sum('price')).get('order_total')
