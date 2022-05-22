@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.password_validation import validate_password
 
 from apps.core.models import User
-from db.user_dao import UserDAO
+from db.user_repository import UserRepository
 from utils.validators import NameValidator, SurnameValidator, PatronymicValidator, PhoneNumberValidator
 
 
@@ -63,7 +63,7 @@ class RegistrationForm(UserBaseForm, UserCreationForm):
     def clean_email(self):
         """Replace validation error message when user with given email address already exists"""
         user_email = self.cleaned_data.get('email')
-        user = UserDAO.get_user_by_username(user_email)
+        user = UserRepository().get_user_by_email(user_email)
         if user:
             raise forms.ValidationError('Адресс электронной почты используется другим пользователем.')
         else:
@@ -98,7 +98,7 @@ class ProfileChangeForm(UserBaseForm, forms.ModelForm):
     def clean_email(self):
         """Replace validation error message when user with given email address already exists"""
         user_email = self.cleaned_data.get('email')
-        user = UserDAO.get_user_by_username(user_email)
+        user = UserRepository().get_user_by_email(user_email)
         if user:
             if self.instance.email != user_email:
                 raise forms.ValidationError('Адресс электронной почты используется другим пользователем.')

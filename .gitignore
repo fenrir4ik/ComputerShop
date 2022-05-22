@@ -4,4 +4,7 @@ media/product/*
 .idea/
 __pycache__/
 env/
+venv/
 staticdata/
+data.json
+*.log

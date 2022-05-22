@@ -104,7 +104,7 @@
             </div>
         </div>
         <div class="detail_chars">
-            <h3 class="chars_title">Характеристики</h3>
+            <h3 class="detail_title">Характеристики</h3>
             {% for characteristic in product_characteristics %}
                 <div class="char_item">
                     <p class="char_name">{{ characteristic.name }}</p>
@@ -115,5 +115,10 @@
         <div id="price_chart">
             <canvas id="chart"></canvas>
         </div>
+        <h3 class="detail_title">Отзывы</h3>
+        {% for review in reviews %}
+            <h5 class="user_name">Пользователь {{ review.user_id }}</h5>
+            <p class="review">{{ review.message }}</p>
+        {% endfor %}
     </div>
 {% endblock %}

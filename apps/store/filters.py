@@ -4,7 +4,7 @@ from django.db.models import Q
 from django_filters.widgets import RangeWidget
 
 from apps.store.models import Product, Category, Vendor, Order
-from db.vendor_dao import VendorDAO
+from db.vendor_repository import VendorRepository
 
 
 class FromToRangeWidget(django_filters.widgets.RangeWidget):
@@ -34,11 +34,13 @@ class ProductFilter(django_filters.FilterSet):
     sort = django_filters.OrderingFilter(
         label="Отсортировать",
         choices=(
+            ('-rating', 'популярные'),
             ('price', 'от дешевых к дорогим'),
             ('-price', 'от дорогих к дешевым'),
             ('name', 'по алфавиту'),
             ('-date_created', 'новинки')
-        )
+        ),
+        empty_label='все'
     )
 
     class Meta:
@@ -49,7 +51,7 @@ class ProductFilter(django_filters.FilterSet):
         super().__init__(data, queryset, **kwargs)
         category_list = data.getlist('category')
         if category_list:
-            self.filters['vendor'].queryset = VendorDAO.get_vendors_for_product_category(category_list)
+            self.filters['vendor'].queryset = VendorRepository().get_vendors_for_product_category(category_list)
         else:
             self.filters['vendor'].queryset = Vendor.objects.none()
 

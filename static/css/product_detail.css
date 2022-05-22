@@ -180,7 +180,7 @@
     content: " ..............................................................................................................................................."
 }
 
-.chars_title {
+.detail_title {
     margin-bottom: 20px;
     color: #2b6777;
 }
@@ -188,6 +188,16 @@
 #price_chart {
     height: 30vw;
     width: 100%;
+    margin-bottom: 25px;
+}
+
+.user_name {
+    font-weight: bolder;
+    font-size: 16px;
+}
+
+.review {
+    color: gray;
 }
 
 @media screen and (max-width: 991px) {
@@ -198,16 +208,16 @@
     .detail_chars {
         max-width: 100%;
     }
-
-    .char_name,
-    .char_value {
-        font-size: 12px;
-    }
 }
 
 @media screen and (max-width: 768px) {
     #price_chart {
         height: 60vw;
+    }
+
+    .char_name,
+    .char_value {
+        font-size: 12px;
     }
 }
 

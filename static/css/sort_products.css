@@ -9,6 +9,11 @@
     padding: 0;
 }
 
+.filter_multiple ul {
+    list-style: none;
+    padding: 0;
+}
+
 .sort_link {
     text-decoration: none;
     color: #2b6777;

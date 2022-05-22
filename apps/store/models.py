@@ -5,7 +5,8 @@ from django.dispatch import receiver
 from django.utils import timezone
 
 from apps.core.models import User
-from services.constants import DEFAULT_PRODUCT_IMAGE
+from services.settings import DEFAULT_PRODUCT_IMAGE
+from services.recommender_service import RecommenderService
 
 
 class Country(models.Model):
@@ -55,7 +56,8 @@ class Product(models.Model):
     date_created = models.DateTimeField(verbose_name="Дата создания", auto_now_add=True)
     description = models.TextField(verbose_name="Описание")
     characteristics = models.ManyToManyField(Characteristic, related_name='products', through='ProductCharacteristic')
-    rating = models.DecimalField(decimal_places=3, max_digits=6, default=0)
+    reviews = models.ManyToManyField(User, through='Review')
+    rating = models.DecimalField(decimal_places=6, max_digits=16, default=0)
 
     class Meta:
         db_table = 'product'
@@ -158,9 +160,12 @@ class Order(models.Model):
         return f'Order[{self.pk}], {self.user_id=}, {self.status=}, {self.date_start=}, {self.date_end=}'
 
     def save(self, *args, **kwargs):
-        if self.status_id == OrderStatus.retrieve_id('completed'):
+        if self.status_id == OrderStatus.retrieve_id('completed') and not self.date_end:
             self.date_end = timezone.now()
-        super().save(*args, **kwargs)
+            super().save(*args, **kwargs)
+            RecommenderService().process_cart_items(self.pk)
+        else:
+            super().save(*args, **kwargs)
 
 
 class CartItem(models.Model):
@@ -177,8 +182,18 @@ class CartItem(models.Model):
     ]
 
 
+class Review(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    message = models.TextField(max_length=500)
+
+    class Meta:
+        db_table = 'review'
+
+
 @receiver(post_delete, sender=ProductImage)
 def delete_image_from_storage(sender, instance, *args, **kwargs):
     product_image = ProductImage.objects.filter(pk=instance.pk).exists()
     if instance.pk and not product_image and instance.image != DEFAULT_PRODUCT_IMAGE:
         instance.image.delete(False)
+

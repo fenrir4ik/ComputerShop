@@ -35,12 +35,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'silk',
     'django_filters',
+    'django_celery_beat',
     'apps.core',
     'apps.store',
     'apps.user',
     'apps.admin_panel'
 ]
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'computershop.wsgi.application'
 DATABASES = {
     # 'default': {
     #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    #     'NAME': 'computershop_v2',
+    #     'NAME': 'computershop_v3',
     #     'USER': 'postgres',
     #     'PASSWORD': '12121212',
     #     'HOST': 'localhost',
@@ -139,11 +139,10 @@ TIME_ZONE = 'Europe/Kiev'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
-
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticdata')
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -163,4 +162,29 @@ MEDIA_URL = '/media/'
 LOGIN_URL = '/user/login'
 LOGIN_REDIRECT_URL = '/'
 
-ALLOWED_HOSTS = ['127.0.0.1', '192.168.0.104']
+# ALLOWED_HOSTS = ['localhost', '192.168.0.104', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '*', '127.0.0.1']
+
+# Celery settings
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
+
+# Logger settings
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'recommender.log'),
+        },
+    },
+    'loggers': {
+        'services.recommender_service': {
+            'handlers': ['file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}

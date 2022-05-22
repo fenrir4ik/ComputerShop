@@ -3,8 +3,8 @@ from django.utils import timezone
 
 from apps.store.models import Order, OrderStatus
 from apps.user.forms import UserBaseForm
-from db.cart_item_dao import CartItemDAO
-from db.order_dao import OrderDAO
+from db.cart_item_repository import CartItemRepository
+from db.order_repository import OrderRepository
 
 
 class AddProductToCartForm(forms.Form):
@@ -26,7 +26,6 @@ class CreateOrderForm(UserBaseForm, forms.ModelForm):
         model = Order
         fields = ['name', 'surname', 'patronymic', 'phone_number', 'email', 'address', 'payment']
 
-
     def __init__(self, user, data=None, files=None, instance=None, **kwargs):
         super().__init__(data=data, files=files, instance=instance, **kwargs)
         self.fields['phone_number'].widget.attrs.update({'required': True})
@@ -39,12 +38,12 @@ class CreateOrderForm(UserBaseForm, forms.ModelForm):
             visible_field.field.widget.attrs['class'] = 'form-control'
 
     def save(self, commit=True):
-        cart_id = OrderDAO.get_user_cart_id(self.user.pk)
+        cart_id = OrderRepository().get_user_cart_id(self.user.pk)
         order = super().save(commit=False)
         order.pk = cart_id
         order.user = self.user
         order.status_id = OrderStatus.retrieve_id('new')
         order.date_start = timezone.now()
-        if CartItemDAO.get_user_cart(self.user.pk).exists():
+        if CartItemRepository().get_user_cart(self.user.pk).exists():
             order.save()
         return order
