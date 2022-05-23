@@ -12,6 +12,11 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from pathlib import Path
 
+import environ
+
+env = environ.Env()
+environ.Env.read_env()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -19,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-m!7rugaj=($nvp+pmb5^*bk7o&emo3-w37d4sd(ygdv)6*c*+u'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -87,11 +92,11 @@ DATABASES = {
     # },
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'computershop_v2',
-        'USER': 'root',
-        'PASSWORD': '12121212',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'NAME': env('DB_NAME'),
+        'USER': env('DB_USER'),
+        'PASSWORD': env('DB_PASSWORD'),
+        'HOST': env('DB_HOST'),
+        'PORT': env('DB_PORT'),
     }
 }
 
@@ -130,8 +135,6 @@ USE_I18N = True
 
 USE_L10N = True
 
-# USE_TZ = True
-
 USE_TZ = False
 
 TIME_ZONE = 'Europe/Kiev'
@@ -142,7 +145,6 @@ TIME_ZONE = 'Europe/Kiev'
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
-
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -162,11 +164,10 @@ MEDIA_URL = '/media/'
 LOGIN_URL = '/user/login'
 LOGIN_REDIRECT_URL = '/'
 
-# ALLOWED_HOSTS = ['localhost', '192.168.0.104', '127.0.0.1']
-ALLOWED_HOSTS = ['localhost', '*', '127.0.0.1']
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
 
 # Celery settings
-CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
+CELERY_BROKER_URL = env('CELERY_BROKER_URL')
 
 # Logger settings
 LOGGING = {
