@@ -8,3 +8,4 @@ venv/
 staticdata/
 data.json
 *.log
+web_cache/

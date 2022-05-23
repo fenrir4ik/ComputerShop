@@ -142,7 +142,7 @@ TIME_ZONE = 'Europe/Kiev'
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
-# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -169,7 +169,6 @@ ALLOWED_HOSTS = ['localhost', '*', '127.0.0.1']
 CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
 
 # Logger settings
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -187,4 +186,13 @@ LOGGING = {
             'propagate': True,
         },
     },
+}
+
+# Web pages caching
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.path.join(BASE_DIR, 'web_cache'),
+    }
 }
