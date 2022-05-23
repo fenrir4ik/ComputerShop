@@ -107,6 +107,11 @@
     padding-right: 5px;
 }
 
+.filter_multiple ul {
+    list-style: none;
+    padding: 0;
+}
+
 @media screen and (max-width: 992px) {
     .expand_button {
         display: block;
