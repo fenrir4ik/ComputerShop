@@ -17,6 +17,7 @@ class OrderStatusService:
     1 - 2 - 3 - 9 - 7           # client didn't pick up order from shop
     1 - 2 - 7                   # admin canceled the order after its confirmation
     1 - 2 - 3 - 7               # admin canceled the order during picking
+    1 - 7
 
     Default status model dict:
 
