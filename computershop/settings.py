@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'silk',
+    # 'silk',
     'django_filters',
     'django_celery_beat',
     'apps.core',
@@ -55,7 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'silk.middleware.SilkyMiddleware',
+    # 'silk.middleware.SilkyMiddleware',
 ]
 
 ROOT_URLCONF = 'computershop.urls'
@@ -120,11 +120,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Custom authentication and user model
 
-AUTH_USER_MODEL = 'core.User'
+# AUTH_USER_MODEL = 'core.User'
 
-AUTHENTICATION_BACKENDS = [
-    'apps.core.backends.EmailBasedBackend'
-]
+# AUTHENTICATION_BACKENDS = [
+#     'apps.core.backends.EmailBasedBackend'
+# ]
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
@@ -187,13 +187,4 @@ LOGGING = {
             'propagate': True,
         },
     },
-}
-
-# Web pages caching
-
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        'LOCATION': os.path.join(BASE_DIR, 'web_cache'),
-    }
 }
