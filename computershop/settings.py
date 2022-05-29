@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'silk',
     'django_filters',
     'django_celery_beat',
     'apps.core',
@@ -55,7 +54,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'silk.middleware.SilkyMiddleware',
 ]
 
 ROOT_URLCONF = 'computershop.urls'
@@ -64,7 +62,6 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [BASE_DIR, os.path.join(BASE_DIR, 'templates')],
-        'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -72,6 +69,12 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'loaders': [
+                ('django.template.loaders.cached.Loader', [
+                    'django.template.loaders.filesystem.Loader',
+                    'django.template.loaders.app_directories.Loader',
+                ]),
+            ]
         },
     },
 ]
@@ -82,14 +85,6 @@ WSGI_APPLICATION = 'computershop.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    #     'NAME': 'computershop_v3',
-    #     'USER': 'postgres',
-    #     'PASSWORD': '12121212',
-    #     'HOST': 'localhost',
-    #     'PORT': '',
-    # },
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': env('DB_NAME'),
@@ -120,11 +115,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Custom authentication and user model
 
-# AUTH_USER_MODEL = 'core.User'
+AUTH_USER_MODEL = 'core.User'
 
-# AUTHENTICATION_BACKENDS = [
-#     'apps.core.backends.EmailBasedBackend'
-# ]
+AUTHENTICATION_BACKENDS = [
+    'apps.core.backends.EmailBasedBackend'
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/

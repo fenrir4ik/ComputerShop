@@ -10,3 +10,4 @@ data.json
 *.log
 web_cache/
 *.env
+apps/store/tests/
