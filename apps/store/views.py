@@ -6,6 +6,7 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import FormView, CreateView
 
+from apps.core.paginator import OptimizedPaginator
 from apps.core.permissions import CustomerPermission
 from apps.store.filters import ProductFilter, OrderFilter
 from apps.store.forms import AddProductToCartForm, CreateOrderForm
@@ -24,12 +25,14 @@ class IndexView(ListView):
     """View is used for main page"""
     template_name = 'store/index.html'
     context_object_name = 'products'
-    paginate_by = 20
+    paginate_by = 40
+    paginator_class = OptimizedPaginator
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['filter'] = ProductFilter(self.request.GET)
-        context['minmax_rating'] = ProductRepository().get_min_max_product_rating()
+        if self.request.user.is_staff:
+            context['minmax_rating'] = ProductRepository().get_min_max_product_rating()
         return context
 
     def get_queryset(self):

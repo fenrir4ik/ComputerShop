@@ -6,6 +6,7 @@ from django.views.generic import ListView, DeleteView, UpdateView
 
 from apps.admin_panel.filters import AdminProductFilter, AdminOrderFilter
 from apps.admin_panel.forms import ProductAddForm, ProductUpdateForm, ChangeOrderForm
+from apps.core.paginator import OptimizedPaginator
 from apps.core.permissions import ManagerPermissionMixin
 from apps.store.models import Product
 from db.characteristic_repository import CharacteristicRepository
@@ -20,6 +21,7 @@ class ProductsListAdminView(ManagerPermissionMixin, ListView):
     context_object_name = 'products'
     paginate_by = 10
     form_class = ProductAddForm
+    paginator_class = OptimizedPaginator
     success_url = reverse_lazy('admin-products')
 
     def get_queryset(self):
@@ -99,6 +101,7 @@ class OrdersListView(ManagerPermissionMixin, ListView):
     template_name = 'store/user_orders.html'
     context_object_name = 'orders_list'
     paginate_by = 10
+    paginator_class = OptimizedPaginator
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
