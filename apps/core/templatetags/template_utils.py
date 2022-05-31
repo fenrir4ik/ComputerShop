@@ -29,5 +29,6 @@ def multiply(arg1, arg2):
 
 
 @register.filter
-def rating_percentage(rating, minmax_tuple):
-    return 0 if (minmax_tuple[1] - minmax_tuple[0]) == 0 else int(rating / (minmax_tuple[1] - minmax_tuple[0])*100)
+def ab_rating_normalizer(a, b):
+    # Normalize rating b to range from 0 to 50 using range between 0 and a
+    return 0 if a == 0 else int(b / a * 50)

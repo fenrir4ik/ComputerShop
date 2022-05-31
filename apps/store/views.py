@@ -32,7 +32,7 @@ class IndexView(ListView):
         context = super().get_context_data(**kwargs)
         context['filter'] = ProductFilter(self.request.GET)
         if self.request.user.is_staff:
-            context['minmax_rating'] = ProductRepository().get_min_max_product_rating()
+            context['min_rating'], context['max_rating'] = ProductRepository().get_min_max_product_rating()
         return context
 
     def get_queryset(self):
