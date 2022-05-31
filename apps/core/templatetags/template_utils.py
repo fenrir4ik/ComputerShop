@@ -30,4 +30,4 @@ def multiply(arg1, arg2):
 
 @register.filter
 def rating_percentage(rating, minmax_tuple):
-    return int(rating / (minmax_tuple[1] - minmax_tuple[0])*100)
+    return 0 if (minmax_tuple[1] - minmax_tuple[0]) == 0 else int(rating / (minmax_tuple[1] - minmax_tuple[0])*100)
